@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-const Color colorApp = Color.fromRGBO(0, 181, 204, 1);
+import 'constants.dart';
+import 'settings_page.dart';
 
 void main() => runApp(const MyApp());
 
@@ -47,10 +47,7 @@ class _HomePageState extends State<HomePage> {
       'Trang 3: Nâng cấp',
       style: optionStyle,
     ),
-    Text(
-      'Trang 4: Cài đặt',
-      style: optionStyle,
-    ),
+    SettingsPage(),
   ];
 
   static const List<String> appBarTitle = [
