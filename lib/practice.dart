@@ -36,6 +36,7 @@ class _PracticeState extends State<Practice> {
     PartSix(),
     PartSeven()
   ];
+  
   final List<String> listDesc = [
     'Mô tả ảnh',
     'Hỏi & đáp',
@@ -151,44 +152,53 @@ class _PracticeState extends State<Practice> {
                     Expanded(
                         child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Image.asset(
-                                  './assets/img/voca_icon.png',
-                                  width: 20,
-                                  height: 20,
-                                ),
-                                SizedBox(width: 6),
-                                Text('Từ vựng', style: TextStyle(fontSize: 14)),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-                              child: Text(
-                                '0',
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.bold),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    './assets/img/voca_icon.png',
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text('Từ vựng',
+                                      style: TextStyle(fontSize: 14)),
+                                ],
                               ),
-                            ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Vocabulary()));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: colorApp,
-                                    textStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                    )),
-                                child: Text('Ôn tập'))
-                          ],
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 12, 0, 12),
+                                child: Text(
+                                  '0',
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Vocabulary()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: colorApp,
+                                      textStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                      )),
+                                  child: Text('Ôn tập'))
+                            ],
+                          ),
                         ),
                         SizedBox(
                           height: 100,
@@ -197,43 +207,51 @@ class _PracticeState extends State<Practice> {
                             decoration: BoxDecoration(color: Colors.black),
                           ),
                         ),
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Image.asset(
-                                  './assets/img/ques_icon.png',
-                                  width: 20,
-                                  height: 20,
-                                ),
-                                SizedBox(width: 6),
-                                Text('Câu hỏi', style: TextStyle(fontSize: 14)),
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-                              child: Text(
-                                '0',
-                                style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.bold),
+                        Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    './assets/img/ques_icon.png',
+                                    width: 20,
+                                    height: 20,
+                                  ),
+                                  SizedBox(width: 6),
+                                  Text('Câu hỏi',
+                                      style: TextStyle(fontSize: 14)),
+                                ],
                               ),
-                            ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Question()));
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        Color.fromRGBO(0, 204, 143, 1),
-                                    textStyle: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                    )),
-                                child: Text('Ôn tập'))
-                          ],
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(0, 12, 0, 12),
+                                child: Text(
+                                  '0',
+                                  style: TextStyle(
+                                      fontSize: 25,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Question()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          Color.fromRGBO(0, 204, 143, 1),
+                                      textStyle: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                      )),
+                                  child: Text('Ôn tập'))
+                            ],
+                          ),
                         ),
                       ],
                     ))

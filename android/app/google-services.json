@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "546046472911",
+    "project_id": "toeic-app-flutter",
+    "storage_bucket": "toeic-app-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:546046472911:android:d48cc8bf366ef18762fdba",
+        "android_client_info": {
+          "package_name": "com.example.toeic_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "546046472911-1j5k8pebsb9li6fqqnoqtfanudvhrrnr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4J3_8Zf3ZySVgnQuA9NVWoGVyhbBnZzU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "546046472911-1j5k8pebsb9li6fqqnoqtfanudvhrrnr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
