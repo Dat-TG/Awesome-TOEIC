@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toeic_app/test.dart';
 import 'practice.dart';
 import 'settings_page.dart';
 import 'constants.dart';
@@ -17,10 +18,7 @@ class _HomePageState extends State<HomePage> {
 
   static List<Widget> _widgetOptions = <Widget>[
     Practice(),
-    Text(
-      'Trang 1: Thi',
-      style: optionStyle,
-    ),
+    Test(),
     Text(
       'Trang 2: Lộ trình',
       style: optionStyle,

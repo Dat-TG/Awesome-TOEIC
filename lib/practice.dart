@@ -1,13 +1,13 @@
 import "package:flutter/material.dart";
-import 'package:toeic_app/partFive.dart';
-import 'package:toeic_app/partFour.dart';
-import 'package:toeic_app/partSeven.dart';
-import 'package:toeic_app/partSix.dart';
-import 'package:toeic_app/partThree.dart';
-import 'package:toeic_app/partTwo.dart';
 import 'package:toeic_app/question.dart';
 import 'package:toeic_app/vocabulary.dart';
-import 'partOne.dart';
+import './part/part_one.dart';
+import './part/part_two.dart';
+import './part/part_three.dart';
+import './part/part_four.dart';
+import './part/part_five.dart';
+import './part/part_six.dart';
+import './part/part_seven.dart';
 import 'constants.dart';
 
 class Practice extends StatefulWidget {
