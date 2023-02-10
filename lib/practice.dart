@@ -1,13 +1,7 @@
 import "package:flutter/material.dart";
+import 'package:toeic_app/part/direction.dart';
 import 'package:toeic_app/question.dart';
 import 'package:toeic_app/vocabulary.dart';
-import './part/part_one.dart';
-import './part/part_two.dart';
-import './part/part_three.dart';
-import './part/part_four.dart';
-import './part/part_five.dart';
-import './part/part_six.dart';
-import './part/part_seven.dart';
 import 'constants.dart';
 
 class Practice extends StatefulWidget {
@@ -18,43 +12,6 @@ class Practice extends StatefulWidget {
 }
 
 class _PracticeState extends State<Practice> {
-  final List<String> listTitle = [
-    'Part 1',
-    'Part 2',
-    'Part 3',
-    'Part 4',
-    'Part 5',
-    'Part 6',
-    'Part 7'
-  ];
-  final List<Widget> listTapWidget = [
-    PartOne(),
-    PartTwo(),
-    PartThree(),
-    PartFour(),
-    PartFive(),
-    PartSix(),
-    PartSeven()
-  ];
-
-  final List<String> listDesc = [
-    'Mô tả ảnh',
-    'Hỏi & đáp',
-    'Đoạn hội thoại',
-    'Đoạn văn đơn',
-    'Điền vào câu',
-    'Điền vào đoạn',
-    'Đọc hiểu đoạn văn'
-  ];
-  final List<String> listImage = [
-    'assets/img/image_icon.png',
-    'assets/img/qa.png',
-    'assets/img/chat.png',
-    'assets/img/headphones.png',
-    'assets/img/vocabulary.png',
-    'assets/img/form.png',
-    'assets/img/book.png',
-  ];
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -78,14 +35,7 @@ class _PracticeState extends State<Practice> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               for (int i = 0; i < 4; i++)
-                Expanded(
-                    flex: 1,
-                    child: BoxContainer(
-                        title: listTitle[i],
-                        img: listImage[i],
-                        desc: listDesc[i],
-                        navTap: listTapWidget[i],
-                        progress: 0.4)),
+                Expanded(flex: 1, child: BoxContainer(part: i)),
             ],
           ),
 
@@ -107,15 +57,7 @@ class _PracticeState extends State<Practice> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               for (int i = 4; i < 7; i++)
-                Expanded(
-                    flex: 1,
-                    child: BoxContainer(
-                      title: listTitle[i],
-                      img: listImage[i],
-                      desc: listDesc[i],
-                      navTap: listTapWidget[i],
-                      progress: 0.4,
-                    )),
+                Expanded(flex: 1, child: BoxContainer(part: i)),
               Expanded(flex: 1, child: SizedBox())
             ],
           ),
@@ -270,17 +212,9 @@ class _PracticeState extends State<Practice> {
 }
 
 class BoxContainer extends StatelessWidget {
-  final String title, img, desc;
-  final double progress;
-  final Widget navTap;
+  final int part; // Part 1-7 --> [0..6]
 
-  const BoxContainer(
-      {super.key,
-      required this.title,
-      required this.img,
-      required this.desc,
-      required this.navTap,
-      required this.progress});
+  const BoxContainer({super.key, required this.part});
 
   @override
   Widget build(BuildContext context) {
@@ -291,7 +225,9 @@ class BoxContainer extends StatelessWidget {
           child: InkWell(
             onTap: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => navTap));
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Direction(part: part)));
             },
             child: Container(
               height: 90,
@@ -312,11 +248,11 @@ class BoxContainer extends StatelessWidget {
                 padding: const EdgeInsets.all(6.0),
                 child: Column(children: [
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 12, top: 5),
                     child: Image.asset(
-                      img,
-                      width: 55,
-                      height: 55,
+                      listImage[part],
+                      width: 50,
+                      height: 50,
                     ),
                   ),
                   SizedBox(
@@ -327,7 +263,7 @@ class BoxContainer extends StatelessWidget {
                       valueColor: AlwaysStoppedAnimation<Color>(
                         colorApp,
                       ),
-                      value: progress,
+                      value: listProgress[part],
                     ),
                   )
                 ]),
@@ -338,7 +274,7 @@ class BoxContainer extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            title,
+            listTitle[part],
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
           ),
         ),
@@ -346,7 +282,7 @@ class BoxContainer extends StatelessWidget {
           height: 50,
           width: 80,
           child: Text(
-            desc,
+            listDesc[part],
             style: TextStyle(fontSize: 17),
             textAlign: TextAlign.center,
           ),
