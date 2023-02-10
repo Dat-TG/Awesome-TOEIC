@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
+import 'main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -9,6 +11,13 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadTheme();
+  }
+
   final List<String> entries = <String>[
     'Đăng nhập | Đăng ký',
     'Bí quyết sử dụng ứng dụng hiệu quả',
@@ -41,7 +50,6 @@ class _SettingsPageState extends State<SettingsPage> {
     Icons.list,
     Icons.type_specimen
   ];
-  bool isDarkMode = false;
   String version = '1.0.0';
 
   @override
@@ -117,11 +125,32 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     onChanged: (bool value) => setState(() {
                           isDarkMode = value;
+                          _changeTheme();
+                          if (isDarkMode) {
+                            MyApp.of(context).changeTheme(ThemeMode.dark);
+                          } else {
+                            MyApp.of(context).changeTheme(ThemeMode.light);
+                          }
                         })),
           ),
         );
       },
       separatorBuilder: (BuildContext context, int index) => const Divider(),
     );
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDarkMode = (prefs.getBool('DarkMode') ?? false);
+    });
+  }
+
+  //Incrementing counter after click
+  Future<void> _changeTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      prefs.setBool('DarkMode', isDarkMode);
+    });
   }
 }
