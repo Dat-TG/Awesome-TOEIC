@@ -10,7 +10,7 @@ class PartOne extends StatefulWidget {
 }
 
 class _PartOneState extends State<PartOne> {
-  String _dropDownValue = "";
+  String _dropDownValue = "10";
   bool _isTest = false;
 
   @override
