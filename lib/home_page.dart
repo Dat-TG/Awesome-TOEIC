@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/test.dart';
+import 'package:toeic_app/upgrade_page.dart';
 import 'practice.dart';
 import 'settings_page.dart';
 import 'constants.dart';
@@ -23,10 +24,7 @@ class _HomePageState extends State<HomePage> {
       'Trang 2: Lộ trình',
       style: optionStyle,
     ),
-    Text(
-      'Trang 3: Nâng cấp',
-      style: optionStyle,
-    ),
+    UpgradePage(),
     SettingsPage()
   ];
 

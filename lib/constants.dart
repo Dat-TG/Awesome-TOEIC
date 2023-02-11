@@ -9,6 +9,7 @@ import 'package:toeic_app/part/part_two.dart';
 
 const Color colorApp = Color.fromRGBO(0, 181, 204, 1);
 const Color colorApp3 = Color.fromRGBO(0, 181, 204, 0.3);
+const Color colorApp5 = Color.fromRGBO(0, 181, 204, 0.5);
 
 final List<String> listImage = [
   'assets/img/image_icon.png',
