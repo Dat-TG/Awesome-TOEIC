@@ -14,6 +14,8 @@ const Color yellowBold = Color.fromARGB(255, 232, 210, 20);
 Color colorBox = Colors.black.withOpacity(0.4);
 Color colorBoxShadow = Colors.grey.withOpacity(0.5);
 Color textColor = Colors.black;
+Color bottomNavColor = colorApp;
+Color textNav = Colors.grey.withOpacity(0.5);
 
 bool isDarkMode = false;
 
@@ -22,6 +24,10 @@ void changeColorByTheme() {
   colorBoxShadow =
       !isDarkMode ? Colors.grey.withOpacity(0.5) : Colors.transparent;
   textColor = isDarkMode ? Colors.white : Colors.black;
+  bottomNavColor = isDarkMode ? Colors.black : colorApp;
+  textNav = !isDarkMode
+      ? Colors.grey.withOpacity(0.5)
+      : Colors.white.withOpacity(0.5);
 }
 
 final List<String> listImage = [

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_app/test_page.dart';
 import 'package:toeic_app/upgrade_page.dart';
 import 'practice_page.dart';
@@ -13,6 +14,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDarkMode = (prefs.getBool('DarkMode') ?? false);
+      changeColorByTheme();
+    });
+  }
+
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -53,35 +69,32 @@ class _HomePageState extends State<HomePage> {
       body: _widgetOptions[_selectedIndex],
       // body: Practice(),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: bottomNavColor,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Luyện tập',
-            backgroundColor: colorApp,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
             label: 'Thi',
-            backgroundColor: colorApp,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.workspaces),
             label: 'Lộ trình',
-            backgroundColor: colorApp,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.workspace_premium),
             label: 'Nâng cấp',
-            backgroundColor: colorApp,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Cài đặt',
-            backgroundColor: colorApp,
           ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[600],
+        unselectedItemColor: textNav,
         onTap: _onItemTapped,
       ),
     );
