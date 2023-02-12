@@ -11,14 +11,14 @@ const Color colorApp = Color.fromRGBO(0, 181, 204, 1);
 const Color colorApp3 = Color.fromRGBO(0, 181, 204, 0.3);
 const Color colorApp5 = Color.fromRGBO(0, 181, 204, 0.5);
 const Color yellowBold = Color.fromARGB(255, 232, 210, 20);
-Color colorBox = Colors.grey.withOpacity(0.6);
+Color colorBox = Colors.black.withOpacity(0.4);
 Color colorBoxShadow = Colors.grey.withOpacity(0.5);
 Color textColor = Colors.black;
 
 bool isDarkMode = false;
 
 void changeColorByTheme() {
-  colorBox = isDarkMode ? Colors.grey.withOpacity(0.6) : Colors.white;
+  colorBox = isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white;
   colorBoxShadow =
       !isDarkMode ? Colors.grey.withOpacity(0.5) : Colors.transparent;
   textColor = isDarkMode ? Colors.white : Colors.black;
