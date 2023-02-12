@@ -143,20 +143,18 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    changeColorByTheme();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
+      changeColorByTheme();
     });
   }
 
   //Incrementing counter after click
   Future<void> _changeTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    changeColorByTheme();
     setState(() {
       prefs.setBool('DarkMode', isDarkMode);
+      changeColorByTheme();
     });
   }
-
-  
 }

@@ -3,6 +3,7 @@ import 'package:toeic_app/direction.dart';
 import 'package:toeic_app/question.dart';
 import 'package:toeic_app/vocabulary.dart';
 import 'constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Practice extends StatefulWidget {
   const Practice({super.key});
@@ -12,6 +13,21 @@ class Practice extends StatefulWidget {
 }
 
 class _PracticeState extends State<Practice> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDarkMode = (prefs.getBool('DarkMode') ?? false);
+      changeColorByTheme();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

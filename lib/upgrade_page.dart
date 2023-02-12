@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 
@@ -28,6 +29,21 @@ class _UpgradePageTestState extends State<UpgradePage> {
   ];
   List<int> normalUser = [1, 1, 0, 0, 0, 4];
   List<int> premiumUser = [1, 1, 1, 1, 1, 30];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDarkMode = (prefs.getBool('DarkMode') ?? false);
+      changeColorByTheme();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_app/constants.dart';
 
 class Test extends StatefulWidget {
@@ -10,6 +11,21 @@ class Test extends StatefulWidget {
 
 class _TestState extends State<Test> {
   final List<String> data = ["Test 1", "Test 2", "Test 3", "Test 4", "Test 5"];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadTheme();
+  }
+
+  Future<void> _loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isDarkMode = (prefs.getBool('DarkMode') ?? false);
+      changeColorByTheme();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
