@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'constants.dart';
 
-class PartFive extends StatelessWidget {
-  const PartFive({super.key});
+import './../constants.dart';
+
+class PartFour extends StatelessWidget {
+  const PartFour({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Điền vào câu"),
+          title: Text("Đoạn văn đơn"),
           backgroundColor: colorApp,
           centerTitle: true,
         ),
-        body: Text("Part Five"));
+        body: Text("Part Four"));
   }
 }
 

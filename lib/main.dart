@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'homePage.dart';
+
+import 'home_page.dart';
 import 'constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,15 +49,17 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _themeMode = themeMode;
     });
+    changeColorByTheme();
   }
 
   Future<void> _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      isDarkMode = (prefs.getBool('DarkMode') ?? false);
+     setState(() {
+      isDarkMode =  (prefs.getBool('DarkMode') ?? false);
       if (isDarkMode) {
         _themeMode = ThemeMode.dark;
       }
+      changeColorByTheme();
     });
   }
 }

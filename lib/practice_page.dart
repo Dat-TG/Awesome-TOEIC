@@ -1,13 +1,7 @@
 import "package:flutter/material.dart";
-import 'package:toeic_app/partFive.dart';
-import 'package:toeic_app/partFour.dart';
-import 'package:toeic_app/partSeven.dart';
-import 'package:toeic_app/partSix.dart';
-import 'package:toeic_app/partThree.dart';
-import 'package:toeic_app/partTwo.dart';
+import 'package:toeic_app/direction.dart';
 import 'package:toeic_app/question.dart';
 import 'package:toeic_app/vocabulary.dart';
-import 'partOne.dart';
 import 'constants.dart';
 
 class Practice extends StatefulWidget {
@@ -18,43 +12,6 @@ class Practice extends StatefulWidget {
 }
 
 class _PracticeState extends State<Practice> {
-  final List<String> listTitle = [
-    'Part 1',
-    'Part 2',
-    'Part 3',
-    'Part 4',
-    'Part 5',
-    'Part 6',
-    'Part 7'
-  ];
-  final List<Widget> listTapWidget = [
-    PartOne(),
-    PartTwo(),
-    PartThree(),
-    PartFour(),
-    PartFive(),
-    PartSix(),
-    PartSeven()
-  ];
-  
-  final List<String> listDesc = [
-    'Mô tả ảnh',
-    'Hỏi & đáp',
-    'Đoạn hội thoại',
-    'Đoạn văn đơn',
-    'Điền vào câu',
-    'Điền vào đoạn',
-    'Đọc hiểu đoạn văn'
-  ];
-  final List<String> listImage = [
-    './assets/img/1.jpg',
-    './assets/img/2.jpg',
-    './assets/img/3.jpg',
-    './assets/img/4.jpg',
-    './assets/img/5.jpg',
-    './assets/img/6.jpg',
-    './assets/img/7.jpg',
-  ];
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -78,13 +35,7 @@ class _PracticeState extends State<Practice> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               for (int i = 0; i < 4; i++)
-                Expanded(
-                    flex: 1,
-                    child: BoxContainer(
-                        title: listTitle[i],
-                        img: listImage[i],
-                        desc: listDesc[i],
-                        navTap: listTapWidget[i])),
+                Expanded(flex: 1, child: BoxContainer(part: i)),
             ],
           ),
 
@@ -106,13 +57,7 @@ class _PracticeState extends State<Practice> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               for (int i = 4; i < 7; i++)
-                Expanded(
-                    flex: 1,
-                    child: BoxContainer(
-                        title: listTitle[i],
-                        img: listImage[i],
-                        desc: listDesc[i],
-                        navTap: listTapWidget[i])),
+                Expanded(flex: 1, child: BoxContainer(part: i)),
               Expanded(flex: 1, child: SizedBox())
             ],
           ),
@@ -134,16 +79,16 @@ class _PracticeState extends State<Practice> {
             padding: const EdgeInsets.all(10.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 252, 251, 251),
+                color: colorBox,
+                borderRadius: BorderRadius.all(Radius.circular(10)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
+                    color: colorBoxShadow,
+                    spreadRadius: 2,
+                    blurRadius: 3,
                     offset: Offset(0, 3), // changes position of shadow
-                  ),
+                  )
                 ],
-                borderRadius: BorderRadius.all(Radius.circular(10)),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -267,47 +212,82 @@ class _PracticeState extends State<Practice> {
 }
 
 class BoxContainer extends StatelessWidget {
-  final String title, img, desc;
-  final Widget navTap;
+  final int part; // Part 1-7 --> [0..6]
 
-  const BoxContainer(
-      {super.key,
-      required this.title,
-      required this.img,
-      required this.desc,
-      required this.navTap});
+  const BoxContainer({super.key, required this.part});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-        onTap: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => navTap));
-        },
-        child: Column(
-          children: [
-            Image.asset(
-              img,
-              width: 70,
-              height: 70,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Direction(part: part)));
+            },
+            child: Container(
+              height: 90,
+              decoration: BoxDecoration(
+                color: colorBox,
+                border: Border.symmetric(),
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                boxShadow: [
+                  BoxShadow(
+                    color: colorBoxShadow,
+                    spreadRadius: 2,
+                    blurRadius: 3,
+                    offset: Offset(0, 3), // changes position of shadow
+                  )
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: Column(children: [
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 12, top: 5),
+                    child: Image.asset(
+                      listImage[part],
+                      width: 50,
+                      height: 50,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 120,
+                    height: 6,
+                    child: LinearProgressIndicator(
+                      backgroundColor: colorApp3,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        colorApp,
+                      ),
+                      value: listProgress[part],
+                    ),
+                  )
+                ]),
               ),
             ),
-            SizedBox(
-              height: 50,
-              width: 80,
-              child: Text(
-                desc,
-                style: TextStyle(fontSize: 17),
-                textAlign: TextAlign.center,
-              ),
-            )
-          ],
-        ));
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            listTitle[part],
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+          ),
+        ),
+        SizedBox(
+          height: 50,
+          width: 80,
+          child: Text(
+            listDesc[part],
+            style: TextStyle(fontSize: 17),
+            textAlign: TextAlign.center,
+          ),
+        )
+      ],
+    );
   }
 }

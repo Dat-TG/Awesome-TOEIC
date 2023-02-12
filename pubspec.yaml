@@ -37,6 +37,8 @@ dependencies:
     firebase_database: ^10.0.10
     firebase_core: ^2.5.0
     shared_preferences: ^2.0.17
+    carousel_slider: ^4.2.1
+    flutter_format_money_vietnam: ^0.0.2
 
 dev_dependencies:
     flutter_test:
