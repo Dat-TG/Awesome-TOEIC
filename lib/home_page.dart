@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:toeic_app/test.dart';
+import 'package:toeic_app/test_page.dart';
 import 'package:toeic_app/upgrade_page.dart';
-import 'practice.dart';
+import 'practice_page.dart';
 import 'settings_page.dart';
 import 'constants.dart';
 
