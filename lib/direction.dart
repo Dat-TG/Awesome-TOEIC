@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import './../constants.dart';
+import 'constants.dart';
 
 class Direction extends StatefulWidget {
   final int part;

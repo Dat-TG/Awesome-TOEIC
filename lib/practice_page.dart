@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:toeic_app/part/direction.dart';
+import 'package:toeic_app/direction.dart';
 import 'package:toeic_app/question.dart';
 import 'package:toeic_app/vocabulary.dart';
 import 'constants.dart';
