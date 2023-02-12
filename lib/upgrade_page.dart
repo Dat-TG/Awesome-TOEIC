@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'constants.dart';
@@ -14,9 +16,23 @@ class UpgradePage extends StatefulWidget {
 
 class _UpgradePageTestState extends State<UpgradePage> {
   int currentPos = 0;
+  List<int> sales = [10, 20, 30, 50];
+  // Data compare normal and premium user
+  List<String> attributes = [
+    "Luyện tập part 1, 2, 5",
+    "Học lý thuyết TOEIC",
+    "Luyện tập FULL 7 dạng bài",
+    "Sử dụng ngoại tuyến",
+    "Loại bỏ quảng cáo",
+    "Mở khóa để thi thử"
+  ];
+  List<int> normalUser = [1, 1, 0, 0, 0, 4];
+  List<int> premiumUser = [1, 1, 1, 1, 1, 30];
 
   @override
   Widget build(BuildContext context) {
+    final double width = MediaQuery.of(context).size.width;
+
     return SingleChildScrollView(
         child: Column(children: [
       // Carousel slider auto
@@ -150,13 +166,13 @@ class _UpgradePageTestState extends State<UpgradePage> {
           options: CarouselOptions(
             height: 180,
             autoPlay: true,
-            enableInfiniteScroll: true,
+            enableInfiniteScroll: false,
             viewportFraction: 0.5,
             enlargeCenterPage: true,
           ),
           items: [
             for (int i = 0; i < listTitle.length; i++)
-              SalesPackageContainer(listTitle[i], 397000, 397000, 397000, 30)
+              SalesPackageContainer(listTitle[i], 397000, 397000, 397000, 50)
           ]),
 
       // Text
@@ -164,11 +180,11 @@ class _UpgradePageTestState extends State<UpgradePage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 15, bottom: 15),
+            padding: const EdgeInsets.only(top: 15, bottom: 10),
             child: Text(
               'Khôi phục thanh toán',
               style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 19,
                   color: colorApp,
                   fontWeight: FontWeight.bold,
                   decoration: TextDecoration.underline),
@@ -178,37 +194,109 @@ class _UpgradePageTestState extends State<UpgradePage> {
       ),
 
       // Table: compare with normal and premium user
-      DataTable(columns: [
-        DataColumn(label: Text("")),
-        DataColumn(label: Text("Miễn phí")),
-        DataColumn(label: Text("Premium"))
-      ], rows: [
-        DataRow(cells: [
-          DataCell(Text("Luyện tập part 1,2,5")),
-          DataCell(Icon(Icons.check)),
-          DataCell(Icon(Icons.check)),
-        ]),
-        DataRow(cells: [
-          DataCell(Text("Luyện tập part 1,2,5")),
-          DataCell(Icon(Icons.check)),
-          DataCell(Icon(Icons.check)),
-        ]),
-        DataRow(cells: [
-          DataCell(Text("Luyện tập part 1,2,5")),
-          DataCell(Icon(Icons.check)),
-          DataCell(Icon(Icons.check)),
-        ])
-      ]),
+      Padding(
+        padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+        child: DataTable(
+            columnSpacing: 0,
+            horizontalMargin: 0,
+            dividerThickness: 0.0,
+            showBottomBorder: false,
+            columns: [
+              DataColumn(
+                  label: SizedBox(
+                      width: width * .5,
+                      child: Text(
+                        "",
+                        textAlign: TextAlign.center,
+                      ))),
+              DataColumn(
+                  label: SizedBox(
+                      width: width * .2,
+                      child: Text(
+                        "Miễn phí",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ))),
+              DataColumn(
+                  label: SizedBox(
+                      width: width * .2,
+                      child: Text(
+                        "Premium",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      )))
+            ],
+            rows: [
+              for (int i = 0; i < attributes.length; i++)
+                DataRow(cells: [
+                  DataCell(Text(
+                    attributes[i],
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  )),
+                  normalUser[i] == 1
+                      ? DataCell(Center(
+                          child: Icon(
+                          Icons.check,
+                          color: colorApp,
+                          size: 27,
+                        )))
+                      : (normalUser[i] == 0
+                          ? DataCell(Center(
+                              child: Icon(
+                              Icons.lock,
+                              color: colorApp,
+                              size: 23,
+                            )))
+                          : DataCell(Center(
+                              child: Text(
+                                "${normalUser[i]}",
+                                style: TextStyle(
+                                    color: colorApp,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ))),
+                  premiumUser[i] == 1
+                      ? DataCell(Center(
+                          child: Icon(
+                          Icons.check,
+                          color: colorApp,
+                          size: 27,
+                        )))
+                      : (premiumUser[i] == 0
+                          ? DataCell(Center(
+                              child: Icon(
+                              Icons.lock,
+                              color: colorApp,
+                              size: 23,
+                            )))
+                          : DataCell(Center(
+                              child: Text(
+                                "${premiumUser[i]}",
+                                style: TextStyle(
+                                    color: colorApp,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ))),
+                ]),
+            ]),
+      ),
 
       // Respone to user
       Padding(
-        padding: const EdgeInsets.only(top: 10, bottom: 10),
+        padding: const EdgeInsets.only(top: 20, bottom: 10),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Phản hồi người dùng',
-              style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline),
             )
           ],
         ),
@@ -218,12 +306,17 @@ class _UpgradePageTestState extends State<UpgradePage> {
       // Package prices
       CarouselSlider(
           options: CarouselOptions(
-              height: 250,
-              autoPlay: true,
+              height: 180,
               enableInfiniteScroll: false,
-              viewportFraction: 0.4,
+              viewportFraction: 0.7,
               enlargeCenterPage: true),
-          items: [for (var img in listImage) Image.asset(img)]),
+          items: [
+            for (int i = 0; i < listTitle.length; i++)
+              ReviewUserContainer(listTitle[i], listDirectionEng[i], i % 5 + 1)
+          ]),
+      SizedBox(
+        height: 10,
+      )
     ]));
   }
 }
@@ -366,6 +459,80 @@ class SalesPackageContainer extends StatelessWidget {
             ),
           )
         ]),
+      ),
+    );
+  }
+}
+
+class ReviewUserContainer extends StatelessWidget {
+  String title, comment;
+  int vote;
+
+  ReviewUserContainer(this.title, this.comment, this.vote);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(top: 6, bottom: 6),
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 252, 251, 251),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 3,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.person_pin,
+                  color: colorApp,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                for (int i = 0; i < vote; i++)
+                  Icon(Icons.star, color: yellowBold, size: 16),
+                for (int i = 0; i < 5 - vote; i++)
+                  Icon(Icons.star_border, color: yellowBold, size: 16)
+              ],
+            ),
+            Text(
+              comment,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.black45,
+                fontWeight: FontWeight.bold,
+                overflow: TextOverflow.ellipsis,
+              ),
+              textAlign: TextAlign.justify,
+              maxLines: 5,
+            ),
+          ],
+        ),
       ),
     );
   }
