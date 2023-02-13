@@ -39,6 +39,9 @@ dependencies:
     shared_preferences: ^2.0.17
     carousel_slider: ^4.2.1
     flutter_format_money_vietnam: ^0.0.2
+    just_audio: ^0.9.31
+    audio_video_progress_bar: ^1.0.0
+    rxdart: ^0.27.7
 
 dev_dependencies:
     flutter_test:
@@ -60,3 +63,4 @@ flutter:
     uses-material-design: true
     assets:
         - assets/img/
+        - assets/audio/

@@ -16,6 +16,9 @@ Color colorBoxShadow = Colors.grey.withOpacity(0.5);
 Color textColor = Colors.black;
 Color bottomNavColor = colorApp;
 Color textNav = Colors.grey.withOpacity(0.5);
+Color orange = Colors.amber[600]!;
+Color white = Colors.white;
+Color black = Colors.black;
 
 bool isDarkMode = false;
 
@@ -28,6 +31,8 @@ void changeColorByTheme() {
   textNav = !isDarkMode
       ? Colors.grey.withOpacity(0.5)
       : Colors.white.withOpacity(0.5);
+  white = isDarkMode ? Colors.black : Colors.white;
+  black = !isDarkMode ? Colors.black : Colors.white;
 }
 
 final List<String> listImage = [
