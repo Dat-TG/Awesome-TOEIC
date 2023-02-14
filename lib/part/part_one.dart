@@ -2,9 +2,6 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
 
 import './../constants.dart';
-// import 'package:flutter/services.dart';
-// import 'dart:typed_data';
-// import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 
@@ -16,20 +13,131 @@ class PartOne extends StatefulWidget {
 }
 
 class _PartOneState extends State<PartOne> {
-  late AudioPlayer _player = AudioPlayer()..setAsset(audioasset);
-  List<String> answers = ["A", "B", "C", "D"];
+  int _curr = 1;
+  int totalQues = 4; // Example
+  List<String> _answer = [];
+  PageController controller = PageController();
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i < totalQues; i++) {
+      _answer.add("");
+    }
+  }
+
+  void callbackAnswer(int number, String ans) {
+    setState(() {
+      _answer[number - 1] = ans;
+    });
+    print(_answer);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: Transform.translate(
+              offset: Offset(-25, 0),
+              child: (Row(
+                children: [
+                  Text('Câu $_curr'),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 13, right: 8),
+                    child: Icon(Icons.info_outline),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 13),
+                    child: Icon(Icons.settings_outlined),
+                  ),
+                  Icon(Icons.favorite_outline)
+                ],
+              ))),
+          backgroundColor: colorApp,
+          centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Center(
+                child: Text(
+                  'Giải thích',
+                  style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            )
+          ],
+        ),
+        body: PageView(
+            scrollDirection: Axis.horizontal,
+            controller: controller,
+            onPageChanged: (number) {
+              setState(() {
+                _curr = number + 1;
+              });
+            },
+            children: [
+              PartOneFrame(
+                  audioPath: 'assets/audio/10.mp3',
+                  img: 'assets/img/test_1.jpg',
+                  number: 1,
+                  getAnswer: (numb, value) => callbackAnswer(numb, value),
+                  ans: _answer),
+              PartOneFrame(
+                  audioPath: 'assets/audio/10.mp3',
+                  img: 'assets/img/test_1.jpg',
+                  number: 2,
+                  getAnswer: (numb, value) => callbackAnswer(numb, value),
+                  ans: _answer),
+              PartOneFrame(
+                  audioPath: 'assets/audio/10.mp3',
+                  img: 'assets/img/test_1.jpg',
+                  number: 3,
+                  getAnswer: (numb, value) => callbackAnswer(numb, value),
+                  ans: _answer),
+              PartOneFrame(
+                  audioPath: 'assets/audio/10.mp3',
+                  img: 'assets/img/test_1.jpg',
+                  number: 4,
+                  getAnswer: (numb, value) => callbackAnswer(numb, value),
+                  ans: _answer)
+            ]));
+  }
+}
+
+class PartOneFrame extends StatefulWidget {
+  final int number;
+  final String img, audioPath;
+  final List<String> ans;
+  final Function(int, String) getAnswer;
+  // Note, reason
+
+  const PartOneFrame(
+      {super.key,
+      required this.number,
+      required this.img,
+      required this.audioPath,
+      required this.getAnswer,
+      required this.ans});
+
+  @override
+  State<PartOneFrame> createState() => _PartOneFrameState();
+}
+
+// --------------------------------------------------------------------
+class _PartOneFrameState extends State<PartOneFrame> {
+  late AudioPlayer _player = AudioPlayer()..setAsset(widget.audioPath);
+  List<String> answersOption = ["A", "B", "C", "D"];
 
   Stream<PositionData> get _positionDataStream => Rx.combineLatest3(
       _player.positionStream,
       _player.bufferedPositionStream,
       _player.durationStream,
-      (a, b, c) => PositionData(a, b, c ?? Duration.zero));
-
-  String audioasset = "assets/audio/10.mp3";
-  @override
-  void initState() {
-    super.initState();
-  }
+      (position, bufferedPosition, duration) =>
+          PositionData(position, bufferedPosition, duration ?? Duration.zero));
 
   @override
   void dispose() {
@@ -39,43 +147,7 @@ class _PartOneState extends State<PartOne> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Transform.translate(
-            offset: Offset(-25, 0),
-            child: (Row(
-              children: [
-                Text("Câu 1"),
-                Padding(
-                  padding: const EdgeInsets.only(left: 13, right: 8),
-                  child: Icon(Icons.info_outline),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 13),
-                  child: Icon(Icons.settings_outlined),
-                ),
-                Icon(Icons.favorite_outline)
-              ],
-            ))),
-        backgroundColor: colorApp,
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: Center(
-              child: Text(
-                'Giải thích',
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          )
-        ],
-      ),
-      body: Column(
+    return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -103,7 +175,7 @@ class _PartOneState extends State<PartOne> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(5, 10, 0, 10),
+                        padding: const EdgeInsets.fromLTRB(10, 15, 0, 15),
                         child: RichText(
                             text: TextSpan(
                                 text: "Select the ",
@@ -127,7 +199,7 @@ class _PartOneState extends State<PartOne> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
-                            child: Image.asset('assets/img/test_1.jpg'),
+                            child: Image.asset(widget.img),
                           )),
                     ],
                   ),
@@ -147,8 +219,8 @@ class _PartOneState extends State<PartOne> {
                         barHeight: 8,
                         baseBarColor: Colors.grey[600],
                         bufferedBarColor: Colors.grey,
-                        progressBarColor: Colors.red,
-                        thumbColor: Colors.red,
+                        progressBarColor: colorApp,
+                        thumbColor: colorApp,
                         timeLabelTextStyle: TextStyle(
                             color: colorApp, fontWeight: FontWeight.w600),
                         progress: positionData?.position ?? Duration.zero,
@@ -168,13 +240,13 @@ class _PartOneState extends State<PartOne> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                 margin: EdgeInsets.only(left: 10),
                 decoration: BoxDecoration(
                     border:
                         Border(bottom: BorderSide(color: orange, width: 5))),
                 child: Text(
-                  'Câu 1',
+                  'Câu ${widget.number}',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       color: orange, fontWeight: FontWeight.bold, fontSize: 17),
@@ -184,9 +256,6 @@ class _PartOneState extends State<PartOne> {
                 padding: EdgeInsets.only(top: 10, bottom: 10),
                 decoration: BoxDecoration(
                   color: colorBox,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10)),
                   boxShadow: [
                     BoxShadow(
                       color: colorBoxShadow,
@@ -200,16 +269,18 @@ class _PartOneState extends State<PartOne> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    for (var i in answers)
+                    for (var i in answersOption)
                       InkWell(
                         onTap: () {
-                          print(i);
+                          widget.getAnswer(widget.number, i);
                         },
                         child: Container(
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: white,
+                            color: i == widget.ans[widget.number - 1]
+                                ? orange
+                                : white,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(
@@ -232,9 +303,7 @@ class _PartOneState extends State<PartOne> {
               ),
             ],
           )
-        ],
-      ),
-    );
+        ]);
   }
 }
 
