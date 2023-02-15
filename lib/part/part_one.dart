@@ -139,7 +139,6 @@ class _PartOneFrameState extends State<PartOneFrame> {
           PositionData(position, bufferedPosition, duration ?? Duration.zero));
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -151,6 +150,7 @@ class _PartOneFrameState extends State<PartOneFrame> {
 
   @override
   Widget build(BuildContext context) {
+    _player.play();
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,

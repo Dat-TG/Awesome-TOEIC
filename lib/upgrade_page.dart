@@ -32,7 +32,6 @@ class _UpgradePageTestState extends State<UpgradePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadTheme();
   }

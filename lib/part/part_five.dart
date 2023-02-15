@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import './../constants.dart';
+import 'question_frame.dart';
 
 class PartFive extends StatefulWidget {
   const PartFive({super.key});
@@ -129,69 +130,11 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width - 50,
-                  decoration: BoxDecoration(
-                    color: colorApp,
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: colorBoxShadow,
-                        spreadRadius: 2,
-                        blurRadius: 3,
-                        offset: Offset(0, 3), // changes position of shadow
-                      )
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        constraints:
-                            BoxConstraints(minHeight: 50, maxHeight: 130),
-                        padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-                        child: SingleChildScrollView(
-                          child: Text(
-                            '${widget.question}',
-                            style: TextStyle(fontSize: 17, color: textColor),
-                          ),
-                        ),
-                      ),
-                      Container(
-                          width: MediaQuery.of(context).size.width - 50,
-                          decoration: BoxDecoration(
-                            color: white,
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(10),
-                                bottomRight: Radius.circular(10)),
-                          ),
-                          child: Container(
-                            constraints:
-                                BoxConstraints(minHeight: 50, maxHeight: 200),
-                            padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
-                            child: SingleChildScrollView(
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    for (int i = 0; i < 4; i++)
-                                      Text(
-                                        '${answersOption[i]}. ${widget.answers[i]}',
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                  ]),
-                            ),
-                          ))
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            padding: const EdgeInsets.only(top: 20),
+            child: QuestionFrame(
+                number: widget.number,
+                question: widget.question,
+                answers: widget.answers),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
