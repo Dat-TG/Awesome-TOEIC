@@ -49,12 +49,12 @@ class _ExplanationState extends State<Explanation> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: 50,
+                  height: 30,
                   decoration: BoxDecoration(
                       color: colorAppBold,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
                       )),
                   child: Row(
                       mainAxisSize: MainAxisSize.max,
@@ -71,13 +71,13 @@ class _ExplanationState extends State<Explanation> {
                             width: MediaQuery.of(context).size.width / 2 < 300
                                 ? 100
                                 : MediaQuery.of(context).size.width / 2 - 100,
-                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
                             margin: EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                                 border: _curr == 0
                                     ? Border(
                                         bottom:
-                                            BorderSide(color: orange, width: 5))
+                                            BorderSide(color: orange, width: 3))
                                     : Border()),
                             child: Text(
                               'Giải thích',
@@ -100,13 +100,13 @@ class _ExplanationState extends State<Explanation> {
                             width: MediaQuery.of(context).size.width / 2 < 300
                                 ? 100
                                 : MediaQuery.of(context).size.width / 2 - 100,
-                            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            padding: EdgeInsets.fromLTRB(10, 2, 10, 2),
                             margin: EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
                                 border: _curr == 1
                                     ? Border(
                                         bottom:
-                                            BorderSide(color: orange, width: 5))
+                                            BorderSide(color: orange, width: 3))
                                     : Border()),
                             child: Text(
                               'Lời dịch',
@@ -131,7 +131,7 @@ class _ExplanationState extends State<Explanation> {
                 ),
                 Container(
                   constraints: BoxConstraints(minHeight: 50, maxHeight: 150),
-                  padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
+                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                   child: PageView(
                       controller: controller,
                       scrollDirection: Axis.horizontal,
@@ -154,6 +154,7 @@ class _ExplanationState extends State<Explanation> {
                                   Text(
                                     '${answersOption[i]}. ${widget.answers[i]}',
                                     style: TextStyle(fontSize: 18),
+                                    textAlign: TextAlign.justify,
                                   ),
                               ]),
                         ),
@@ -170,6 +171,7 @@ class _ExplanationState extends State<Explanation> {
                                   Text(
                                     '${answersOption[i]}. ${widget.ansTrans[i]}',
                                     style: TextStyle(fontSize: 18),
+                                    textAlign: TextAlign.justify,
                                   ),
                               ]),
                         ),
