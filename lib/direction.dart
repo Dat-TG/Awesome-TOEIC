@@ -214,7 +214,7 @@ class _DirectionState extends State<Direction> {
                               padding:
                                   const EdgeInsets.only(left: 10, right: 10),
                               child: Container(
-                                height: 20,
+                                height: 30,
                                 decoration: BoxDecoration(
                                   color: colorBox,
                                   borderRadius:

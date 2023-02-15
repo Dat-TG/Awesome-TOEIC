@@ -22,6 +22,8 @@ Color black = Colors.black;
 
 bool isDarkMode = false;
 
+List<String> answersOption = ["A", "B", "C", "D"];
+
 void changeColorByTheme() {
   colorBox = isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white;
   colorBoxShadow =

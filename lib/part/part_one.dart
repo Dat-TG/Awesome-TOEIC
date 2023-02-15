@@ -130,7 +130,6 @@ class PartOneFrame extends StatefulWidget {
 // --------------------------------------------------------------------
 class _PartOneFrameState extends State<PartOneFrame> {
   late AudioPlayer _player = AudioPlayer()..setAsset(widget.audioPath);
-  List<String> answersOption = ["A", "B", "C", "D"];
 
   Stream<PositionData> get _positionDataStream => Rx.combineLatest3(
       _player.positionStream,
@@ -138,6 +137,11 @@ class _PartOneFrameState extends State<PartOneFrame> {
       _player.durationStream,
       (position, bufferedPosition, duration) =>
           PositionData(position, bufferedPosition, duration ?? Duration.zero));
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -199,7 +203,7 @@ class _PartOneFrameState extends State<PartOneFrame> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
-                            child: Image.asset(widget.img),
+                            child: Image.asset(widget.img, width: 340),
                           )),
                     ],
                   ),
