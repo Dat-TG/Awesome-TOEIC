@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:toeic_app/part/explanation.dart';
+import 'package:toeic_app/part/app_bar.dart';
 
 import './../constants.dart';
 import 'question_frame.dart';
@@ -13,7 +13,7 @@ class PartSeven extends StatefulWidget {
 
 class _PartSevenState extends State<PartSeven> {
   int _curr = 1;
-  String numAnswers = '178-185';
+  String numAnswers = '180-185';
   int totalQues = 9; //Example
   List<String> _answer = [];
   PageController controllerFrame = PageController();
@@ -36,61 +36,10 @@ class _PartSevenState extends State<PartSeven> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Transform.translate(
-              offset: Offset(-25, 0),
-              child: (Row(
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        'Câu ',
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        numAnswers,
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13, right: 8),
-                    child: Icon(Icons.info_outline),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 13),
-                    child: Icon(Icons.settings_outlined),
-                  ),
-                  Icon(Icons.favorite_outline)
-                ],
-              ))),
-          backgroundColor: colorApp,
-          centerTitle: true,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    isShow = !isShow;
-                  });
-                },
-                child: Center(
-                  child: Text(
-                    'Giải thích',
-                    style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            )
-          ],
+        appBar: AppBarPractice(
+          numAnswers: numAnswers,
+          answers: listDirectionEng,
+          ansTrans: listDirectionVn,
         ),
         body: PageView(
             scrollDirection: Axis.horizontal,
@@ -255,22 +204,12 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
           ),
 
           // --------- Answer ---------
-          Container(
+          SizedBox(
             height: 120,
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Explanation(
-                    answers: listDirectionEng,
-                    ansTrans: listDirectionVn,
-                    isShow: widget.isShow,
-                    cancelShow: (s) {
-                      setState(() {
-                        widget.cancelShowExplan(s);
-                      });
-                    },
-                  ),
                   Row(
                     children: [
                       for (var index in widget.number)

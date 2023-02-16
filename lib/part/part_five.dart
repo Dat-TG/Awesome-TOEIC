@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toeic_app/part/app_bar.dart';
 import './../constants.dart';
 import 'question_frame.dart';
 
@@ -13,6 +14,7 @@ class _PartFiveState extends State<PartFive> {
   int totalQues = 4;
   List<String> _answer = [];
   PageController controller = PageController();
+  bool isShow = false;
 
   void callbackAnswer(int number, String ans) {
     setState(() {
@@ -32,40 +34,10 @@ class _PartFiveState extends State<PartFive> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Transform.translate(
-              offset: Offset(-25, 0),
-              child: (Row(
-                children: [
-                  Text('Câu $_curr'),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13, right: 8),
-                    child: Icon(Icons.info_outline),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 13),
-                    child: Icon(Icons.settings_outlined),
-                  ),
-                  Icon(Icons.favorite_outline)
-                ],
-              ))),
-          backgroundColor: colorApp,
-          centerTitle: true,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: Center(
-                child: Text(
-                  'Giải thích',
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          ],
+        appBar: AppBarPractice(
+          numAnswers: '$_curr',
+          answers: listDirectionEng,
+          ansTrans: listDirectionVn,
         ),
         body: PageView(
             scrollDirection: Axis.horizontal,
@@ -82,21 +54,39 @@ class _PartFiveState extends State<PartFive> {
                       "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
                   answers: ["her", "she", "hers", "herself"],
                   getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answer),
+                  ans: _answer,
+                  isShow: isShow,
+                  cancelShowExplan: (s) {
+                    setState(() {
+                      isShow = s;
+                    });
+                  }),
               PartFiveFrame(
                   number: 2,
                   question:
                       "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
                   answers: ["her", "she", "hers", "herself"],
                   getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answer),
+                  ans: _answer,
+                  isShow: isShow,
+                  cancelShowExplan: (s) {
+                    setState(() {
+                      isShow = s;
+                    });
+                  }),
               PartFiveFrame(
                   number: 3,
                   question:
                       "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
                   answers: ["her", "she", "hers", "herself"],
                   getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answer)
+                  ans: _answer,
+                  isShow: isShow,
+                  cancelShowExplan: (s) {
+                    setState(() {
+                      isShow = s;
+                    });
+                  })
             ]));
   }
 }
@@ -107,6 +97,8 @@ class PartFiveFrame extends StatefulWidget {
   final String question;
   final List<String> answers;
   final Function(int, String) getAnswer;
+  final bool isShow;
+  final Function(bool) cancelShowExplan;
   // Note, reason
 
   const PartFiveFrame(
@@ -115,7 +107,9 @@ class PartFiveFrame extends StatefulWidget {
       required this.question,
       required this.answers,
       required this.getAnswer,
-      required this.ans});
+      required this.ans,
+      required this.isShow,
+      required this.cancelShowExplan});
 
   @override
   State<PartFiveFrame> createState() => _PartFiveFrameState();
@@ -136,72 +130,79 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                 question: widget.question,
                 answers: widget.answers),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                margin: EdgeInsets.only(left: 10),
-                decoration: BoxDecoration(
-                    border:
-                        Border(bottom: BorderSide(color: orange, width: 5))),
-                child: Text(
-                  'Câu ${widget.number}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: orange, fontWeight: FontWeight.bold, fontSize: 17),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 10, bottom: 10),
-                decoration: BoxDecoration(
-                  color: colorBox,
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorBoxShadow,
-                      spreadRadius: 2,
-                      blurRadius: 3,
-                      offset: Offset(0, 3), // changes position of shadow
-                    )
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    for (var i in answersOption)
-                      InkWell(
-                        onTap: () {
-                          widget.getAnswer(widget.number, i);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: i == widget.ans[widget.number - 1]
-                                ? orange
-                                : white,
-                            border: Border.all(color: black, width: 1.3),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorBoxShadow,
-                                spreadRadius: 2,
-                                blurRadius: 3,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
-                              )
-                            ],
+          SizedBox(
+            height: 120,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    margin: EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(color: orange, width: 5))),
+                    child: Text(
+                      'Câu ${widget.number}',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: colorBox,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorBoxShadow,
+                          spreadRadius: 2,
+                          blurRadius: 3,
+                          offset: Offset(0, 3), // changes position of shadow
+                        )
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        for (var i in answersOption)
+                          InkWell(
+                            onTap: () {
+                              widget.getAnswer(widget.number, i);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: i == widget.ans[widget.number - 1]
+                                    ? orange
+                                    : white,
+                                border: Border.all(color: black, width: 1.3),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colorBoxShadow,
+                                    spreadRadius: 2,
+                                    blurRadius: 3,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  )
+                                ],
+                              ),
+                              child: Text(
+                                i,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
                           ),
-                          child: Text(
-                            i,
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           )
         ]);
   }

@@ -1,5 +1,6 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:toeic_app/part/app_bar.dart';
 
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
@@ -17,6 +18,7 @@ class _PartOneState extends State<PartOne> {
   int totalQues = 4; // Example
   List<String> _answer = [];
   PageController controller = PageController();
+  bool isShow = false;
 
   @override
   void initState() {
@@ -36,40 +38,10 @@ class _PartOneState extends State<PartOne> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Transform.translate(
-              offset: Offset(-25, 0),
-              child: (Row(
-                children: [
-                  Text('Câu $_curr'),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13, right: 8),
-                    child: Icon(Icons.info_outline),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 13),
-                    child: Icon(Icons.settings_outlined),
-                  ),
-                  Icon(Icons.favorite_outline)
-                ],
-              ))),
-          backgroundColor: colorApp,
-          centerTitle: true,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: Center(
-                child: Text(
-                  'Giải thích',
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          ],
+        appBar: AppBarPractice(
+          numAnswers: '$_curr',
+          answers: listDirectionEng,
+          ansTrans: listDirectionVn,
         ),
         body: PageView(
             scrollDirection: Axis.horizontal,
@@ -81,29 +53,57 @@ class _PartOneState extends State<PartOne> {
             },
             children: [
               PartOneFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  img: 'assets/img/test_1.jpg',
-                  number: 1,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
+                audioPath: 'assets/audio/10.mp3',
+                img: 'assets/img/test_1.jpg',
+                number: 1,
+                getAnswer: (numb, value) => callbackAnswer(numb, value),
+                ans: _answer,
+                isShow: isShow,
+                cancelShowExplan: (s) {
+                  setState(() {
+                    isShow = s;
+                  });
+                },
+              ),
               PartOneFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  img: 'assets/img/test_1.jpg',
-                  number: 2,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
+                audioPath: 'assets/audio/10.mp3',
+                img: 'assets/img/test_1.jpg',
+                number: 2,
+                getAnswer: (numb, value) => callbackAnswer(numb, value),
+                ans: _answer,
+                isShow: isShow,
+                cancelShowExplan: (s) {
+                  setState(() {
+                    isShow = s;
+                  });
+                },
+              ),
               PartOneFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  img: 'assets/img/test_1.jpg',
-                  number: 3,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
+                audioPath: 'assets/audio/10.mp3',
+                img: 'assets/img/test_1.jpg',
+                number: 3,
+                getAnswer: (numb, value) => callbackAnswer(numb, value),
+                ans: _answer,
+                isShow: isShow,
+                cancelShowExplan: (s) {
+                  setState(() {
+                    isShow = s;
+                  });
+                },
+              ),
               PartOneFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  img: 'assets/img/test_1.jpg',
-                  number: 4,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer)
+                audioPath: 'assets/audio/10.mp3',
+                img: 'assets/img/test_1.jpg',
+                number: 4,
+                getAnswer: (numb, value) => callbackAnswer(numb, value),
+                ans: _answer,
+                isShow: isShow,
+                cancelShowExplan: (s) {
+                  setState(() {
+                    isShow = s;
+                  });
+                },
+              )
             ]));
   }
 }
@@ -113,6 +113,8 @@ class PartOneFrame extends StatefulWidget {
   final String img, audioPath;
   final List<String> ans;
   final Function(int, String) getAnswer;
+  final bool isShow;
+  final Function(bool) cancelShowExplan;
   // Note, reason
 
   const PartOneFrame(
@@ -121,7 +123,9 @@ class PartOneFrame extends StatefulWidget {
       required this.img,
       required this.audioPath,
       required this.getAnswer,
-      required this.ans});
+      required this.ans,
+      required this.isShow,
+      required this.cancelShowExplan});
 
   @override
   State<PartOneFrame> createState() => _PartOneFrameState();
@@ -240,72 +244,79 @@ class _PartOneFrameState extends State<PartOneFrame> {
               ),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                margin: EdgeInsets.only(left: 10),
-                decoration: BoxDecoration(
-                    border:
-                        Border(bottom: BorderSide(color: orange, width: 5))),
-                child: Text(
-                  'Câu ${widget.number}',
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                      color: orange, fontWeight: FontWeight.bold, fontSize: 17),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 10, bottom: 10),
-                decoration: BoxDecoration(
-                  color: colorBox,
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorBoxShadow,
-                      spreadRadius: 2,
-                      blurRadius: 3,
-                      offset: Offset(0, 3), // changes position of shadow
-                    )
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    for (var i in answersOption)
-                      InkWell(
-                        onTap: () {
-                          widget.getAnswer(widget.number, i);
-                        },
-                        child: Container(
-                          padding: EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: i == widget.ans[widget.number - 1]
-                                ? orange
-                                : white,
-                            border: Border.all(color: black, width: 1.3),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colorBoxShadow,
-                                spreadRadius: 2,
-                                blurRadius: 3,
-                                offset:
-                                    Offset(0, 3), // changes position of shadow
-                              )
-                            ],
+          SizedBox(
+            height: 120,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    margin: EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                        border: Border(
+                            bottom: BorderSide(color: orange, width: 5))),
+                    child: Text(
+                      'Câu ${widget.number}',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    decoration: BoxDecoration(
+                      color: colorBox,
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorBoxShadow,
+                          spreadRadius: 2,
+                          blurRadius: 3,
+                          offset: Offset(0, 3), // changes position of shadow
+                        )
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        for (var i in answersOption)
+                          InkWell(
+                            onTap: () {
+                              widget.getAnswer(widget.number, i);
+                            },
+                            child: Container(
+                              padding: EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: i == widget.ans[widget.number - 1]
+                                    ? orange
+                                    : white,
+                                border: Border.all(color: black, width: 1.3),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colorBoxShadow,
+                                    spreadRadius: 2,
+                                    blurRadius: 3,
+                                    offset: Offset(
+                                        0, 3), // changes position of shadow
+                                  )
+                                ],
+                              ),
+                              child: Text(
+                                i,
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
                           ),
-                          child: Text(
-                            i,
-                            style: TextStyle(fontSize: 18),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           )
         ]);
   }
