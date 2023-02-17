@@ -13,14 +13,14 @@ class PartSix extends StatefulWidget {
 
 class _PartSixState extends State<PartSix> {
   int _curr = 1;
-  int totalQues = 9; //Example
+  int totalQues = listQuestionPart6.length * 4; //Example
   List<String> _answer = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
 
-  void callbackAnswer(int number, String ans) {
+  void callbackAnswer(int number, String value) {
     setState(() {
-      _answer[number - 1] = ans;
+      _answer[number - 1] = value;
     });
   }
 
@@ -99,7 +99,7 @@ class _PartSixState extends State<PartSix> {
                 _curr = number * 4 + 1;
               });
             },
-            children: <Widget>[
+            children: [
               for (int i = 0; i < listQuestionPart6.length; i++)
                 PartSixFrame(
                   number: [_curr, _curr + 1, _curr + 2, _curr + 3],
@@ -145,7 +145,8 @@ class PartSixFrame extends StatefulWidget {
 }
 
 // --------------------------------------------------------------------
-class _PartSixFrameState extends State<PartSixFrame> {
+class _PartSixFrameState extends State<PartSixFrame>
+    with AutomaticKeepAliveClientMixin<PartSixFrame> {
   PageController controllerAnswer = PageController();
   late int _currAns;
 
@@ -156,7 +157,12 @@ class _PartSixFrameState extends State<PartSixFrame> {
   }
 
   @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
@@ -232,7 +238,7 @@ class _PartSixFrameState extends State<PartSixFrame> {
           ),
 
           // --------- Answer ---------
-          Container(
+          SizedBox(
             height: 120,
             child: SingleChildScrollView(
               child: Column(
@@ -253,11 +259,14 @@ class _PartSixFrameState extends State<PartSixFrame> {
                       for (int index in widget.number)
                         InkWell(
                           onTap: () {
-                            controllerAnswer
-                                .jumpToPage(_currAns - widget.number[0]);
                             setState(() {
                               _currAns = index;
                             });
+                            controllerAnswer
+                                .jumpToPage(_currAns - widget.number[0]);
+                            print(
+                                'jump to page ${_currAns - widget.number[0]}');
+                            print('on tap $_currAns $index');
                           },
                           child: Container(
                             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -323,6 +332,8 @@ class _PartSixFrameState extends State<PartSixFrame> {
                                           onTap: () {
                                             widget.getAnswer(
                                                 widget.number[size], i);
+                                            print(
+                                                'Question ${widget.number[size]} - answer $i');
                                           },
                                           child: Container(
                                             padding: EdgeInsets.all(15),
