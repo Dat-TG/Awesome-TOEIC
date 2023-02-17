@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/sign_in.dart';
+import 'package:toeic_app/sign_up.dart';
 import 'main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -78,7 +80,12 @@ class _SettingsPageState extends State<SettingsPage> {
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => SignIn()));
+                                  },
                                   style: TextButton.styleFrom(
                                       padding: const EdgeInsets.only(left: 0)),
                                   child: const Text(
@@ -91,7 +98,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                                 const Text(' | '),
                                 TextButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => SignUp()));
+                                  },
                                   style: TextButton.styleFrom(
                                       padding: const EdgeInsets.only(left: 0)),
                                   child: const Text(

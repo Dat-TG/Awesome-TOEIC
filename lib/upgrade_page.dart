@@ -180,7 +180,7 @@ class _UpgradePageTestState extends State<UpgradePage> {
       // Package prices
       CarouselSlider(
           options: CarouselOptions(
-            height: 180,
+            height: 200,
             autoPlay: true,
             enableInfiniteScroll: false,
             viewportFraction: 0.5,
@@ -322,7 +322,7 @@ class _UpgradePageTestState extends State<UpgradePage> {
       // Package prices
       CarouselSlider(
           options: CarouselOptions(
-              height: 180,
+              height: 190,
               enableInfiniteScroll: false,
               viewportFraction: 0.7,
               enlargeCenterPage: true),

@@ -7,6 +7,9 @@ import 'package:toeic_app/part/part_six.dart';
 import 'package:toeic_app/part/part_three.dart';
 import 'package:toeic_app/part/part_two.dart';
 
+const String appName = "TOEIC APP";
+const String appIcon = 'assets/img/headphones.png';
+
 const Color colorApp = Color.fromRGBO(0, 181, 204, 1);
 const Color colorAppBold = Color.fromRGBO(1, 107, 121, 1);
 const Color colorApp3 = Color.fromRGBO(0, 181, 204, 0.3);
