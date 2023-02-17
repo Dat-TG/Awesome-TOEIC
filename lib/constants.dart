@@ -101,3 +101,65 @@ final List<String> listDirectionVn = [
 final List<int> listSentencesDone = [1, 2, 3, 4, 5, 6, 7];
 final List<int> listSentencesRight = [1, 2, 3, 4, 5, 6, 7];
 final List<double> listProgress = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7];
+
+List<Map<String, dynamic>> listQuestionPart6 = [
+  {
+    "paragraph":
+        "Lawrence Paper is dedicated to helping all of its employees fulfill their potential. That is why we have once again organized 2 days of spring training. Human Resources has put together a wide range of topics for this year’s workshops, (1) _____ sales techniques, computer skills, communication strategies, and goal setting. We still have two workshop time slots available, so if there is something you’ve been dying to learn about, please let us know. It’s quite possible we (2) _____ it into this year’s spring training. (3) _____ Feel free to (4) _____ any ideas you might have to Nancy Kensington in the human resources department.",
+    "listQuestion": [
+      "Human Resources has put together a wide range of topics for this year’s workshops, (1) _____ sales techniques, computer skills, communication strategies, and goal setting.",
+      "It’s quite possible we (2) _____ it into this year’s spring training.",
+      "(3) _____ Feel free to _____ any ideas you might have to Nancy Kensington in the human resources department.",
+      "_____ Feel free to (4) _____ any ideas you might have to Nancy Kensington in the human resources department.",
+    ],
+    "listAnswer": [
+      ["distributing", "locating", "including", "advancing"],
+      [
+        "were incorporating",
+        "should incorporate",
+        "are incorporating",
+        "could incorporate"
+      ],
+      [
+        "If we get many suggestions, we could also hold a workshop on the following weekend, December 4th.",
+        "We’ll be finalizing our choices by the end of the week",
+        "A large amount of time and energy has gone into organizing this conference.",
+        "Inviting friends and family to these events is always encouraged."
+      ],
+      ["create", "request", "submit", "transfer"]
+    ],
+    "rightAnswer": [
+      "including",
+      "could incorporate",
+      "We’ll be finalizing our choices by the end of the week",
+      "submit"
+    ]
+  },
+  {
+    "paragraph":
+        "Vander Properties has been serving Houston for over 29 years. It is through our commitment to providing the highest degree of expertise market knowledge and (1) _______ service that we are recognized as an industry leader. We specialize in (2) _____ and corporate real estate here in the Denver area. (3) _____ you are looking to buy a new home or start a new business, we are the people you should be talking with. With our office centrally located downtown, we have our eyes on the whole city. Browse our site for listing, or give us a call today (4)_______",
+    "listQuestion": [
+      "It is through our commitment to providing the highest degree of expertise market knowledge and (1) _______ service that we are recognized as an industry leader.",
+      "We specialize in (2) _____ and corporate real estate here in the Denver area.",
+      "(3) _____ you are looking to buy a new home or start a new business, we are the people you should be talking with.",
+      "Browse our site for listing, or give US a call today (4) _____.",
+    ],
+    "listAnswer": [
+      ["personalize", "personalizes", "personalizing", "personalized"],
+      ["productive", "promoted", "residential", "relevant"],
+      ["Whether", "Even if", "Even though", "Whenever"],
+      [
+        "Take a drive out of town and come see us today.",
+        "We appreciate your assistance.",
+        "Of course, drop-ins are always welcome.",
+        "Our kitchen is open from eight to five daily."
+      ]
+    ],
+    "rightAnswer": [
+      "personalized",
+      "residential",
+      "Whether",
+      "Of course, drop-ins are always welcome."
+    ]
+  },
+];
