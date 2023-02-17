@@ -187,7 +187,7 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                                     spreadRadius: 2,
                                     blurRadius: 3,
                                     offset: Offset(
-                                        0, 3), // changes position of shadow
+                                        0, 3),
                                   )
                                 ],
                               ),
