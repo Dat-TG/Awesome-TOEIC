@@ -52,7 +52,7 @@ final List<String> listDesc = [
   'Mô tả ảnh',
   'Hỏi & đáp',
   'Đoạn hội thoại',
-  'Đoạn văn đơn',
+  'Đoạn nói chuyện ngắn',
   'Điền vào câu',
   'Điền vào đoạn',
   'Đọc hiểu đoạn văn'
@@ -162,4 +162,118 @@ List<Map<String, dynamic>> listQuestionPart6 = [
       "Of course, drop-ins are always welcome."
     ]
   },
+];
+
+List<Map<String, dynamic>> listQuestionPart3 = [
+  {
+    "listQuestion": [
+      "Human Resources has put together a wide range of topics for this year’s workshops, (1) _____ sales techniques, computer skills, communication strategies, and goal setting.",
+      "It’s quite possible we (2) _____ it into this year’s spring training.",
+      "(3) _____ Feel free to _____ any ideas you might have to Nancy Kensington in the human resources department.",
+    ],
+    "listAnswer": [
+      ["distributing", "locating", "including", "advancing"],
+      [
+        "were incorporating",
+        "should incorporate",
+        "are incorporating",
+        "could incorporate"
+      ],
+      [
+        "If we get many suggestions, we could also hold a workshop on the following weekend, December 4th.",
+        "We’ll be finalizing our choices by the end of the week",
+        "A large amount of time and energy has gone into organizing this conference.",
+        "Inviting friends and family to these events is always encouraged."
+      ],
+    ],
+    "rightAnswer": [
+      "including",
+      "could incorporate",
+      "We’ll be finalizing our choices by the end of the week",
+    ]
+  },
+  {
+    "listQuestion": [
+      "Human Resources has put together a wide range of topics for this year’s workshops, (1) _____ sales techniques, computer skills, communication strategies, and goal setting.",
+      "It’s quite possible we (2) _____ it into this year’s spring training.",
+      "(3) _____ Feel free to _____ any ideas you might have to Nancy Kensington in the human resources department.",
+    ],
+    "listAnswer": [
+      ["distributing", "locating", "including", "advancing"],
+      [
+        "were incorporating",
+        "should incorporate",
+        "are incorporating",
+        "could incorporate"
+      ],
+      [
+        "If we get many suggestions, we could also hold a workshop on the following weekend, December 4th.",
+        "We’ll be finalizing our choices by the end of the week",
+        "A large amount of time and energy has gone into organizing this conference.",
+        "Inviting friends and family to these events is always encouraged."
+      ],
+    ],
+    "rightAnswer": [
+      "including",
+      "could incorporate",
+      "We’ll be finalizing our choices by the end of the week",
+    ]
+  }
+];
+
+List<Map<String, dynamic>> listQuestionPart4 = [
+  {
+    "listQuestion": [
+      "Human Resources has put together a wide range of topics for this year’s workshops, (1) _____ sales techniques, computer skills, communication strategies, and goal setting.",
+      "It’s quite possible we (2) _____ it into this year’s spring training.",
+      "(3) _____ Feel free to _____ any ideas you might have to Nancy Kensington in the human resources department.",
+    ],
+    "listAnswer": [
+      ["distributing", "locating", "including", "advancing"],
+      [
+        "were incorporating",
+        "should incorporate",
+        "are incorporating",
+        "could incorporate"
+      ],
+      [
+        "If we get many suggestions, we could also hold a workshop on the following weekend, December 4th.",
+        "We’ll be finalizing our choices by the end of the week",
+        "A large amount of time and energy has gone into organizing this conference.",
+        "Inviting friends and family to these events is always encouraged."
+      ],
+    ],
+    "rightAnswer": [
+      "including",
+      "could incorporate",
+      "We’ll be finalizing our choices by the end of the week",
+    ]
+  },
+  {
+    "listQuestion": [
+      "Human Resources has put together a wide range of topics for this year’s workshops, (1) _____ sales techniques, computer skills, communication strategies, and goal setting.",
+      "It’s quite possible we (2) _____ it into this year’s spring training.",
+      "(3) _____ Feel free to _____ any ideas you might have to Nancy Kensington in the human resources department.",
+    ],
+    "listAnswer": [
+      ["distributing", "locating", "including", "advancing"],
+      [
+        "were incorporating",
+        "should incorporate",
+        "are incorporating",
+        "could incorporate"
+      ],
+      [
+        "If we get many suggestions, we could also hold a workshop on the following weekend, December 4th.",
+        "We’ll be finalizing our choices by the end of the week",
+        "A large amount of time and energy has gone into organizing this conference.",
+        "Inviting friends and family to these events is always encouraged."
+      ],
+    ],
+    "rightAnswer": [
+      "including",
+      "could incorporate",
+      "We’ll be finalizing our choices by the end of the week",
+    ]
+  }
 ];
