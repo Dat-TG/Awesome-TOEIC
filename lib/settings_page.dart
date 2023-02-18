@@ -116,12 +116,49 @@ class _SettingsPageState extends State<SettingsPage> {
                                 )
                               ]),
                     // ignore: avoid_print
-                    onTap: () => print(entries[index]),
-                    trailing: entries.elementAt(index) == "Phiên bản"
+                    onTap: () => {
+                      if (entries.elementAt(index) == "Ngôn ngữ")
+                        {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Center(
+                                child: Wrap(children: [
+                                  AlertDialog(
+                                      backgroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
+                                      title: Text(
+                                        "Chọn ngôn ngữ",
+                                        style: TextStyle(fontSize: 17),
+                                      ),
+                                      contentPadding: EdgeInsets.all(5),
+                                      alignment: Alignment.center,
+                                      content:
+                                          const Center(child: LanguageForm())),
+                                ]),
+                              );
+                            },
+                          )
+                        }
+                    },
+                    trailing: (entries.elementAt(index) == "Phiên bản" ||
+                            entries.elementAt(index) == "Ngôn ngữ")
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [Text(version)],
+                            children: [
+                              (entries.elementAt(index) == "Phiên bản")
+                                  ? Text(
+                                      version,
+                                      style:
+                                          TextStyle(color: Colors.orange[500]),
+                                    )
+                                  : Text(language,
+                                      style:
+                                          TextStyle(color: Colors.orange[500]))
+                            ],
                           )
                         : Column(),
                   )
@@ -158,6 +195,7 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       changeColorByTheme();
+      language = (prefs.getString("language") ?? "Tiếng Việt");
     });
   }
 
@@ -168,5 +206,173 @@ class _SettingsPageState extends State<SettingsPage> {
       prefs.setBool('DarkMode', isDarkMode);
       changeColorByTheme();
     });
+  }
+}
+
+//Select Language Popup Form
+
+enum Language { english, vietnamese, french, spanish, chinese, russian }
+
+class LanguageForm extends StatefulWidget {
+  const LanguageForm({super.key});
+
+  @override
+  State<LanguageForm> createState() => _LanguageFormState();
+}
+
+class _LanguageFormState extends State<LanguageForm> {
+  Language? _language = Language.vietnamese;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Wrap(
+        spacing: 5,
+        alignment: WrapAlignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    ListTile(
+                      title: Transform.translate(
+                        offset: Offset(-16, 0),
+                        child: const Text(
+                          'English',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      leading: Radio<Language>(
+                        value: Language.english,
+                        groupValue: _language,
+                        onChanged: (Language? value) {
+                          setState(() {
+                            _language = value;
+                          });
+                        },
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    ListTile(
+                      title: Transform.translate(
+                        offset: Offset(-16, 0),
+                        child: const Text(
+                          'Tiếng Việt',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      leading: Radio<Language>(
+                        value: Language.vietnamese,
+                        groupValue: _language,
+                        onChanged: (Language? value) {
+                          setState(() {
+                            _language = value;
+                          });
+                        },
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    ListTile(
+                      title: Transform.translate(
+                        offset: Offset(-16, 0),
+                        child: const Text(
+                          'Français',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      leading: Radio<Language>(
+                        value: Language.french,
+                        groupValue: _language,
+                        onChanged: (Language? value) {
+                          setState(() {
+                            _language = value;
+                          });
+                        },
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ],
+                ),
+              ),
+              Flexible(
+                flex: 2,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ListTile(
+                      title: Transform.translate(
+                        offset: Offset(-16, 0),
+                        child: const Text(
+                          'Español',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      leading: Radio<Language>(
+                        value: Language.spanish,
+                        groupValue: _language,
+                        onChanged: (Language? value) {
+                          setState(() {
+                            _language = value;
+                          });
+                        },
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    ListTile(
+                      title: Transform.translate(
+                        offset: Offset(-16, 0),
+                        child: const Text(
+                          '中文',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      leading: Radio<Language>(
+                        value: Language.chinese,
+                        groupValue: _language,
+                        onChanged: (Language? value) {
+                          setState(() {
+                            _language = value;
+                          });
+                        },
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    ListTile(
+                      title: Transform.translate(
+                        offset: Offset(-16, 0),
+                        child: const Text(
+                          'Русский',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      leading: Radio<Language>(
+                        value: Language.russian,
+                        groupValue: _language,
+                        onChanged: (Language? value) {
+                          setState(() {
+                            _language = value;
+                          });
+                        },
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
