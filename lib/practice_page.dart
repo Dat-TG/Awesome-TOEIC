@@ -296,10 +296,10 @@ class BoxContainer extends StatelessWidget {
         ),
         SizedBox(
           height: 50,
-          width: 80,
+          width: 100,
           child: Text(
             listDesc[part],
-            style: TextStyle(fontSize: 17),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
             textAlign: TextAlign.center,
           ),
         )
