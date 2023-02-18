@@ -21,14 +21,14 @@ class _SignInState extends State<SignIn> {
       body: SingleChildScrollView(
         child: Column(children: [
           Padding(
-            padding: const EdgeInsets.only(top: 30, bottom: 20),
+            padding: const EdgeInsets.only(top: 20, bottom: 20),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   appIcon,
-                  width: 120,
+                  width: 80,
                 ),
               ],
             ),
@@ -36,46 +36,34 @@ class _SignInState extends State<SignIn> {
           Text(
             appName,
             style: TextStyle(
-                fontSize: 24, color: colorApp, fontWeight: FontWeight.bold),
+                fontSize: 20, color: colorApp, fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 30,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 20, right: 20, bottom: 10),
-                child: TextFormField(
-                    cursorColor: colorApp,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.mail_outline, size: 30),
-                      labelText: 'Username',
-                      border: OutlineInputBorder(),
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 20, right: 20, bottom: 10),
-                child: TextFormField(
-                    cursorColor: colorApp,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.lock_outline_rounded, size: 30),
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                    )),
-              ),
-            ],
+          SizedBox(
+            width: MediaQuery.of(context).size.width > 500
+                ? 500
+                : MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TextEditForm(label: "Username", icon: Icons.email_outlined),
+                TextEditForm(
+                    label: "Password", icon: Icons.lock_outline_rounded),
+              ],
+            ),
           ),
           SizedBox(
-            height: 20,
+            height: 10,
           ),
           Row(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                flex: 1,
+              SizedBox(
+                width: MediaQuery.of(context).size.width > 500
+                    ? 500
+                    : MediaQuery.of(context).size.width,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
                   child: ElevatedButton(
@@ -97,14 +85,16 @@ class _SignInState extends State<SignIn> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+            padding: const EdgeInsets.all(20),
             child: Text("---- OR ----"),
           ),
           Row(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                flex: 1,
+              SizedBox(
+                width: MediaQuery.of(context).size.width > 500
+                    ? 500
+                    : MediaQuery.of(context).size.width,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: ElevatedButton(
@@ -156,7 +146,7 @@ class _SignInState extends State<SignIn> {
                     'Tạo tài khoản',
                     style: TextStyle(
                         fontSize: 17,
-                        color: colorApp,
+                        color: orange,
                         decoration: TextDecoration.underline),
                   ),
                 )
@@ -165,6 +155,31 @@ class _SignInState extends State<SignIn> {
           )
         ]),
       ),
+    );
+  }
+}
+
+class TextEditForm extends StatefulWidget {
+  final String label;
+  final IconData icon;
+  const TextEditForm({super.key, required this.label, required this.icon});
+
+  @override
+  State<TextEditForm> createState() => _TextEditFormState();
+}
+
+class _TextEditFormState extends State<TextEditForm> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
+      child: TextFormField(
+          cursorColor: colorApp,
+          decoration: InputDecoration(
+              icon: Icon(widget.icon, size: 30),
+              labelText: widget.label,
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.only(left: 20))),
     );
   }
 }

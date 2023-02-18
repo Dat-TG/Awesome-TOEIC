@@ -21,14 +21,14 @@ class _SignUpState extends State<SignUp> {
       body: SingleChildScrollView(
         child: Column(children: [
           Padding(
-            padding: const EdgeInsets.only(top: 30, bottom: 20),
+            padding: const EdgeInsets.only(top: 20, bottom: 20),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
                   appIcon,
-                  width: 120,
+                  width: 80,
                 ),
               ],
             ),
@@ -36,79 +36,38 @@ class _SignUpState extends State<SignUp> {
           Text(
             appName,
             style: TextStyle(
-                fontSize: 24, color: colorApp, fontWeight: FontWeight.bold),
+                fontSize: 20, color: colorApp, fontWeight: FontWeight.bold),
           ),
           SizedBox(
-            height: 30,
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 20, right: 20, bottom: 10),
-                child: TextFormField(
-                    cursorColor: colorApp,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.alternate_email_sharp, size: 30),
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 20, right: 20, bottom: 10),
-                child: TextFormField(
-                    cursorColor: colorApp,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.lock_outline_rounded, size: 30),
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 20, right: 20, bottom: 10),
-                child: TextFormField(
-                    cursorColor: colorApp,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.phone, size: 30),
-                      labelText: 'Phone',
-                      border: OutlineInputBorder(),
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 20, right: 20, bottom: 10),
-                child: TextFormField(
-                    cursorColor: colorApp,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.lock_outline_rounded, size: 30),
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
-                    )),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 10, left: 20, right: 20, bottom: 10),
-                child: TextFormField(
-                    cursorColor: colorApp,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.lock_outline_rounded, size: 30),
-                      labelText: 'Verify password',
-                      border: OutlineInputBorder(),
-                    )),
-              ),
-            ],
+            height: 10,
           ),
           SizedBox(
-            height: 20,
+            width: MediaQuery.of(context).size.width > 500
+                ? 500
+                : MediaQuery.of(context).size.width,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                TextEditForm(label: "Tên", icon: Icons.alternate_email_sharp),
+                TextEditForm(label: "Username", icon: Icons.email_outlined),
+                TextEditForm(label: "SDT", icon: Icons.phone),
+                TextEditForm(
+                    label: "Password", icon: Icons.lock_outline_rounded),
+                TextEditForm(
+                    label: "Verify password", icon: Icons.lock_outline_rounded),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 10,
           ),
           Row(
-            mainAxisSize: MainAxisSize.max,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
-                flex: 1,
+              SizedBox(
+                width: MediaQuery.of(context).size.width > 500
+                    ? 500
+                    : MediaQuery.of(context).size.width,
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
                   child: ElevatedButton(
@@ -123,48 +82,6 @@ class _SignUpState extends State<SignUp> {
                             fontSize: 17,
                           ),
                           textAlign: TextAlign.center,
-                        ),
-                      )),
-                ),
-              )
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
-            child: Text("---- OR ----"),
-          ),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                flex: 1,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                          shape: StadiumBorder(),
-                          backgroundColor: Colors.white),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Image.asset(
-                              'assets/img/google.png',
-                              width: 20,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              'Đăng nhập bằng Google',
-                              style:
-                                  TextStyle(fontSize: 17, color: Colors.black),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
                         ),
                       )),
                 ),
@@ -189,7 +106,7 @@ class _SignUpState extends State<SignUp> {
                     'Đăng nhập',
                     style: TextStyle(
                         fontSize: 17,
-                        color: colorApp,
+                        color: orange,
                         decoration: TextDecoration.underline),
                   ),
                 )

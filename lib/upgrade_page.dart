@@ -56,7 +56,7 @@ class _UpgradePageTestState extends State<UpgradePage> {
         options: CarouselOptions(
           height: 250,
           autoPlay: true,
-          viewportFraction: 1,
+          viewportFraction: MediaQuery.of(context).size.width > 500 ? 0.5 : 1,
           onPageChanged: (index, reason) {
             setState(() {
               currentPos = index;
@@ -88,9 +88,12 @@ class _UpgradePageTestState extends State<UpgradePage> {
       Padding(
         padding: const EdgeInsets.all(15.0),
         child: Row(
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
+            SizedBox(
+              width: MediaQuery.of(context).size.width > 730
+                  ? 700
+                  : MediaQuery.of(context).size.width - 30,
               child: Container(
                   height: 120,
                   decoration: BoxDecoration(
@@ -347,7 +350,9 @@ class AdsContainer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Container(
-        width: MediaQuery.of(context).size.width,
+        width: MediaQuery.of(context).size.width > 500
+            ? 500
+            : MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: colorBox,
           boxShadow: [
@@ -405,7 +410,9 @@ class SalesPackageContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 6, bottom: 6),
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.of(context).size.width > 500
+          ? 500
+          : MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: colorBox,
         boxShadow: [
@@ -486,7 +493,9 @@ class ReviewUserContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 6, bottom: 6),
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.of(context).size.width > 500
+          ? 500
+          : MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: colorBox,
         boxShadow: [

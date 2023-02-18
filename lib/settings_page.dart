@@ -125,7 +125,6 @@ class _SettingsPageState extends State<SettingsPage> {
                               return Center(
                                 child: Wrap(children: [
                                   AlertDialog(
-                                      backgroundColor: Colors.white,
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(15)),
