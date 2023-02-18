@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:toeic_app/part/explanation.dart';
 
 import './../constants.dart';
 import 'question_frame.dart';
@@ -244,16 +243,7 @@ class _PartSixFrameState extends State<PartSixFrame>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Explanation(
-                    answers: listDirectionEng,
-                    ansTrans: listDirectionVn,
-                    isShow: widget.isShow,
-                    cancelShow: (s) {
-                      setState(() {
-                        widget.cancelShowExplan(s);
-                      });
-                    },
-                  ),
+                  
                   Row(
                     children: [
                       for (int index in widget.number)

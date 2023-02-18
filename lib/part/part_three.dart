@@ -2,7 +2,6 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:toeic_app/part/explanation.dart';
 import 'package:toeic_app/part/part_one.dart';
 
 import './../constants.dart';
@@ -281,16 +280,6 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Explanation(
-                    answers: listDirectionEng,
-                    ansTrans: listDirectionVn,
-                    isShow: widget.isShow,
-                    cancelShow: (s) {
-                      setState(() {
-                        widget.cancelShowExplan(s);
-                      });
-                    },
-                  ),
                   Row(
                     children: [
                       for (int index in widget.number)
