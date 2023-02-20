@@ -4,6 +4,7 @@ import 'package:toeic_app/sign_in.dart';
 import 'package:toeic_app/sign_up.dart';
 import 'main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -141,6 +142,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             },
                           )
                         }
+                      else if (entries.elementAt(index) == "Chia sẻ ứng dụng")
+                        {Share.share('Link apk hoặc CH Play')}
                     },
                     trailing: (entries.elementAt(index) == "Phiên bản" ||
                             entries.elementAt(index) == "Ngôn ngữ")
