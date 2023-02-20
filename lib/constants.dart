@@ -285,3 +285,7 @@ List<Map<String, dynamic>> listQuestionPart4 = [
 
 String language = "";
 Language? enumLanguage;
+
+bool isRemind = false;
+
+String timeRemind = "00:00";

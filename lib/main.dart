@@ -6,7 +6,7 @@ import 'constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp();
   runApp(MyApp());
 }
@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       if (isDarkMode) {

@@ -37,7 +37,7 @@ class _UpgradePageTestState extends State<UpgradePage> {
   }
 
   Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       changeColorByTheme();

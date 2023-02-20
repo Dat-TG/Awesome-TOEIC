@@ -144,6 +144,15 @@ class _SettingsPageState extends State<SettingsPage> {
                         }
                       else if (entries.elementAt(index) == "Chia sẻ ứng dụng")
                         {Share.share('Link apk hoặc CH Play')}
+                      else if (entries.elementAt(index) == "Nhắc nhở học tập")
+                        {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return RemindDialog();
+                            },
+                          )
+                        }
                     },
                     trailing: (entries.elementAt(index) == "Phiên bản" ||
                             entries.elementAt(index) == "Ngôn ngữ")
@@ -193,9 +202,12 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _loadTheme() async {
-    final prefs = await SharedPreferences.getInstance();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
+      isRemind = (prefs.getBool('isRemind') ?? false);
+      timeRemind =
+          (prefs.getString("TimeRemind") ?? TimeOfDay.now().format(context));
       changeColorByTheme();
       language = (prefs.getString("language") ?? "Language.vietnamese");
       switch (language) {
@@ -230,8 +242,8 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   //Incrementing counter after click
-  Future<void> _changeTheme() async {
-    final prefs = await SharedPreferences.getInstance();
+  void _changeTheme() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       prefs.setBool('DarkMode', isDarkMode);
       changeColorByTheme();
@@ -428,4 +440,149 @@ class _LanguageFormState extends State<LanguageForm> {
 Future<void> changeLanguage(value) async {
   final prefs = await SharedPreferences.getInstance();
   prefs.setString("language", value.toString());
+}
+
+class RemindDialog extends StatefulWidget {
+  const RemindDialog({super.key});
+
+  @override
+  State<RemindDialog> createState() => _RemindDialogState();
+}
+
+class _RemindDialogState extends State<RemindDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Wrap(children: [
+        AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            title: SwitchListTile(
+                value: isRemind,
+                title: Text(
+                  "Nhắc nhở học tập",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+                secondary: Icon(Icons.alarm, color: colorApp),
+                contentPadding: EdgeInsets.zero,
+                onChanged: (bool value) => setState(() {
+                      isRemind = value;
+                      // Save to shared preferences....
+                      //
+                    })),
+            contentPadding: EdgeInsets.zero,
+            alignment: Alignment.center,
+            content: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (isRemind)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 25),
+                        child: Text("Chọn thời gian trong ngày"),
+                      ),
+                    if (isRemind)
+                      Padding(
+                          padding: const EdgeInsets.only(left: 25),
+                          child: TimeRemindPickerListTile()),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.setString("TimeRemind", timeRemind);
+                          prefs.setBool("isRemind", isRemind);
+                          // ignore: use_build_context_synchronously
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: colorApp,
+                            alignment: Alignment.center,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15))),
+                        child: Text("Xong"),
+                      ),
+                    )
+                  ],
+                ))),
+      ]),
+    );
+  }
+}
+
+Future<TimeOfDay?> showTimePicker({
+  required BuildContext context,
+  required TimeOfDay initialTime,
+  TransitionBuilder? builder,
+  bool useRootNavigator = true,
+  TimePickerEntryMode initialEntryMode = TimePickerEntryMode.dial,
+  String? cancelText,
+  String? confirmText,
+  String? helpText,
+  String? errorInvalidText,
+  String? hourLabelText,
+  String? minuteLabelText,
+  RouteSettings? routeSettings,
+  EntryModeChangeCallback? onEntryModeChanged,
+  Offset? anchorPoint,
+}) async {
+  assert(debugCheckHasMaterialLocalizations(context));
+
+  final Widget dialog = TimePickerDialog(
+    initialTime: initialTime,
+    initialEntryMode: initialEntryMode,
+    cancelText: cancelText,
+    confirmText: confirmText,
+    helpText: helpText,
+    errorInvalidText: errorInvalidText,
+    hourLabelText: hourLabelText,
+    minuteLabelText: minuteLabelText,
+    onEntryModeChanged: onEntryModeChanged,
+  );
+  return showDialog<TimeOfDay>(
+    context: context,
+    useRootNavigator: useRootNavigator,
+    builder: (BuildContext context) {
+      return builder == null ? dialog : builder(context, dialog);
+    },
+    routeSettings: routeSettings,
+    anchorPoint: anchorPoint,
+  );
+}
+
+class TimeRemindPickerListTile extends StatefulWidget {
+  const TimeRemindPickerListTile({super.key});
+
+  @override
+  State<TimeRemindPickerListTile> createState() =>
+      _TimeRemindPickerListTileState();
+}
+
+class _TimeRemindPickerListTileState extends State<TimeRemindPickerListTile> {
+  String trailing = timeRemind;
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text("Thời gian"),
+      trailing: Text(trailing),
+      contentPadding: EdgeInsets.only(right: 40),
+      onTap: () async {
+        final TimeOfDay? TimePick = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay(
+              hour: int.parse(timeRemind.split(":")[0]),
+              minute: int.parse(timeRemind.split(":")[1].substring(0, 1))),
+        );
+        // ignore: use_build_context_synchronously
+        timeRemind = TimePick != null
+            // ignore: use_build_context_synchronously
+            ? TimePick.format(context)
+            : timeRemind;
+        setState(() {
+          trailing = timeRemind;
+        });
+      },
+    );
+  }
 }
