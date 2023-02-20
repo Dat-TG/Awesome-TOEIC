@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_app/part/part_five.dart';
 import 'package:toeic_app/part/part_four.dart';
 import 'package:toeic_app/part/part_one.dart';
@@ -6,6 +7,7 @@ import 'package:toeic_app/part/part_seven.dart';
 import 'package:toeic_app/part/part_six.dart';
 import 'package:toeic_app/part/part_three.dart';
 import 'package:toeic_app/part/part_two.dart';
+import 'settings_page.dart';
 
 const String appName = "TOEIC APP";
 const String appIcon = 'assets/img/headphones.png';
@@ -281,4 +283,5 @@ List<Map<String, dynamic>> listQuestionPart4 = [
   }
 ];
 
-String language = "Tiếng Việt";
+String language = "";
+Language? enumLanguage;

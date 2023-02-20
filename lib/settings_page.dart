@@ -194,7 +194,35 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       changeColorByTheme();
-      language = (prefs.getString("language") ?? "Tiếng Việt");
+      language = (prefs.getString("language") ?? "Language.vietnamese");
+      switch (language) {
+        case "Language.vietnamese":
+          language = "Tiếng Việt";
+          enumLanguage = Language.vietnamese;
+          break;
+        case "Language.english":
+          language = "English";
+          enumLanguage = Language.english;
+          break;
+        case "Language.french":
+          language = "Français";
+          enumLanguage = Language.french;
+          break;
+        case "Language.russian":
+          language = "Русский";
+          enumLanguage = Language.russian;
+          break;
+        case "Language.chinese":
+          language = "中文";
+          enumLanguage = Language.chinese;
+          break;
+        case "Language.spanish":
+          language = "Español";
+          enumLanguage = Language.spanish;
+          break;
+        default:
+          break;
+      }
     });
   }
 
@@ -220,8 +248,7 @@ class LanguageForm extends StatefulWidget {
 }
 
 class _LanguageFormState extends State<LanguageForm> {
-  Language? _language = Language.vietnamese;
-
+  Language? _language = enumLanguage;
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -255,6 +282,9 @@ class _LanguageFormState extends State<LanguageForm> {
                         onChanged: (Language? value) {
                           setState(() {
                             _language = value;
+                            changeLanguage(value);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/', (_) => false);
                           });
                         },
                       ),
@@ -274,6 +304,9 @@ class _LanguageFormState extends State<LanguageForm> {
                         onChanged: (Language? value) {
                           setState(() {
                             _language = value;
+                            changeLanguage(value);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/', (_) => false);
                           });
                         },
                       ),
@@ -293,6 +326,9 @@ class _LanguageFormState extends State<LanguageForm> {
                         onChanged: (Language? value) {
                           setState(() {
                             _language = value;
+                            changeLanguage(value);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/', (_) => false);
                           });
                         },
                       ),
@@ -322,6 +358,9 @@ class _LanguageFormState extends State<LanguageForm> {
                         onChanged: (Language? value) {
                           setState(() {
                             _language = value;
+                            changeLanguage(value);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/', (_) => false);
                           });
                         },
                       ),
@@ -341,6 +380,9 @@ class _LanguageFormState extends State<LanguageForm> {
                         onChanged: (Language? value) {
                           setState(() {
                             _language = value;
+                            changeLanguage(value);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/', (_) => false);
                           });
                         },
                       ),
@@ -360,6 +402,9 @@ class _LanguageFormState extends State<LanguageForm> {
                         onChanged: (Language? value) {
                           setState(() {
                             _language = value;
+                            changeLanguage(value);
+                            Navigator.pushNamedAndRemoveUntil(
+                                context, '/', (_) => false);
                           });
                         },
                       ),
@@ -374,4 +419,10 @@ class _LanguageFormState extends State<LanguageForm> {
       ),
     );
   }
+}
+
+//change language save in shared preferences
+Future<void> changeLanguage(value) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString("language", value.toString());
 }
