@@ -148,6 +148,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         {
                           showDialog(
                             context: context,
+                            barrierDismissible: false,
                             builder: (BuildContext context) {
                               return RemindDialog();
                             },

@@ -67,6 +67,7 @@ class _MyAppState extends State<MyApp> {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
+      isRemind = (prefs.getBool('isRemind') ?? false);
       if (isDarkMode) {
         _themeMode = ThemeMode.dark;
       }
@@ -87,6 +88,10 @@ tz.TZDateTime _nextInstanceOfRemindTime(int hour, int minute) {
 }
 
 Future<void> showRemindNotification() async {
+  if (!isRemind) {
+    await flutterLocalNotificationsPlugin.cancel(0);
+    return;
+  }
   tz.initializeTimeZones();
   final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZone));
