@@ -221,39 +221,45 @@ class _ExplanationState extends State<Explanation> {
                     });
                   },
                   children: [
-                    SingleChildScrollView(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (int i = 0;
-                                i <
-                                    (widget.answers.length > 4
-                                        ? 4
-                                        : widget.answers.length);
-                                i++)
-                              Text(
-                                '${answersOption[i]}. ${widget.answers[i]}',
-                                style: TextStyle(fontSize: 16),
-                                textAlign: TextAlign.justify,
-                              ),
-                          ]),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (int i = 0;
+                                  i <
+                                      (widget.answers.length > 4
+                                          ? 4
+                                          : widget.answers.length);
+                                  i++)
+                                Text(
+                                  '${answersOption[i]}. ${widget.answers[i]}',
+                                  style: TextStyle(fontSize: 16),
+                                  textAlign: TextAlign.justify,
+                                ),
+                            ]),
+                      ),
                     ),
-                    SingleChildScrollView(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (int i = 0;
-                                i <
-                                    (widget.ansTrans.length > 4
-                                        ? 4
-                                        : widget.ansTrans.length);
-                                i++)
-                              Text(
-                                '${answersOption[i]}. ${widget.ansTrans[i]}',
-                                style: TextStyle(fontSize: 16),
-                                textAlign: TextAlign.justify,
-                              ),
-                          ]),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (int i = 0;
+                                  i <
+                                      (widget.ansTrans.length > 4
+                                          ? 4
+                                          : widget.ansTrans.length);
+                                  i++)
+                                Text(
+                                  '${answersOption[i]}. ${widget.ansTrans[i]}',
+                                  style: TextStyle(fontSize: 16),
+                                  textAlign: TextAlign.justify,
+                                ),
+                            ]),
+                      ),
                     ),
                   ]),
             )

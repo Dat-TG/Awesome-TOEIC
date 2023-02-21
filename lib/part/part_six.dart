@@ -212,10 +212,8 @@ class _PartSixFrameState extends State<PartSixFrame>
                         child: Container(
                           constraints: BoxConstraints(
                               minHeight: 50,
-                              maxHeight: MediaQuery.of(context).size.height <
-                                      400
-                                  ? MediaQuery.of(context).size.height * 0.28
-                                  : MediaQuery.of(context).size.height * 0.45),
+                              maxHeight:
+                                  MediaQuery.of(context).size.height * 0.28),
                           padding: const EdgeInsets.fromLTRB(5, 5, 0, 10),
                           child: SingleChildScrollView(
                             child: Column(

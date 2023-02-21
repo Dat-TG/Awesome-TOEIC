@@ -193,7 +193,7 @@ class _PartFourFrameState extends State<PartFourFrame> {
                     Container(
                       width: MediaQuery.of(context).size.width * 2 / 3 > 500
                           ? 500
-                          : MediaQuery.of(context).size.width * 2 / 3,
+                          : MediaQuery.of(context).size.width * 0.9,
                       constraints: BoxConstraints(
                           minHeight: 50,
                           maxHeight: MediaQuery.of(context).size.height * 0.1),
@@ -226,7 +226,7 @@ class _PartFourFrameState extends State<PartFourFrame> {
                     Container(
                       width: MediaQuery.of(context).size.width * 2 / 3 > 500
                           ? 500
-                          : MediaQuery.of(context).size.width * 2 / 3,
+                          : MediaQuery.of(context).size.width * 0.9,
                       constraints: BoxConstraints(
                           minHeight: 50,
                           maxHeight: MediaQuery.of(context).size.height * 0.1),
