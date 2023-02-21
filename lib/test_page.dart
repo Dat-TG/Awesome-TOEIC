@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_app/constants.dart';
 
+import 'others/get_It.dart';
+
 class Test extends StatefulWidget {
   const Test({super.key});
 
@@ -20,7 +22,7 @@ class _TestState extends State<Test> {
   }
 
   Future<void> _loadTheme() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       changeColorByTheme();

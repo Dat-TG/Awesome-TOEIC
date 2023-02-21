@@ -8,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'constants.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 
+import 'others/get_It.dart';
+
 class UpgradePage extends StatefulWidget {
   const UpgradePage({super.key});
 
@@ -37,7 +39,7 @@ class _UpgradePageTestState extends State<UpgradePage> {
   }
 
   Future<void> _loadTheme() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       changeColorByTheme();

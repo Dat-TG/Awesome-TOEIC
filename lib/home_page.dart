@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_app/test_page.dart';
 import 'package:toeic_app/upgrade_page.dart';
+import 'others/get_It.dart';
 import 'practice_page.dart';
 import 'settings_page.dart';
 import 'constants.dart';
@@ -22,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadTheme() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       changeColorByTheme();
