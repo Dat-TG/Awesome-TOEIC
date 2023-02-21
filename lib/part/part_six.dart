@@ -177,9 +177,9 @@ class _PartSixFrameState extends State<PartSixFrame>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width / 2 < 380
-                          ? 380
-                          : MediaQuery.of(context).size.width / 2,
+                      width: MediaQuery.of(context).size.width * 2 / 3 > 500
+                          ? 500
+                          : MediaQuery.of(context).size.width * 2 / 3,
                       constraints: BoxConstraints(
                           minHeight: 50,
                           maxHeight: MediaQuery.of(context).size.height * 0.4),
@@ -203,9 +203,7 @@ class _PartSixFrameState extends State<PartSixFrame>
                       child: Text(""),
                     ),
                     Container(
-                        width: MediaQuery.of(context).size.width / 2 < 380
-                            ? 380
-                            : MediaQuery.of(context).size.width / 2,
+                        width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(10),
@@ -214,8 +212,10 @@ class _PartSixFrameState extends State<PartSixFrame>
                         child: Container(
                           constraints: BoxConstraints(
                               minHeight: 50,
-                              maxHeight:
-                                  MediaQuery.of(context).size.height * 0.28),
+                              maxHeight: MediaQuery.of(context).size.height <
+                                      400
+                                  ? MediaQuery.of(context).size.height * 0.28
+                                  : MediaQuery.of(context).size.height * 0.45),
                           padding: const EdgeInsets.fromLTRB(5, 5, 0, 10),
                           child: SingleChildScrollView(
                             child: Column(
@@ -243,7 +243,6 @@ class _PartSixFrameState extends State<PartSixFrame>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  
                   Row(
                     children: [
                       for (int index in widget.number)

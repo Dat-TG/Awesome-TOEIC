@@ -124,7 +124,7 @@ class _ExplanationState extends State<Explanation> {
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
           )),
-      height: 300,
+      height: MediaQuery.of(context).size.height,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -210,9 +210,8 @@ class _ExplanationState extends State<Explanation> {
                     )
                   ]),
             ),
-            Container(
-              height: 250,
-              padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+            Expanded(
+              flex: 1,
               child: PageView(
                   controller: controller,
                   scrollDirection: Axis.horizontal,

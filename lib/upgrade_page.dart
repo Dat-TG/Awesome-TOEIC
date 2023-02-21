@@ -56,7 +56,7 @@ class _UpgradePageTestState extends State<UpgradePage> {
         options: CarouselOptions(
           height: 250,
           autoPlay: true,
-          viewportFraction: MediaQuery.of(context).size.width > 500 ? 0.5 : 1,
+          viewportFraction: MediaQuery.of(context).size.width > 500 ? 0.7 : 1,
           onPageChanged: (index, reason) {
             setState(() {
               currentPos = index;

@@ -191,9 +191,9 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width / 2 < 380
-                          ? 380
-                          : MediaQuery.of(context).size.width / 2,
+                      width: MediaQuery.of(context).size.width * 2 / 3 > 500
+                          ? 500
+                          : MediaQuery.of(context).size.width * 2 / 3,
                       constraints: BoxConstraints(
                           minHeight: 50,
                           maxHeight: MediaQuery.of(context).size.height * 0.1),
@@ -224,9 +224,7 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width / 2 < 380
-                          ? 380
-                          : MediaQuery.of(context).size.width / 2,
+                      width: MediaQuery.of(context).size.width,
                       constraints: BoxConstraints(
                           minHeight: 50,
                           maxHeight: MediaQuery.of(context).size.height * 0.1),
@@ -240,9 +238,7 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                       ),
                     ),
                     Container(
-                        width: MediaQuery.of(context).size.width / 2 < 380
-                            ? 380
-                            : MediaQuery.of(context).size.width / 2,
+                        width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(10),

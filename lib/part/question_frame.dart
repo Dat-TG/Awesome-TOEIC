@@ -31,9 +31,9 @@ class _QuestionFrameState extends State<QuestionFrame> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width / 2 < 370
-                      ? 370
-                      : MediaQuery.of(context).size.width / 2,
+                  width: MediaQuery.of(context).size.width * 2 / 3 > 500
+                      ? 500
+                      : MediaQuery.of(context).size.width * 2 / 3,
                   decoration: BoxDecoration(
                     color: colorApp,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -64,9 +64,9 @@ class _QuestionFrameState extends State<QuestionFrame> {
                         ),
                       ),
                       Container(
-                          width: MediaQuery.of(context).size.width / 2 < 370
-                              ? 370
-                              : MediaQuery.of(context).size.width / 2,
+                          width: MediaQuery.of(context).size.width * 2 / 3 > 500
+                              ? 500
+                              : MediaQuery.of(context).size.width * 2 / 3,
                           decoration: BoxDecoration(
                             color: white,
                             borderRadius: BorderRadius.only(
