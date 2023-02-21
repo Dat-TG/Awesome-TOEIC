@@ -12,11 +12,14 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import 'others/get_It.dart';
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await setupLocator();
   await initNotification();
   await showRemindNotification();
   // await Firebase.initializeApp();
@@ -64,7 +67,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _loadTheme() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       isRemind = (prefs.getBool('isRemind') ?? false);
@@ -96,7 +99,7 @@ Future<void> showRemindNotification() async {
   final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
   tz.setLocalLocation(tz.getLocation(timeZone));
 
-  final prefs = await SharedPreferences.getInstance();
+  final prefs = locator<SharedPreferences>();
   String timeRemindString = prefs.getString("TimeRemind") ?? "12:00 AM";
   int hour = int.parse(timeRemindString.split(":")[0]);
   int minute = int.parse(timeRemindString.split(":")[1].substring(0, 2));

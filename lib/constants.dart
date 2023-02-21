@@ -7,6 +7,7 @@ import 'package:toeic_app/part/part_seven.dart';
 import 'package:toeic_app/part/part_six.dart';
 import 'package:toeic_app/part/part_three.dart';
 import 'package:toeic_app/part/part_two.dart';
+import 'package:toeic_app/settings/language_form.dart';
 import 'settings_page.dart';
 
 const String appName = "TOEIC APP";

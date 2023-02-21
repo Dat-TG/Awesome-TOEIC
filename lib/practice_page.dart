@@ -5,6 +5,8 @@ import 'package:toeic_app/vocabulary.dart';
 import 'constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'others/get_It.dart';
+
 class Practice extends StatefulWidget {
   const Practice({super.key});
 
@@ -21,7 +23,7 @@ class _PracticeState extends State<Practice> {
   }
 
   Future<void> _loadTheme() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = locator<SharedPreferences>();
     setState(() {
       isDarkMode = (prefs.getBool('DarkMode') ?? false);
       changeColorByTheme();
