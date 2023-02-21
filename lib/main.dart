@@ -1,12 +1,23 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'home_page.dart';
 import 'constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:flutter_native_timezone/flutter_native_timezone.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await showRemindNotification();
   // await Firebase.initializeApp();
   runApp(MyApp());
 }
@@ -61,4 +72,54 @@ class _MyAppState extends State<MyApp> {
       changeColorByTheme();
     });
   }
+}
+
+tz.TZDateTime _nextInstanceOfRemindTime(int hour, int minute) {
+  final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+  tz.TZDateTime scheduledDate =
+      tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, minute, 0);
+  if (scheduledDate.isBefore(now)) {
+    scheduledDate = scheduledDate.add(const Duration(hours: 24));
+  }
+  print(scheduledDate);
+  return scheduledDate;
+}
+
+Future<void> showRemindNotification() async {
+  tz.initializeTimeZones();
+  final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
+  tz.setLocalLocation(tz.getLocation(timeZone));
+
+  final prefs = await SharedPreferences.getInstance();
+  String timeRemindString = prefs.getString("TimeRemind") ?? "12:00 AM";
+  int hour = int.parse(timeRemindString.split(":")[0]);
+  int minute = int.parse(timeRemindString.split(":")[1].substring(0, 2));
+  if (timeRemindString.substring(timeRemindString.length - 2) == "PM" &&
+      hour != 12) {
+    hour += 12;
+  }
+  if (timeRemindString.substring(timeRemindString.length - 2) == "AM" &&
+      hour == 12) {
+    hour = 0;
+  }
+
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'Đã đến giờ học rồi',
+      'Vào app luyện thôi bạn ơi',
+      _nextInstanceOfRemindTime(hour, minute),
+      const NotificationDetails(
+          android: AndroidNotificationDetails(
+        'your channel id',
+        'your channel name',
+        'your channel description',
+        importance: Importance.max,
+        priority: Priority.high,
+        ongoing: true,
+        styleInformation: BigTextStyleInformation(''),
+      )),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time);
 }

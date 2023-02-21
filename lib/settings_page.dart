@@ -495,6 +495,7 @@ class _RemindDialogState extends State<RemindDialog> {
                           prefs.setBool("isRemind", isRemind);
                           // ignore: use_build_context_synchronously
                           Navigator.pop(context);
+                          await showRemindNotification();
                         },
                         style: ElevatedButton.styleFrom(
                             backgroundColor: colorApp,
@@ -568,12 +569,19 @@ class _TimeRemindPickerListTileState extends State<TimeRemindPickerListTile> {
       trailing: Text(trailing),
       contentPadding: EdgeInsets.only(right: 40),
       onTap: () async {
+        int hour = int.parse(timeRemind.split(":")[0]);
+        if (timeRemind.substring(timeRemind.length - 2) == "PM" && hour != 12) {
+          hour += 12;
+        }
+        if (timeRemind.substring(timeRemind.length - 2) == "AM" && hour == 12) {
+          hour = 0;
+        }
         final TimeOfDay? TimePick = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay(
-              hour: int.parse(timeRemind.split(":")[0]),
-              minute: int.parse(timeRemind.split(":")[1].substring(0, 1))),
-        );
+            context: context,
+            initialTime: TimeOfDay(
+                hour: hour,
+                minute: int.parse(timeRemind.split(":")[1].substring(0, 2))),
+            initialEntryMode: TimePickerEntryMode.input);
         // ignore: use_build_context_synchronously
         timeRemind = TimePick != null
             // ignore: use_build_context_synchronously
