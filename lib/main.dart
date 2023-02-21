@@ -17,6 +17,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initNotification();
   await showRemindNotification();
   // await Firebase.initializeApp();
   runApp(MyApp());
@@ -122,4 +123,18 @@ Future<void> showRemindNotification() async {
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time);
+}
+
+Future<void> initNotification() async {
+  const IOSInitializationSettings initializationSettingsIOS =
+      IOSInitializationSettings();
+
+  const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings("@mipmap/ic_launcher");
+
+  const InitializationSettings initializationSettings = InitializationSettings(
+    iOS: initializationSettingsIOS,
+    android: initializationSettingsAndroid,
+  );
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 }
