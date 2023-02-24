@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:toeic_app/api/addAnswer.dart';
-import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/api/add_answer.dart';
 
-Future<void> addQuestion(int? id, 
+Future<void> addQuestion(
+    int id,
     List<String> listQuestion,
-    List<List<String>> listAnswers, List<String> listRightAnswer, int partID,
-    {
-    String? content,
+    List<List<String>> listAnswers,
+    List<String> listRightAnswer,
+    int partID,
+    int start,
+    {String? content,
     String? audioURL,
     List<String>? imagesURL,
     int examID = 0,
@@ -14,7 +16,8 @@ Future<void> addQuestion(int? id,
   List<int> listAnswersID = [];
 
   for (int i = 0; i < listAnswers.length; i++) {
-    int id = await addAnswer(listAnswers[i]);
+    int id = start + i + 1;
+    await addAnswer(id, listAnswers[i]);
     listAnswersID.add(id);
   }
 
