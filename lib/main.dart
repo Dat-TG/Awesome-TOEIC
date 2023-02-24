@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:toeic_app/api/addQuestion.dart';
+import 'package:toeic_app/api/data.dart';
 
 import 'home_page.dart';
 import 'constants.dart';
@@ -11,7 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-
+import 'package:cloud_firestore/cloud_firestore.dart';
+import "package:typed_data/typed_data.dart";
 import 'others/get_It.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -22,7 +25,8 @@ Future<void> main() async {
   await setupLocator();
   await initNotification();
   await showRemindNotification();
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp();
+
   runApp(MyApp());
 }
 
@@ -40,7 +44,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
-
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   @override
   void initState() {
     super.initState();
@@ -49,6 +53,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    addQuestion(
+        id = 101,
+        listQuestion = listQuestion,
+        listAnswers = listAnswers,
+        listRightAnswer = listRightAnswer,
+        partID = partID,
+        audioURL: audio,
+        imagesURL: imagesURL,
+        examID: examID);
+
     return MaterialApp(
       title: MyApp._title,
       theme: ThemeData(),

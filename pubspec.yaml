@@ -46,6 +46,7 @@ dependencies:
     flutter_local_notifications: ^8.2.0
     flutter_native_timezone: ^2.0.0
     get_it: ^7.2.0
+    cloud_firestore: ^4.4.3
 
 dev_dependencies:
     flutter_test:
