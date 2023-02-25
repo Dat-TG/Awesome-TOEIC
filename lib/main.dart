@@ -83,7 +83,9 @@ class _MyAppState extends State<MyApp> {
     for (int i = 31; i < 54; i++) {
       await addQuestion(qID[i], listQuestion[i], listAnswers[i],
           listRightAnswer[i], partID[i], start,
-          audioURL: audio[i], examID: examID, imagesURL: [imagesURL[1][i-31]]);
+          audioURL: audio[i],
+          examID: examID,
+          imagesURL: [imagesURL[1][i - 31]]);
       documents = await firestore.collection("Answers").get();
       setState(() {
         start = documents.size;
@@ -189,4 +191,35 @@ Future<void> initNotification() async {
     android: initializationSettingsAndroid,
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+}
+
+Future<void> getQuestion(List<Map<String, dynamic>> data, int partID) async {
+  var temp;
+  await FirebaseFirestore.instance
+      .collection("Questions")
+      .where('part_id', isEqualTo: 6)
+      .get()
+      .then((value) async => {
+            for (int i = 0; i < value.docs.length; i++)
+              {
+                temp = value.docs[i].data(),
+                temp['list_answers'] = [],
+                data.add(temp),
+                for (int j = 0; j < temp['list_answers_id'].length; j++)
+                  {
+                    await FirebaseFirestore.instance
+                        .collection("Answers")
+                        .where(FieldPath.documentId,
+                            isEqualTo: temp['list_answers_id'][j])
+                        .get()
+                        .then((value) => {
+                              temp['list_answers']
+                                  .add(value.docs[0].data()['list_answers']),
+                              //print("answer ${temp['list_answers'][j]}")
+                            })
+                  }
+              },
+            print(value.docs.length)
+          });
+  print("get questions");
 }

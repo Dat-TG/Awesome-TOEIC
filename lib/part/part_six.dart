@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:toeic_app/main.dart';
 
 import './../constants.dart';
 import 'question_frame.dart';
@@ -12,7 +15,7 @@ class PartSix extends StatefulWidget {
 
 class _PartSixState extends State<PartSix> {
   int _curr = 1;
-  int totalQues = listQuestionPart6.length * 4; //Example
+  int totalQues = listQuestionPart6.length * 4;
   List<String> _answer = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
@@ -24,11 +27,25 @@ class _PartSixState extends State<PartSix> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _curr = 1;
+    _answer = [];
+  }
+
+  @override
   void initState() {
     super.initState();
-    for (int i = 0; i < totalQues; i++) {
-      _answer.add("");
-    }
+    getQuestion(listQuestionPart6, 6).then((value) => {
+          print("list question length: ${listQuestionPart6.length}"),
+          setState(() {
+            totalQues = listQuestionPart6.length * 4;
+            for (int i = 0; i < totalQues; i++) {
+              _answer.add("");
+            }
+          })
+        });
   }
 
   @override
@@ -102,9 +119,11 @@ class _PartSixState extends State<PartSix> {
               for (int i = 0; i < listQuestionPart6.length; i++)
                 PartSixFrame(
                   number: [_curr, _curr + 1, _curr + 2, _curr + 3],
-                  paragraph: listQuestionPart6[i]['paragraph'],
-                  question: listQuestionPart6[i]['listQuestion'],
-                  answers: listQuestionPart6[i]['listAnswer'],
+                  paragraph: listQuestionPart6[i]['content'],
+                  question: List<String>.from(
+                      listQuestionPart6[i]['list_question'] as List),
+                  answers: convertListDynamicToListListString(
+                      listQuestionPart6[i]['list_answers']),
                   getAnswer: (number, value) => callbackAnswer(number, value),
                   ans: _answer,
                   isShow: isShow,
@@ -164,12 +183,12 @@ class _PartSixFrameState extends State<PartSixFrame>
     super.build(context);
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Row(
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
@@ -222,7 +241,9 @@ class _PartSixFrameState extends State<PartSixFrame>
                                   for (int j = 0; j < widget.number.length; j++)
                                     QuestionFrame(
                                       number: widget.number[j],
-                                      question: widget.question[j],
+                                      question: widget.question[j] == ""
+                                          ? "(${j + 1})"
+                                          : widget.question[j],
                                       answers: widget.answers[j],
                                     ),
                                 ]),
@@ -361,4 +382,13 @@ class _PartSixFrameState extends State<PartSixFrame>
           ),
         ]);
   }
+}
+
+List<List<String>> convertListDynamicToListListString(List<dynamic> data) {
+  List<List<String>> newList = [];
+  for (int i = 0; i < data.length; i++) {
+    newList.add(List<String>.from(data[i] as List));
+  }
+  ;
+  return newList;
 }
