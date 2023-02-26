@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:toeic_app/api/add_question.dart';
-import 'package:toeic_app/api/data.dart';
 
 import 'home_page.dart';
 import 'constants.dart';
@@ -14,7 +12,6 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import "package:typed_data/typed_data.dart";
 import 'others/get_It.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -51,44 +48,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _loadTheme();
-    // importData(); // Import data
-  }
-
-  //
-  Future<void> importData() async {
-    var documents = await firestore.collection("Answers").get();
-    setState(() {
-      start = documents.size;
-    });
-    for (int i = 0; i < 6; i++) {
-      await addQuestion(qID[i], listQuestion[i], listAnswers[i],
-          listRightAnswer[i], partID[i], start,
-          imagesURL: [imagesURL[0][i]], audioURL: audio[i], examID: examID);
-      documents = await firestore.collection("Answers").get();
-      setState(() {
-        start = documents.size;
-      });
-    }
-
-    for (int i = 6; i < 31; i++) {
-      await addQuestion(qID[i], listQuestion[i], listAnswers[i],
-          listRightAnswer[i], partID[i], start,
-          audioURL: audio[i], examID: examID);
-      documents = await firestore.collection("Answers").get();
-      setState(() {
-        start = documents.size;
-      });
-    }
-
-    for (int i = 31; i < 54; i++) {
-      await addQuestion(qID[i], listQuestion[i], listAnswers[i],
-          listRightAnswer[i], partID[i], start,
-          audioURL: audio[i], examID: examID, imagesURL: [imagesURL[1][i-31]]);
-      documents = await firestore.collection("Answers").get();
-      setState(() {
-        start = documents.size;
-      });
-    }
   }
 
   @override

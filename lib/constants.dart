@@ -75,7 +75,7 @@ final List<String> listTitle = [
 ];
 
 final List<Widget> listTapWidget = [
-  PartOne(),
+  // PartOne(),
   PartTwo(),
   PartThree(),
   PartFour(),

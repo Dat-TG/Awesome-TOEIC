@@ -1,13 +1,15 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:toeic_app/part/app_bar.dart';
-
+import 'package:firebase_storage/firebase_storage.dart';
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 
 class PartOne extends StatefulWidget {
-  const PartOne({super.key});
+  final List<DocumentSnapshot> questions;
+  const PartOne({super.key, required this.questions});
 
   @override
   State<PartOne> createState() => _PartOneState();
@@ -15,7 +17,7 @@ class PartOne extends StatefulWidget {
 
 class _PartOneState extends State<PartOne> {
   int _curr = 1;
-  int totalQues = 4; // Example
+  int totalQues = 6;
   List<String> _answer = [];
   PageController controller = PageController();
   bool isShow = false;
@@ -32,7 +34,6 @@ class _PartOneState extends State<PartOne> {
     setState(() {
       _answer[number - 1] = ans;
     });
-    print(_answer);
   }
 
   @override
@@ -52,65 +53,26 @@ class _PartOneState extends State<PartOne> {
               });
             },
             children: [
-              PartOneFrame(
-                audioPath: 'assets/audio/10.mp3',
-                img: 'assets/img/test_1.jpg',
-                number: 1,
-                getAnswer: (numb, value) => callbackAnswer(numb, value),
-                ans: _answer,
-                isShow: isShow,
-                cancelShowExplan: (s) {
-                  setState(() {
-                    isShow = s;
-                  });
-                },
-              ),
-              PartOneFrame(
-                audioPath: 'assets/audio/10.mp3',
-                img: 'assets/img/test_1.jpg',
-                number: 2,
-                getAnswer: (numb, value) => callbackAnswer(numb, value),
-                ans: _answer,
-                isShow: isShow,
-                cancelShowExplan: (s) {
-                  setState(() {
-                    isShow = s;
-                  });
-                },
-              ),
-              PartOneFrame(
-                audioPath: 'assets/audio/10.mp3',
-                img: 'assets/img/test_1.jpg',
-                number: 3,
-                getAnswer: (numb, value) => callbackAnswer(numb, value),
-                ans: _answer,
-                isShow: isShow,
-                cancelShowExplan: (s) {
-                  setState(() {
-                    isShow = s;
-                  });
-                },
-              ),
-              PartOneFrame(
-                audioPath: 'assets/audio/10.mp3',
-                img: 'assets/img/test_1.jpg',
-                number: 4,
-                getAnswer: (numb, value) => callbackAnswer(numb, value),
-                ans: _answer,
-                isShow: isShow,
-                cancelShowExplan: (s) {
-                  setState(() {
-                    isShow = s;
-                  });
-                },
-              )
+              ...widget.questions
+                  .asMap()
+                  .entries
+                  .map((question) => PartOneFrame(
+                      number: question.key + 1,
+                      getAnswer: (numb, value) => callbackAnswer(numb, value),
+                      ans: _answer,
+                      isShow: isShow,
+                      cancelShowExplan: (s) {
+                        setState(() {
+                          isShow = s;
+                        });
+                      }))
+                  .toList()
             ]));
   }
 }
 
 class PartOneFrame extends StatefulWidget {
   final int number;
-  final String img, audioPath;
   final List<String> ans;
   final Function(int, String) getAnswer;
   final bool isShow;
@@ -120,8 +82,6 @@ class PartOneFrame extends StatefulWidget {
   const PartOneFrame(
       {super.key,
       required this.number,
-      required this.img,
-      required this.audioPath,
       required this.getAnswer,
       required this.ans,
       required this.isShow,
@@ -133,7 +93,8 @@ class PartOneFrame extends StatefulWidget {
 
 // --------------------------------------------------------------------
 class _PartOneFrameState extends State<PartOneFrame> {
-  late AudioPlayer _player = AudioPlayer()..setAsset(widget.audioPath);
+  AudioPlayer _player = AudioPlayer();
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   Stream<PositionData> get _positionDataStream => Rx.combineLatest3(
       _player.positionStream,
@@ -141,9 +102,24 @@ class _PartOneFrameState extends State<PartOneFrame> {
       _player.durationStream,
       (position, bufferedPosition, duration) =>
           PositionData(position, bufferedPosition, duration ?? Duration.zero));
+  String imageURL = "";
   @override
   void initState() {
+    init();
     super.initState();
+  }
+
+  void init() async {
+    Reference audioRef = storage.ref().child('Q${widget.number}.mp3');
+    String audioURL = await audioRef.getDownloadURL();
+    String url =
+        await storage.ref().child('img/${widget.number}.jpg').getDownloadURL();
+
+    setState(() {
+      imageURL = url;
+    });
+    await _player.setAudioSource(ConcatenatingAudioSource(
+        children: [AudioSource.uri(Uri.parse(audioURL))]));
   }
 
   @override
@@ -155,6 +131,7 @@ class _PartOneFrameState extends State<PartOneFrame> {
   @override
   Widget build(BuildContext context) {
     _player.play();
+
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
@@ -207,7 +184,17 @@ class _PartOneFrameState extends State<PartOneFrame> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(15, 20, 15, 15),
-                            child: Image.asset(widget.img, width: 340),
+                            child: imageURL != ""
+                                ? Image.network(imageURL,
+                                    width: 340, height: 300, fit: BoxFit.fill)
+                                : SizedBox(
+                                    width: 340,
+                                    height: 300,
+                                    child: Center(
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )),
                           )),
                     ],
                   ),

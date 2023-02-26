@@ -38,3 +38,49 @@ Future<void> addQuestion(
       .then((value) => print("Question Added"))
       .catchError((error) => print("Failed to add question: $error"));
 }
+
+
+
+
+// Future<void> updateData() async {
+//   for (int i = 132; i <= 154; i++) {
+//     await updateListRightAnswer(i, listRightAnswer[i - 101]);
+//   }
+// }
+
+// Import data
+// Future<void> importData() async {
+//   var documents = await firestore.collection("Answers").get();
+//   setState(() {
+//     start = documents.size;
+//   });
+//   for (int i = 0; i < 6; i++) {
+//     await addQuestion(qID[i], listQuestion[i], listAnswers[i],
+//         listRightAnswer[i], partID[i], start,
+//         imagesURL: [imagesURL[0][i]], audioURL: audio[i], examID: examID);
+//     documents = await firestore.collection("Answers").get();
+//     setState(() {
+//       start = documents.size;
+//     });
+//   }
+
+//   for (int i = 6; i < 31; i++) {
+//     await addQuestion(qID[i], listQuestion[i], listAnswers[i],
+//         listRightAnswer[i], partID[i], start,
+//         audioURL: audio[i], examID: examID);
+//     documents = await firestore.collection("Answers").get();
+//     setState(() {
+//       start = documents.size;
+//     });
+//   }
+
+//   for (int i = 31; i < 54; i++) {
+//     await addQuestion(qID[i], listQuestion[i], listAnswers[i],
+//         listRightAnswer[i], partID[i], start,
+//         audioURL: audio[i], examID: examID, imagesURL: [imagesURL[1][i - 31]]);
+//     documents = await firestore.collection("Answers").get();
+//     setState(() {
+//       start = documents.size;
+//     });
+//   }
+// }

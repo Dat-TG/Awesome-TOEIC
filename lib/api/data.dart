@@ -23,7 +23,29 @@ List<List<List<String>>> listAnswers = [
 List<List<String>> listRightAnswer = [
   for (int i = 0; i < 31; i++) [rightAns[i]],
   for (int i = 31; i < 100; i += 3)
-    [rightAns[i], rightAns[i + 1], rightAns[i + 2]]
+    [
+      rightAns[i] == a
+          ? answers[i - 31][0]
+          : rightAns[i] == b
+              ? answers[i - 31][1]
+              : rightAns[i] == c
+                  ? answers[i - 31][2]
+                  : answers[i - 31][3],
+      rightAns[i + 1] == a
+          ? answers[i + 1 - 31][0]
+          : rightAns[i + 1] == b
+              ? answers[i + 1 - 31][1]
+              : rightAns[i + 1] == c
+                  ? answers[i + 1 - 31][2]
+                  : answers[i + 1 - 31][3],
+      rightAns[i + 2] == a
+          ? answers[i + 2 - 31][0]
+          : rightAns[i + 2] == b
+              ? answers[i + 2 - 31][1]
+              : rightAns[i + 2] == c
+                  ? answers[i + 2 - 31][2]
+                  : answers[i + 2 - 31][3],
+    ]
 ];
 List<int> partID = [
   for (int i = 1; i <= 6; i++) 1,
@@ -33,8 +55,8 @@ List<int> partID = [
 ];
 
 List<String> audio = [
-  for (int i = 1; i <= 54; i++)
-    "https://studenthcmusedu-my.sharepoint.com/:u:/g/personal/20120470_student_hcmus_edu_vn/EQFNWfKBSptIiXfx196k_5wBt5J8utYqJkj_H7ixSF8F_A?e=byCxA2"
+  for (int i = 0; i < 54; i++)
+    "https://firebasestorage.googleapis.com/v0/b/toeic-app-flutter.appspot.com/o/Q1.mp3?alt=media&token=9f4b690c-30ae-48bd-9cef-e15ade375680"
 ];
 List<List<String>> imagesURL = [
   //part 1
@@ -305,12 +327,6 @@ List<List<String>> answers = [
     "Providing extra training"
   ],
   [
-    "Adjusting a price list",
-    "Conducting a survey",
-    "Using a local service",
-    "Providing extra training"
-  ],
-  [
     "At an electronics store",
     "At an art museum ",
     "At a movie theater ",
@@ -428,6 +444,12 @@ List<List<String>> answers = [
   ],
   ["Professional musician", "Graphic designer", "Theater owner", "Event host"],
   ["Line 1", "Line 2", "Line 3", "Line 4"],
+  [
+    "Finalize a budget",
+    "Visit the man's office",
+    "Get some items printed",
+    "Update a mailing list"
+  ],
   [
     "To encourage teamwork among employees",
     "To thank employees for their hard work",

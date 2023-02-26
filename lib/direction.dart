@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:toeic_app/api/get_question.dart';
+import 'package:toeic_app/part/part_one.dart';
 
 import 'constants.dart';
 
@@ -302,12 +305,15 @@ class _DirectionState extends State<Direction> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10, top: 20),
                     child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          QuerySnapshot snapshot = await GetQuestion().byAll();
+                          List<DocumentSnapshot> documents = snapshot.docs;
+                          // ignore: use_build_context_synchronously
                           Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      listTapWidget[widget.part]));
+                                      PartOne(questions: documents)));
                         },
                         style: ElevatedButton.styleFrom(
                             shape: StadiumBorder(), backgroundColor: colorApp),
