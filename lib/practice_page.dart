@@ -17,7 +17,6 @@ class Practice extends StatefulWidget {
 class _PracticeState extends State<Practice> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _loadTheme();
   }

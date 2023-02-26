@@ -31,6 +31,14 @@ bool isDarkMode = false;
 
 List<String> answersOption = ["A", "B", "C", "D"];
 
+List<String> convertListDynamicToListString(List<dynamic> data) {
+  List<String> newList = [];
+  for (int i = 0; i < data.length; i++) {
+    newList.add(data[i].toString());
+  }
+  return newList;
+}
+
 void changeColorByTheme() {
   colorBox = isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white;
   colorBoxShadow =
@@ -75,13 +83,13 @@ final List<String> listTitle = [
 ];
 
 final List<Widget> listTapWidget = [
-  // PartOne(),
+  Text("1"),
   PartTwo(),
   PartThree(),
   PartFour(),
-  PartFive(),
+  Text("5"),
   PartSix(),
-  PartSeven()
+  Text("7")
 ];
 
 final List<String> listDirectionEng = [

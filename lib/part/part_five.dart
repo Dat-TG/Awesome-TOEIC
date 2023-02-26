@@ -1,34 +1,39 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:toeic_app/api/get_questions_answers.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import './../constants.dart';
 import 'question_frame.dart';
 
 class PartFive extends StatefulWidget {
-  const PartFive({super.key});
+  final List<Map<String, dynamic>> data;
+  const PartFive({super.key, required this.data});
   @override
   State<StatefulWidget> createState() => _PartFiveState();
 }
 
 class _PartFiveState extends State<PartFive> {
-  int _curr = 1;
-  int totalQues = 4;
-  List<String> _answer = [];
+  int _curr = 101;
+  int totalQues = 30;
+  List<String> _answers = [];
+  List<List<String>> answersData = [];
   PageController controller = PageController();
   bool isShow = false;
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      _answer[number - 1] = ans;
+      _answers[number - 1] = ans;
     });
-    print(_answer);
   }
 
   @override
   void initState() {
+    setState(() {
+      for (int i = 0; i < totalQues; i++) {
+        _answers.add("");
+      }
+    });
     super.initState();
-    for (int i = 0; i < totalQues; i++) {
-      _answer.add("");
-    }
   }
 
   @override
@@ -44,49 +49,24 @@ class _PartFiveState extends State<PartFive> {
             controller: controller,
             onPageChanged: (number) {
               setState(() {
-                _curr = number + 1;
+                _curr = number + 101;
               });
             },
             children: [
-              PartFiveFrame(
-                  number: 1,
-                  question:
-                      "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
-                  answers: ["her", "she", "hers", "herself"],
-                  getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answer,
-                  isShow: isShow,
-                  cancelShowExplan: (s) {
-                    setState(() {
-                      isShow = s;
-                    });
-                  }),
-              PartFiveFrame(
-                  number: 2,
-                  question:
-                      "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
-                  answers: ["her", "she", "hers", "herself"],
-                  getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answer,
-                  isShow: isShow,
-                  cancelShowExplan: (s) {
-                    setState(() {
-                      isShow = s;
-                    });
-                  }),
-              PartFiveFrame(
-                  number: 3,
-                  question:
-                      "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
-                  answers: ["her", "she", "hers", "herself"],
-                  getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answer,
-                  isShow: isShow,
-                  cancelShowExplan: (s) {
-                    setState(() {
-                      isShow = s;
-                    });
-                  })
+              for (int i = 0; i < totalQues; i++)
+                PartFiveFrame(
+                    number: i + 1,
+                    question: widget.data[i]['list_question'][0],
+                    answers: convertListDynamicToListString(
+                        widget.data.elementAt(i)['list_answers'][0]),
+                    getAnswer: (number, value) => callbackAnswer(number, value),
+                    ans: _answers,
+                    isShow: isShow,
+                    cancelShowExplan: (s) {
+                      setState(() {
+                        isShow = s;
+                      });
+                    })
             ]));
   }
 }
@@ -117,8 +97,15 @@ class PartFiveFrame extends StatefulWidget {
 
 // --------------------------------------------------------------------
 class _PartFiveFrameState extends State<PartFiveFrame> {
+  int test = 5;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(test);
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
@@ -126,7 +113,7 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
           Padding(
             padding: const EdgeInsets.only(top: 20),
             child: QuestionFrame(
-                number: widget.number,
+                number: widget.number + 100,
                 question: widget.question,
                 answers: widget.answers),
           ),
@@ -143,7 +130,7 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                         border: Border(
                             bottom: BorderSide(color: orange, width: 5))),
                     child: Text(
-                      'Câu ${widget.number}',
+                      'Câu ${widget.number + 100}',
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: orange,
@@ -186,8 +173,7 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                                     color: colorBoxShadow,
                                     spreadRadius: 2,
                                     blurRadius: 3,
-                                    offset: Offset(
-                                        0, 3),
+                                    offset: Offset(0, 3),
                                   )
                                 ],
                               ),

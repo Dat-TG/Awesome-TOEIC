@@ -5,7 +5,8 @@ import './../constants.dart';
 import 'question_frame.dart';
 
 class PartSeven extends StatefulWidget {
-  const PartSeven({super.key});
+  final List<Map<String, dynamic>> data;
+  const PartSeven({super.key, required this.data});
 
   @override
   State<PartSeven> createState() => _PartSevenState();
@@ -14,7 +15,7 @@ class PartSeven extends StatefulWidget {
 class _PartSevenState extends State<PartSeven> {
   int _curr = 1;
   String numAnswers = '180-185';
-  int totalQues = 9; //Example
+  int totalQues = 54;
   List<String> _answer = [];
   PageController controllerFrame = PageController();
   bool isShow = false;

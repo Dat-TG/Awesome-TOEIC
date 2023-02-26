@@ -8,8 +8,8 @@ import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 
 class PartOne extends StatefulWidget {
-  final List<DocumentSnapshot> questions;
-  const PartOne({super.key, required this.questions});
+  final List<Map<String, dynamic>> data;
+  const PartOne({super.key, required this.data});
 
   @override
   State<PartOne> createState() => _PartOneState();
@@ -53,20 +53,17 @@ class _PartOneState extends State<PartOne> {
               });
             },
             children: [
-              ...widget.questions
-                  .asMap()
-                  .entries
-                  .map((question) => PartOneFrame(
-                      number: question.key + 1,
-                      getAnswer: (numb, value) => callbackAnswer(numb, value),
-                      ans: _answer,
-                      isShow: isShow,
-                      cancelShowExplan: (s) {
-                        setState(() {
-                          isShow = s;
-                        });
-                      }))
-                  .toList()
+              for (int i = 0; i < totalQues; i++)
+              PartOneFrame(
+                  number: i + 1,
+                  getAnswer: (numb, value) => callbackAnswer(numb, value),
+                  ans: _answer,
+                  isShow: isShow,
+                  cancelShowExplan: (s) {
+                    setState(() {
+                      isShow = s;
+                    });
+                  })
             ]));
   }
 }
