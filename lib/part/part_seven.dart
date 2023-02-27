@@ -72,6 +72,28 @@ class _PartSevenState extends State<PartSeven> {
                   });
                 },
               ),
+              PartSevenFrame(
+                number: [1, 2, 3],
+                img: [
+                  "assets/img/test_1.jpg",
+                  "assets/img/test_1.jpg",
+                  "assets/img/test_1.jpg"
+                ],
+                question: ["her", "she", "hers", "herself"],
+                answers: [
+                  ["her", "she", "hers", "herself"],
+                  ["her", "she", "hers", "herself"],
+                  ["her", "she", "hers", "herself"]
+                ],
+                getAnswer: (number, value) => callbackAnswer(number, value),
+                ans: _answer,
+                isShow: isShow,
+                cancelShowExplan: (s) {
+                  setState(() {
+                    isShow = s;
+                  });
+                },
+              ),
             ]));
   }
 }

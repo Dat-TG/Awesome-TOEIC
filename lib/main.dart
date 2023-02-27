@@ -197,7 +197,7 @@ Future<void> getQuestion(List<Map<String, dynamic>> data, int partID) async {
   var temp;
   await FirebaseFirestore.instance
       .collection("Questions")
-      .where('part_id', isEqualTo: 6)
+      .where('part_id', isEqualTo: partID)
       .get()
       .then((value) async => {
             for (int i = 0; i < value.docs.length; i++)
@@ -210,7 +210,7 @@ Future<void> getQuestion(List<Map<String, dynamic>> data, int partID) async {
                     await FirebaseFirestore.instance
                         .collection("Answers")
                         .where(FieldPath.documentId,
-                            isEqualTo: temp['list_answers_id'][j])
+                            isEqualTo: temp['list_answers_id'][j].toString())
                         .get()
                         .then((value) => {
                               temp['list_answers']

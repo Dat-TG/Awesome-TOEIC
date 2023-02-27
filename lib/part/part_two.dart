@@ -1,5 +1,6 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:toeic_app/main.dart';
 
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
@@ -17,13 +18,21 @@ class _PartTwoState extends State<PartTwo> {
   int totalQues = 4; // Example
   List<String> _answer = [];
   PageController controller = PageController();
+  List<Map<String, dynamic>> listQuestionPart2 = [];
 
   @override
   void initState() {
     super.initState();
-    for (int i = 0; i < totalQues; i++) {
-      _answer.add("");
-    }
+    getQuestion(listQuestionPart2, 2).then((value) => {
+          print("list question length: ${listQuestionPart2.length}"),
+          setState(() {
+            totalQues = listQuestionPart2.length;
+            _answer = [];
+            for (int i = 0; i < totalQues; i++) {
+              _answer.add("");
+            }
+          })
+        });
   }
 
   void callbackAnswer(int number, String ans) {
@@ -80,26 +89,12 @@ class _PartTwoState extends State<PartTwo> {
               });
             },
             children: [
-              PartTwoFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  number: 1,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
-              PartTwoFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  number: 2,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
-              PartTwoFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  number: 3,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
-              PartTwoFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  number: 4,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer)
+              for (int i = 0; i < listQuestionPart2.length; i++)
+                PartTwoFrame(
+                    audioPath: 'assets/audio/10.mp3',
+                    number: i + 1,
+                    getAnswer: (numb, value) => callbackAnswer(numb, value),
+                    ans: _answer),
             ]));
   }
 }
