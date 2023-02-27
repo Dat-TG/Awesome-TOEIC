@@ -1,3 +1,4 @@
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:toeic_app/part/app_bar.dart';
 
@@ -23,6 +24,7 @@ class _PartSevenState extends State<PartSeven> {
   void callbackAnswer(int number, String ans) {
     setState(() {
       _answer[number - 1] = ans;
+      print(_answer);
     });
   }
 
@@ -36,6 +38,8 @@ class _PartSevenState extends State<PartSeven> {
 
   @override
   Widget build(BuildContext context) {
+    _curr = 1;
+
     return Scaffold(
         appBar: AppBarPractice(
           numAnswers: numAnswers,
@@ -51,28 +55,39 @@ class _PartSevenState extends State<PartSeven> {
               });
             },
             children: [
-              PartSevenFrame(
-                number: [1, 2, 3],
-                img: [
-                  "assets/img/test_1.jpg",
-                  "assets/img/test_1.jpg",
-                  "assets/img/test_1.jpg"
-                ],
-                question: ["her", "she", "hers", "herself"],
-                answers: [
-                  ["her", "she", "hers", "herself"],
-                  ["her", "she", "hers", "herself"],
-                  ["her", "she", "hers", "herself"]
-                ],
-                getAnswer: (number, value) => callbackAnswer(number, value),
-                ans: _answer,
-                isShow: isShow,
-                cancelShowExplan: (s) {
-                  setState(() {
-                    isShow = s;
-                  });
-                },
-              ),
+              for (int i = 0; i < widget.data.length; i++)
+                PartSevenFrame(
+                  number: [
+                    for (int j = 0;
+                        j <
+                            convertListDynamicToListListString(
+                                    widget.data[i]['list_answers'])
+                                .length;
+                        j++)
+                      _curr++
+                  ],
+                  img: [
+                    for (int j = 0;
+                        j <
+                            convertListDynamicToListListString(
+                                    widget.data[i]['list_answers'])
+                                .length;
+                        j++)
+                      "assets/img/test_1.jpg"
+                  ],
+                  question: convertListDynamicToListString(
+                      widget.data[i]['list_question']),
+                  answers: convertListDynamicToListListString(
+                      widget.data[i]['list_answers']),
+                  getAnswer: (number, value) => callbackAnswer(number, value),
+                  ans: _answer,
+                  isShow: isShow,
+                  cancelShowExplan: (s) {
+                    setState(() {
+                      isShow = s;
+                    });
+                  },
+                ),
             ]));
   }
 }
@@ -105,11 +120,20 @@ class PartSevenFrame extends StatefulWidget {
 class _PartSevenFrameState extends State<PartSevenFrame> {
   PageController controllerAnswer = PageController();
   late int _currAns;
-
+  FirebaseStorage storage = FirebaseStorage.instance;
+  String imageURL = "";
   @override
   void initState() {
     super.initState();
     _currAns = widget.number[0];
+  }
+
+  void init() async {
+    String url = await storage.ref().child('img/1.jpg').getDownloadURL();
+
+    setState(() {
+      imageURL = url;
+    });
   }
 
   @override
@@ -141,10 +165,19 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                             for (int i = 0; i < widget.img.length; i++)
                               Container(
                                 margin: EdgeInsets.only(top: 10, bottom: 10),
-                                child: Image.asset(
-                                  widget.img[i],
-                                  width: 320,
-                                ),
+                                child: imageURL != ""
+                                    ? Image.network(imageURL,
+                                        width: 340,
+                                        height: 300,
+                                        fit: BoxFit.fill)
+                                    : SizedBox(
+                                        width: 340,
+                                        height: 300,
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )),
                               )
                           ],
                         ),
@@ -173,24 +206,14 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                             child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  QuestionFrame(
-                                    number: 2,
-                                    question:
-                                        "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
-                                    answers: ["her", "she", "hers", "herself"],
-                                  ),
-                                  QuestionFrame(
-                                    number: 2,
-                                    question:
-                                        "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
-                                    answers: ["her", "she", "hers", "herself"],
-                                  ),
-                                  QuestionFrame(
-                                    number: 2,
-                                    question:
-                                        "Ms. Kim asks that the marketing team e-mail the final draft to _____ before 5 p.m.",
-                                    answers: ["her", "she", "hers", "herself"],
-                                  ),
+                                  for (int i = 0;
+                                      i < widget.question.length;
+                                      i++)
+                                    QuestionFrame(
+                                      number: i + 1,
+                                      question: widget.question[i],
+                                      answers: widget.answers[i],
+                                    ),
                                 ]),
                           ),
                         )),
@@ -209,7 +232,7 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                 children: [
                   Row(
                     children: [
-                      for (var index in widget.number)
+                      for (int index in widget.number)
                         InkWell(
                           onTap: () {
                             setState(() {
@@ -230,7 +253,7 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Câu $index',
+                                  'Q.$index',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color: _currAns == index ? orange : black,
@@ -286,7 +309,10 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                                             padding: EdgeInsets.all(15),
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: i == widget.ans[size]
+                                              color: i ==
+                                                      widget.ans[
+                                                          widget.number[size] -
+                                                              1]
                                                   ? orange
                                                   : white,
                                               border: Border.all(

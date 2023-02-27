@@ -39,6 +39,14 @@ List<String> convertListDynamicToListString(List<dynamic> data) {
   return newList;
 }
 
+List<List<String>> convertListDynamicToListListString(List<dynamic> data) {
+  List<List<String>> newList = [];
+  for (int i = 0; i < data.length; i++) {
+    newList.add(List<String>.from(data[i] as List));
+  }
+  return newList;
+}
+
 void changeColorByTheme() {
   colorBox = isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white;
   colorBoxShadow =
