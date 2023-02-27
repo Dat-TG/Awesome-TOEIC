@@ -108,8 +108,6 @@ final List<int> listSentencesDone = [1, 2, 3, 4, 5, 6, 7];
 final List<int> listSentencesRight = [1, 2, 3, 4, 5, 6, 7];
 final List<double> listProgress = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7];
 
-List<Map<String, dynamic>> listQuestionPart6 = [];
-
 List<Map<String, dynamic>> listQuestionPart3 = [
   {
     "listQuestion": [

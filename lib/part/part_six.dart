@@ -14,8 +14,9 @@ class PartSix extends StatefulWidget {
 }
 
 class _PartSixState extends State<PartSix> {
+  List<Map<String, dynamic>> listQuestionPart6 = [];
   int _curr = 1;
-  int totalQues = listQuestionPart6.length * 4;
+  int totalQues = 1;
   List<String> _answer = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
@@ -30,11 +31,6 @@ class _PartSixState extends State<PartSix> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _curr = 1;
-    _answer = [];
-    for (int i = 0; i < totalQues; i++) {
-      _answer.add("");
-    }
   }
 
   @override
@@ -44,7 +40,6 @@ class _PartSixState extends State<PartSix> {
           print("list question length: ${listQuestionPart6.length}"),
           setState(() {
             totalQues = listQuestionPart6.length * 4;
-            _answer = [];
             for (int i = 0; i < totalQues; i++) {
               _answer.add("");
             }
@@ -393,6 +388,5 @@ List<List<String>> convertListDynamicToListListString(List<dynamic> data) {
   for (int i = 0; i < data.length; i++) {
     newList.add(List<String>.from(data[i] as List));
   }
-  ;
   return newList;
 }
