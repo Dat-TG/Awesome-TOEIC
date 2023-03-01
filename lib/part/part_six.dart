@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import './../constants.dart';
+import 'app_bar.dart';
 import 'question_frame.dart';
 
 class PartSix extends StatefulWidget {
@@ -17,6 +18,7 @@ class _PartSixState extends State<PartSix> {
   List<String> _answer = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
+  String numAnswers = "1-4";
 
   void callbackAnswer(int number, String value) {
     setState(() {
@@ -43,75 +45,33 @@ class _PartSixState extends State<PartSix> {
 
   @override
   Widget build(BuildContext context) {
+    _curr = 1;
     return Scaffold(
-        appBar: AppBar(
-          title: Transform.translate(
-              offset: Offset(-25, 0),
-              child: (Row(
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        'Câu ',
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        "Câu ${_curr}-${_curr + 3}",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13, right: 8),
-                    child: Icon(Icons.info_outline),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 13),
-                    child: Icon(Icons.settings_outlined),
-                  ),
-                  Icon(Icons.favorite_outline)
-                ],
-              ))),
-          backgroundColor: colorApp,
-          centerTitle: true,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    isShow = !isShow;
-                  });
-                },
-                child: Center(
-                  child: Text(
-                    'Giải thích',
-                    style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            )
-          ],
+        appBar: AppBarPractice(
+          numAnswers: numAnswers,
+          answers: listDirectionEng,
+          ansTrans: listDirectionVn,
         ),
         body: PageView(
             scrollDirection: Axis.horizontal,
             controller: controllerFrame,
             onPageChanged: (number) {
               setState(() {
-                _curr = number * 4 + 1;
+                numAnswers = "${number * 4 + 1}-${number * 4 + 4}";
               });
             },
             children: [
               for (int i = 0; i < widget.data.length; i++)
                 PartSixFrame(
-                  number: [_curr, _curr + 1, _curr + 2, _curr + 3],
+                  number: [
+                    for (int j = 0;
+                        j <
+                            convertListDynamicToListListString(
+                                    widget.data[i]['list_answers'])
+                                .length;
+                        j++)
+                      _curr++
+                  ],
                   paragraph: widget.data[i]['content'],
                   question: List<String>.from(
                       widget.data[i]['list_question'] as List),

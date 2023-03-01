@@ -1,14 +1,17 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:toeic_app/part/part_one.dart';
 
 import './../constants.dart';
+import 'app_bar.dart';
 import 'question_frame.dart';
 
 class PartThree extends StatefulWidget {
-  const PartThree({super.key});
+  final List<Map<String, dynamic>> data;
+  const PartThree({super.key, required this.data});
 
   @override
   State<PartThree> createState() => _PartThreeState();
@@ -16,10 +19,11 @@ class PartThree extends StatefulWidget {
 
 class _PartThreeState extends State<PartThree> {
   int _curr = 1;
-  int totalQues = listQuestionPart3.length * 3; //Example
+  int totalQues = 3; //Example
   List<String> _answer = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
+  String numAnswers = "1-3";
 
   void callbackAnswer(int number, String value) {
     setState(() {
@@ -30,85 +34,49 @@ class _PartThreeState extends State<PartThree> {
   @override
   void initState() {
     super.initState();
-    for (int i = 0; i < totalQues; i++) {
-      _answer.add("");
-    }
+    setState(() {
+      totalQues = widget.data.length * 3;
+      for (int i = 0; i < totalQues; i++) {
+        _answer.add("");
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    _curr = 1;
     return Scaffold(
-        appBar: AppBar(
-          title: Transform.translate(
-              offset: Offset(-25, 0),
-              child: (Row(
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        'Câu ',
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
-                      ),
-                      Text(
-                        "Câu ${_curr}-${_curr + 2}",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      )
-                    ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13, right: 8),
-                    child: Icon(Icons.info_outline),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 13),
-                    child: Icon(Icons.settings_outlined),
-                  ),
-                  Icon(Icons.favorite_outline)
-                ],
-              ))),
-          backgroundColor: colorApp,
-          centerTitle: true,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: InkWell(
-                onTap: () {
-                  setState(() {
-                    isShow = !isShow;
-                  });
-                },
-                child: Center(
-                  child: Text(
-                    'Giải thích',
-                    style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-            )
-          ],
+        appBar: AppBarPractice(
+          numAnswers: numAnswers,
+          answers: listDirectionEng,
+          ansTrans: listDirectionVn,
         ),
         body: PageView(
             scrollDirection: Axis.horizontal,
             controller: controllerFrame,
             onPageChanged: (number) {
               setState(() {
-                _curr = number * 3 + 1;
+                numAnswers = "${number * 3 + 1}-${number * 3 + 3}";
               });
             },
             children: [
-              for (int i = 0; i < listQuestionPart3.length; i++)
+              for (int i = 0; i < widget.data.length; i++)
                 PartThreeFrame(
-                  number: [_curr, _curr + 1, _curr + 2],
-                  audioPath: 'assets/audio/10.mp3',
-                  question: listQuestionPart3[i]['listQuestion'],
-                  answers: listQuestionPart3[i]['listAnswer'],
+                  number: [
+                    for (int j = 0;
+                        j <
+                            convertListDynamicToListListString(
+                                    widget.data[i]['list_answers'])
+                                .length;
+                        j++)
+                      _curr++
+                  ],
+                  audioPath: widget.data[i]['audio'],
+                  images: List<String>.from(widget.data[i]['images'] as List),
+                  question: List<String>.from(
+                      widget.data[i]['list_question'] as List),
+                  answers: convertListDynamicToListListString(
+                      widget.data[i]['list_answers']),
                   getAnswer: (number, value) => callbackAnswer(number, value),
                   ans: _answer,
                   isShow: isShow,
@@ -130,12 +98,14 @@ class PartThreeFrame extends StatefulWidget {
   final Function(int, String) getAnswer;
   final Function(bool) cancelShowExplan;
   final bool isShow;
+  final List<String> images;
   // Note, reason
 
   const PartThreeFrame(
       {super.key,
       required this.number,
       required this.audioPath,
+      required this.images,
       required this.question,
       required this.answers,
       required this.getAnswer,
@@ -150,9 +120,11 @@ class PartThreeFrame extends StatefulWidget {
 // --------------------------------------------------------------------
 class _PartThreeFrameState extends State<PartThreeFrame> {
   PageController controllerAnswer = PageController();
+  FirebaseStorage storage = FirebaseStorage.instance;
   late int _currAns;
 
-  late AudioPlayer _player = AudioPlayer()..setAsset(widget.audioPath);
+  late AudioPlayer _player = AudioPlayer();
+  String imageURL = "";
 
   Stream<PositionData> get _positionDataStream => Rx.combineLatest3(
       _player.positionStream,
@@ -161,16 +133,33 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
       (position, bufferedPosition, duration) =>
           PositionData(position, bufferedPosition, duration ?? Duration.zero));
 
+  void init() async {
+    Reference audioRef = storage.ref().child(widget.audioPath);
+    String audioURL = await audioRef.getDownloadURL();
+    String url = "";
+    if (widget.images[0] != "") {
+      url =
+          await storage.ref().child('img/${widget.images[0]}').getDownloadURL();
+    }
+
+    setState(() {
+      imageURL = url;
+    });
+    await _player.setAudioSource(ConcatenatingAudioSource(
+        children: [AudioSource.uri(Uri.parse(audioURL))]));
+  }
+
   @override
   void initState() {
+    init();
     super.initState();
     _currAns = widget.number[0];
   }
 
   @override
   void dispose() {
-    _player.dispose();
     super.dispose();
+    _player.dispose();
   }
 
   @override
@@ -190,6 +179,31 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 15, 0, 15),
+                        child: Text(
+                          "Nghe và chọn câu trả lời phù hợp",
+                          style: TextStyle(fontSize: 16),
+                        )),
+                    Container(
+                        decoration: BoxDecoration(
+                          color: white,
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10),
+                              bottomRight: Radius.circular(10)),
+                        ),
+                        child: Padding(
+                          padding: imageURL != ""
+                              ? const EdgeInsets.fromLTRB(15, 20, 15, 15)
+                              : const EdgeInsets.all(0),
+                          child: imageURL != ""
+                              ? Image.network(imageURL,
+                                  width: 340,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.2,
+                                  fit: BoxFit.fill)
+                              : SizedBox(),
+                        )),
                     Container(
                       width: MediaQuery.of(context).size.width * 2 / 3 > 500
                           ? 500
@@ -227,7 +241,7 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                       width: MediaQuery.of(context).size.width,
                       constraints: BoxConstraints(
                           minHeight: 50,
-                          maxHeight: MediaQuery.of(context).size.height * 0.1),
+                          maxHeight: MediaQuery.of(context).size.height * 1),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -247,8 +261,9 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                         child: Container(
                           constraints: BoxConstraints(
                               minHeight: 50,
-                              maxHeight:
-                                  MediaQuery.of(context).size.height * 0.4),
+                              maxHeight: imageURL != ""
+                                  ? MediaQuery.of(context).size.height * 0.25
+                                  : MediaQuery.of(context).size.height * 0.4),
                           padding: const EdgeInsets.fromLTRB(5, 5, 0, 10),
                           child: SingleChildScrollView(
                             child: Column(
@@ -284,6 +299,7 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                             setState(() {
                               _currAns = index;
                             });
+                            print(widget.number);
                             controllerAnswer
                                 .jumpToPage(_currAns - widget.number[0]);
                             print(
@@ -302,7 +318,7 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Q.$index',
+                                  'Câu $index',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color:
