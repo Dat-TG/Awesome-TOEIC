@@ -92,7 +92,7 @@ final List<String> listTitle = [
 
 final List<Widget> listTapWidget = [
   Text("1"),
-  PartTwo(),
+  Text("2"),
   PartThree(),
   PartFour(),
   Text("5"),

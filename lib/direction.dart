@@ -6,6 +6,7 @@ import 'package:toeic_app/part/part_five.dart';
 import 'package:toeic_app/part/part_one.dart';
 import 'package:toeic_app/part/part_seven.dart';
 import 'package:toeic_app/part/part_six.dart';
+import 'package:toeic_app/part/part_two.dart';
 
 import 'constants.dart';
 
@@ -355,6 +356,12 @@ class _DirectionState extends State<Direction> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         PartOne(data: data)));
+                                          } else if (widget.part == 1) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PartTwo(data: data)));
                                           } else if (widget.part == 4) {
                                             Navigator.push(
                                                 context,

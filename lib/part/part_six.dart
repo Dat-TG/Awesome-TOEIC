@@ -33,11 +33,12 @@ class _PartSixState extends State<PartSix> {
   @override
   void initState() {
     super.initState();
-
-    totalQues = widget.data.length * 4;
-    for (int i = 0; i < totalQues; i++) {
-      _answer.add("");
-    }
+    setState(() {
+      totalQues = widget.data.length * 4;
+      for (int i = 0; i < totalQues; i++) {
+        _answer.add("");
+      }
+    });
   }
 
   @override

@@ -1,12 +1,15 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:toeic_app/main.dart';
 
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
 
 class PartTwo extends StatefulWidget {
-  const PartTwo({super.key});
+  final List<Map<String, dynamic>> data;
+  const PartTwo({super.key, required this.data});
 
   @override
   State<PartTwo> createState() => _PartTwoState();
@@ -21,9 +24,13 @@ class _PartTwoState extends State<PartTwo> {
   @override
   void initState() {
     super.initState();
-    for (int i = 0; i < totalQues; i++) {
-      _answer.add("");
-    }
+    setState(() {
+      totalQues = widget.data.length;
+      _answer = [];
+      for (int i = 0; i < totalQues; i++) {
+        _answer.add("");
+      }
+    });
   }
 
   void callbackAnswer(int number, String ans) {
@@ -80,26 +87,12 @@ class _PartTwoState extends State<PartTwo> {
               });
             },
             children: [
-              PartTwoFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  number: 1,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
-              PartTwoFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  number: 2,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
-              PartTwoFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  number: 3,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer),
-              PartTwoFrame(
-                  audioPath: 'assets/audio/10.mp3',
-                  number: 4,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer)
+              for (int i = 0; i < widget.data.length; i++)
+                PartTwoFrame(
+                    audioPath: widget.data[i]['audio'],
+                    number: i + 1,
+                    getAnswer: (numb, value) => callbackAnswer(numb, value),
+                    ans: _answer),
             ]));
   }
 }
@@ -124,7 +117,8 @@ class PartTwoFrame extends StatefulWidget {
 
 // --------------------------------------------------------------------
 class _PartTwoFrameState extends State<PartTwoFrame> {
-  late AudioPlayer _player = AudioPlayer()..setAsset(widget.audioPath);
+  late AudioPlayer _player = AudioPlayer();
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   Stream<PositionData> get _positionDataStream => Rx.combineLatest3(
       _player.positionStream,
@@ -132,9 +126,18 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
       _player.durationStream,
       (position, bufferedPosition, duration) =>
           PositionData(position, bufferedPosition, duration ?? Duration.zero));
+
   @override
   void initState() {
+    init();
     super.initState();
+  }
+
+  void init() async {
+    Reference audioRef = storage.ref().child(widget.audioPath);
+    String audioURL = await audioRef.getDownloadURL();
+    await _player.setAudioSource(ConcatenatingAudioSource(
+        children: [AudioSource.uri(Uri.parse(audioURL))]));
   }
 
   @override
@@ -207,7 +210,7 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
                     border:
                         Border(bottom: BorderSide(color: orange, width: 5))),
                 child: Text(
-                  'Q.${widget.number}',
+                  'Câu ${widget.number}',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       color: orange, fontWeight: FontWeight.bold, fontSize: 17),
