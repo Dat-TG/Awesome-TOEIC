@@ -4,7 +4,8 @@ import './../constants.dart';
 import 'question_frame.dart';
 
 class PartSix extends StatefulWidget {
-  const PartSix({super.key});
+  final List<Map<String, dynamic>> data;
+  const PartSix({super.key, required this.data});
 
   @override
   State<PartSix> createState() => _PartSixState();
@@ -12,7 +13,7 @@ class PartSix extends StatefulWidget {
 
 class _PartSixState extends State<PartSix> {
   int _curr = 1;
-  int totalQues = listQuestionPart6.length * 4; //Example
+  int totalQues = 1;
   List<String> _answer = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
@@ -24,8 +25,16 @@ class _PartSixState extends State<PartSix> {
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
+
+    totalQues = widget.data.length * 4;
     for (int i = 0; i < totalQues; i++) {
       _answer.add("");
     }
@@ -99,12 +108,14 @@ class _PartSixState extends State<PartSix> {
               });
             },
             children: [
-              for (int i = 0; i < listQuestionPart6.length; i++)
+              for (int i = 0; i < widget.data.length; i++)
                 PartSixFrame(
                   number: [_curr, _curr + 1, _curr + 2, _curr + 3],
-                  paragraph: listQuestionPart6[i]['paragraph'],
-                  question: listQuestionPart6[i]['listQuestion'],
-                  answers: listQuestionPart6[i]['listAnswer'],
+                  paragraph: widget.data[i]['content'],
+                  question: List<String>.from(
+                      widget.data[i]['list_question'] as List),
+                  answers: convertListDynamicToListListString(
+                      widget.data[i]['list_answers']),
                   getAnswer: (number, value) => callbackAnswer(number, value),
                   ans: _answer,
                   isShow: isShow,
@@ -164,12 +175,12 @@ class _PartSixFrameState extends State<PartSixFrame>
     super.build(context);
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10, bottom: 10),
             child: Row(
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Column(
@@ -222,7 +233,9 @@ class _PartSixFrameState extends State<PartSixFrame>
                                   for (int j = 0; j < widget.number.length; j++)
                                     QuestionFrame(
                                       number: widget.number[j],
-                                      question: widget.question[j],
+                                      question: widget.question[j] == ""
+                                          ? "(${j + 1})"
+                                          : widget.question[j],
                                       answers: widget.answers[j],
                                     ),
                                 ]),
@@ -267,7 +280,7 @@ class _PartSixFrameState extends State<PartSixFrame>
                             child: Row(
                               children: [
                                 Text(
-                                  'Q.$index',
+                                  'Câu $index',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color:
@@ -361,4 +374,12 @@ class _PartSixFrameState extends State<PartSixFrame>
           ),
         ]);
   }
+}
+
+List<List<String>> convertListDynamicToListListString(List<dynamic> data) {
+  List<List<String>> newList = [];
+  for (int i = 0; i < data.length; i++) {
+    newList.add(List<String>.from(data[i] as List));
+  }
+  return newList;
 }

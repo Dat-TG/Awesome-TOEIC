@@ -5,6 +5,7 @@ import 'package:toeic_app/api/get_questions_answers.dart';
 import 'package:toeic_app/part/part_five.dart';
 import 'package:toeic_app/part/part_one.dart';
 import 'package:toeic_app/part/part_seven.dart';
+import 'package:toeic_app/part/part_six.dart';
 
 import 'constants.dart';
 
@@ -360,6 +361,12 @@ class _DirectionState extends State<Direction> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         PartFive(data: data)));
+                                          } else if (widget.part == 5) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PartSix(data: data)));
                                           } else if (widget.part == 6) {
                                             Navigator.push(
                                                 context,

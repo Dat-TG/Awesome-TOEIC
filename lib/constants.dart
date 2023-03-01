@@ -96,7 +96,7 @@ final List<Widget> listTapWidget = [
   PartThree(),
   PartFour(),
   Text("5"),
-  PartSix(),
+  Text("6"),
   Text("7")
 ];
 
