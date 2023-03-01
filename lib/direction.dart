@@ -30,7 +30,6 @@ class _DirectionState extends State<Direction> {
 
           if (snapshot.connectionState == ConnectionState.done) {
             data = snapshot.data as List<Map<String, dynamic>>;
-            print(data);
           }
 
           return Scaffold(

@@ -304,7 +304,7 @@ class _PartFourFrameState extends State<PartFourFrame> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Câu $index',
+                                  'Q.$index',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color:

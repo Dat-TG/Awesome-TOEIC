@@ -207,7 +207,7 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
                     border:
                         Border(bottom: BorderSide(color: orange, width: 5))),
                 child: Text(
-                  'Câu ${widget.number}',
+                  'Q.${widget.number}',
                   textAlign: TextAlign.left,
                   style: TextStyle(
                       color: orange, fontWeight: FontWeight.bold, fontSize: 17),

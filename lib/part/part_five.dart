@@ -97,7 +97,6 @@ class PartFiveFrame extends StatefulWidget {
 
 // --------------------------------------------------------------------
 class _PartFiveFrameState extends State<PartFiveFrame> {
-  int test = 5;
   @override
   void initState() {
     super.initState();
@@ -105,7 +104,6 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
 
   @override
   Widget build(BuildContext context) {
-    print(test);
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
@@ -130,7 +128,7 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                         border: Border(
                             bottom: BorderSide(color: orange, width: 5))),
                     child: Text(
-                      'Câu ${widget.number + 100}',
+                      'Q.${widget.number + 100}',
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: orange,

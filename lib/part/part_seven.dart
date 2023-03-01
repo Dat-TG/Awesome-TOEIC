@@ -15,7 +15,7 @@ class PartSeven extends StatefulWidget {
 
 class _PartSevenState extends State<PartSeven> {
   int _curr = 1;
-  String numAnswers = '180-185';
+  String numAnswers = '147-148';
   int totalQues = 54;
   List<String> _answer = [];
   PageController controllerFrame = PageController();
@@ -39,7 +39,6 @@ class _PartSevenState extends State<PartSeven> {
   @override
   Widget build(BuildContext context) {
     _curr = 1;
-
     return Scaffold(
         appBar: AppBarPractice(
           numAnswers: numAnswers,
@@ -51,7 +50,14 @@ class _PartSevenState extends State<PartSeven> {
             controller: controllerFrame,
             onPageChanged: (number) {
               setState(() {
-                _curr = number + 1;
+                int numAnswerCurrent = 147;
+                for (int i = 0; i < number; i++) {
+                  numAnswerCurrent += convertListDynamicToListListString(
+                          widget.data[i]['list_answers'])
+                      .length;
+                }
+                numAnswers =
+                    '$numAnswerCurrent - ${numAnswerCurrent + convertListDynamicToListListString(widget.data[number]['list_answers']).length - 1}';
               });
             },
             children: [
@@ -69,8 +75,8 @@ class _PartSevenState extends State<PartSeven> {
                   img: [
                     for (int j = 0;
                         j <
-                            convertListDynamicToListListString(
-                                    widget.data[i]['list_answers'])
+                            convertListDynamicToListString(
+                                    widget.data[i]['images'])
                                 .length;
                         j++)
                       "assets/img/test_1.jpg"
@@ -124,6 +130,7 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
   String imageURL = "";
   @override
   void initState() {
+    init();
     super.initState();
     _currAns = widget.number[0];
   }
@@ -210,7 +217,7 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                                       i < widget.question.length;
                                       i++)
                                     QuestionFrame(
-                                      number: i + 1,
+                                      number: widget.number[i],
                                       question: widget.question[i],
                                       answers: widget.answers[i],
                                     ),
@@ -245,7 +252,7 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                             margin: EdgeInsets.only(left: 5, right: 5),
                             decoration: BoxDecoration(
-                                border: _currAns == index
+                                border: (_currAns == index)
                                     ? Border(
                                         bottom:
                                             BorderSide(color: orange, width: 5))
@@ -256,7 +263,8 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                                   'Q.$index',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
-                                      color: _currAns == index ? orange : black,
+                                      color:
+                                          (_currAns == index) ? orange : black,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17),
                                 ),
@@ -285,7 +293,7 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                         scrollDirection: Axis.horizontal,
                         onPageChanged: (number) {
                           setState(() {
-                            _currAns = number + 1;
+                            _currAns = widget.number[number];
                           });
                         },
                         children: [

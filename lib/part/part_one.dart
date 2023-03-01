@@ -241,7 +241,7 @@ class _PartOneFrameState extends State<PartOneFrame> {
                         border: Border(
                             bottom: BorderSide(color: orange, width: 5))),
                     child: Text(
-                      'Câu ${widget.number}',
+                      'Q.${widget.number}',
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: orange,

@@ -267,7 +267,7 @@ class _PartSixFrameState extends State<PartSixFrame>
                             child: Row(
                               children: [
                                 Text(
-                                  'Câu $index',
+                                  'Q.$index',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color:
