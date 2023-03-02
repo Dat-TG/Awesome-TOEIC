@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/api/get_questions_answers.dart';
 import 'package:toeic_app/part/part_five.dart';
+import 'package:toeic_app/part/part_four.dart';
 import 'package:toeic_app/part/part_one.dart';
 import 'package:toeic_app/part/part_seven.dart';
 import 'package:toeic_app/part/part_six.dart';
@@ -369,6 +370,13 @@ class _DirectionState extends State<Direction> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         PartThree(data: data)));
+                                          } else if (widget.part == 3) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PartFour(data: data),
+                                                ));
                                           } else if (widget.part == 4) {
                                             Navigator.push(
                                                 context,

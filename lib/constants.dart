@@ -94,7 +94,7 @@ final List<Widget> listTapWidget = [
   Text("1"),
   Text("2"),
   Text("3"),
-  PartFour(),
+  Text("4"),
   Text("5"),
   Text("6"),
   Text("7")
@@ -123,63 +123,6 @@ final List<String> listDirectionVn = [
 final List<int> listSentencesDone = [1, 2, 3, 4, 5, 6, 7];
 final List<int> listSentencesRight = [1, 2, 3, 4, 5, 6, 7];
 final List<double> listProgress = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7];
-
-List<Map<String, dynamic>> listQuestionPart4 = [
-  {
-    "listQuestion": [
-      "Human Resources has put together a wide range of topics for this year’s workshops, (1) _____ sales techniques, computer skills, communication strategies, and goal setting.",
-      "It’s quite possible we (2) _____ it into this year’s spring training.",
-      "(3) _____ Feel free to _____ any ideas you might have to Nancy Kensington in the human resources department.",
-    ],
-    "listAnswer": [
-      ["distributing", "locating", "including", "advancing"],
-      [
-        "were incorporating",
-        "should incorporate",
-        "are incorporating",
-        "could incorporate"
-      ],
-      [
-        "If we get many suggestions, we could also hold a workshop on the following weekend, December 4th.",
-        "We’ll be finalizing our choices by the end of the week",
-        "A large amount of time and energy has gone into organizing this conference.",
-        "Inviting friends and family to these events is always encouraged."
-      ],
-    ],
-    "rightAnswer": [
-      "including",
-      "could incorporate",
-      "We’ll be finalizing our choices by the end of the week",
-    ]
-  },
-  {
-    "listQuestion": [
-      "Human Resources has put together a wide range of topics for this year’s workshops, (1) _____ sales techniques, computer skills, communication strategies, and goal setting.",
-      "It’s quite possible we (2) _____ it into this year’s spring training.",
-      "(3) _____ Feel free to _____ any ideas you might have to Nancy Kensington in the human resources department.",
-    ],
-    "listAnswer": [
-      ["distributing", "locating", "including", "advancing"],
-      [
-        "were incorporating",
-        "should incorporate",
-        "are incorporating",
-        "could incorporate"
-      ],
-      [
-        "If we get many suggestions, we could also hold a workshop on the following weekend, December 4th.",
-        "We’ll be finalizing our choices by the end of the week",
-        "A large amount of time and energy has gone into organizing this conference.",
-        "Inviting friends and family to these events is always encouraged."
-      ],
-    ],
-    "rightAnswer": [
-      "including",
-      "could incorporate",
-      "We’ll be finalizing our choices by the end of the week",
-    ]
-  }
-];
 
 String language = "";
 Language? enumLanguage;
