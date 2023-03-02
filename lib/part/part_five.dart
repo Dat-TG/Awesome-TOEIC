@@ -11,7 +11,7 @@ class PartFive extends StatefulWidget {
 }
 
 class _PartFiveState extends State<PartFive> {
-  int _curr = 101;
+  int _curr = 1;
   int totalQues = 30;
   List<String> _answers = [];
   List<List<String>> answersData = [];
@@ -136,7 +136,7 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
           Padding(
             padding: const EdgeInsets.only(top: 20),
             child: QuestionFrame(
-                number: widget.number + 100,
+                number: widget.number + 1,
                 question: widget.question,
                 answers: widget.answers),
           ),

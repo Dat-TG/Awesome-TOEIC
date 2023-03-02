@@ -32,25 +32,20 @@ class _AppBarPracticeState extends State<AppBarPractice> {
               Column(
                 children: [
                   Text(
-                    'Câu ',
+                    'Câu ${widget.numAnswers}',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 18,
                     ),
                   ),
-                  Text(
-                    widget.numAnswers,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  )
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 13, right: 8),
+                padding: const EdgeInsets.only(left: 10, right: 5),
                 child: Icon(Icons.info_outline),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 8, right: 13),
+                padding: const EdgeInsets.only(left: 5, right: 10),
                 child: Icon(Icons.settings_outlined),
               ),
               Icon(Icons.favorite_outline)

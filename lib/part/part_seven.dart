@@ -24,7 +24,7 @@ class _PartSevenState extends State<PartSeven> {
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      _answer[number] = ans;
+      if (_answer[number] == "") _answer[number] = ans;
       print(_answer);
     });
   }
@@ -84,7 +84,7 @@ class _PartSevenState extends State<PartSeven> {
                       .length;
                 }
                 numAnswers =
-                    '$numAnswerCurrent - ${numAnswerCurrent + convertListDynamicToListListString(widget.data[number]['list_answers']).length - 1}';
+                    '${numAnswerCurrent + 147} - ${numAnswerCurrent + convertListDynamicToListListString(widget.data[number]['list_answers']).length - 1 + 147}';
               });
             },
             children: [
