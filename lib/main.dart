@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -9,8 +7,8 @@ import 'constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
-import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'others/get_It.dart';
 
@@ -99,8 +97,12 @@ Future<void> showRemindNotification() async {
     return;
   }
   tz.initializeTimeZones();
-  final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
-  tz.setLocalLocation(tz.getLocation(timeZone));
+  try {
+    final String timeZone = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZone));
+  } catch (err) {
+    print("error: $err");
+  }
 
   final prefs = locator<SharedPreferences>();
   String timeRemindString = prefs.getString("TimeRemind") ?? "12:00 AM";
