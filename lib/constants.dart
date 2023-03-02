@@ -26,6 +26,8 @@ Color textNav = Colors.grey.withOpacity(0.5);
 Color orange = Colors.amber[600]!;
 Color white = Colors.white;
 Color black = Colors.black;
+Color green = Colors.green;
+Color red = Colors.red;
 
 bool isDarkMode = false;
 
