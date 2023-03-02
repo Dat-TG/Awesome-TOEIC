@@ -374,26 +374,7 @@ class _DirectionState extends State<Direction> {
                                                         listTapWidget[
                                                             widget.part]));
 
-                                          // ignore: use_build_context_synchronously
-                                          // Navigator.push(context,
-                                          //     MaterialPageRoute(builder: (context) {
-                                          //   switch (widget.part) {
-                                          //     case 0:
-
-                                          //     case 1:
-                                          //       return PartOne(questions: documents);
-                                          //     case 2:
-                                          //       return PartOne(questions: documents);
-                                          //     case 3:
-                                          //       return PartOne(questions: documents);
-                                          //     case 4:
-                                          //       return PartFive(documents: documents);
-                                          //     case 5:
-                                          //       return PartOne(questions: documents);
-                                          //     default:
-                                          //       return PartOne(questions: documents);
-                                          //   }
-                                          // }));
+                                          
                                         },
                                         style: ElevatedButton.styleFrom(
                                             shape: StadiumBorder(),

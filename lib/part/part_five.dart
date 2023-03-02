@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:toeic_app/api/get_questions_answers.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import './../constants.dart';
 import 'question_frame.dart';
@@ -19,10 +17,12 @@ class _PartFiveState extends State<PartFive> {
   List<List<String>> answersData = [];
   PageController controller = PageController();
   bool isShow = false;
+  late List<String> rightAnsText;
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      _answers[number - 1] = ans;
+      if (_answers[number] == "") _answers[number] = ans;
+      print(_answers);
     });
   }
 
@@ -34,6 +34,28 @@ class _PartFiveState extends State<PartFive> {
       }
     });
     super.initState();
+    rightAnsText = compareAnswersToRightAnswers();
+  }
+
+  List<String> compareAnswersToRightAnswers() {
+    List<String> rightAns = [];
+    for (int i = 0; i < widget.data.length; i++) {
+      for (int j = 0; j < 4; j++) {
+        if (widget.data.elementAt(i)['list_right_answer'][0] ==
+            widget.data.elementAt(i)['list_answers'][0][j]) {
+          if (j == 0) {
+            rightAns.add("A");
+          } else if (j == 1) {
+            rightAns.add("B");
+          } else if (j == 2) {
+            rightAns.add("C");
+          } else {
+            rightAns.add("D");
+          }
+        }
+      }
+    }
+    return rightAns;
   }
 
   @override
@@ -49,18 +71,19 @@ class _PartFiveState extends State<PartFive> {
             controller: controller,
             onPageChanged: (number) {
               setState(() {
-                _curr = number + 101;
+                _curr = number + 1;
               });
             },
             children: [
               for (int i = 0; i < totalQues; i++)
                 PartFiveFrame(
-                    number: i + 1,
+                    number: i,
                     question: widget.data[i]['list_question'][0],
                     answers: convertListDynamicToListString(
                         widget.data.elementAt(i)['list_answers'][0]),
                     getAnswer: (number, value) => callbackAnswer(number, value),
                     ans: _answers,
+                    rightAnswers: rightAnsText,
                     isShow: isShow,
                     cancelShowExplan: (s) {
                       setState(() {
@@ -76,6 +99,7 @@ class PartFiveFrame extends StatefulWidget {
   final List<String> ans;
   final String question;
   final List<String> answers;
+  final List<String> rightAnswers;
   final Function(int, String) getAnswer;
   final bool isShow;
   final Function(bool) cancelShowExplan;
@@ -87,6 +111,7 @@ class PartFiveFrame extends StatefulWidget {
       required this.question,
       required this.answers,
       required this.getAnswer,
+      required this.rightAnswers,
       required this.ans,
       required this.isShow,
       required this.cancelShowExplan});
@@ -128,7 +153,7 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                         border: Border(
                             bottom: BorderSide(color: orange, width: 5))),
                     child: Text(
-                      'Q.${widget.number + 100}',
+                      'Q.${widget.number + 1}',
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: orange,
@@ -162,9 +187,14 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                               padding: EdgeInsets.all(15),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: i == widget.ans[widget.number - 1]
-                                    ? orange
-                                    : white,
+                                color: widget.ans[widget.number] != "" &&
+                                        i == widget.rightAnswers[widget.number]
+                                    ? green
+                                    : (widget.ans[widget.number] != "")
+                                        ? (i == widget.ans[widget.number]
+                                            ? red
+                                            : white)
+                                        : white,
                                 border: Border.all(color: black, width: 1.3),
                                 boxShadow: [
                                   BoxShadow(

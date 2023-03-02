@@ -1,5 +1,4 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -32,7 +31,8 @@ class _PartOneState extends State<PartOne> {
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      _answer[number - 1] = ans;
+      if (_answer[number] == "") _answer[number] = ans;
+      print(_answer);
     });
   }
 
@@ -54,16 +54,18 @@ class _PartOneState extends State<PartOne> {
             },
             children: [
               for (int i = 0; i < totalQues; i++)
-              PartOneFrame(
-                  number: i + 1,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer,
-                  isShow: isShow,
-                  cancelShowExplan: (s) {
-                    setState(() {
-                      isShow = s;
-                    });
-                  })
+                PartOneFrame(
+                    number: i,
+                    getAnswer: (numb, value) => callbackAnswer(numb, value),
+                    ans: _answer,
+                    isShow: isShow,
+                    rightAnswers: convertListDynamicToListString(
+                        widget.data[i]['list_right_answer']),
+                    cancelShowExplan: (s) {
+                      setState(() {
+                        isShow = s;
+                      });
+                    })
             ]));
   }
 }
@@ -74,6 +76,7 @@ class PartOneFrame extends StatefulWidget {
   final Function(int, String) getAnswer;
   final bool isShow;
   final Function(bool) cancelShowExplan;
+  final List<String> rightAnswers;
   // Note, reason
 
   const PartOneFrame(
@@ -81,6 +84,7 @@ class PartOneFrame extends StatefulWidget {
       required this.number,
       required this.getAnswer,
       required this.ans,
+      required this.rightAnswers,
       required this.isShow,
       required this.cancelShowExplan});
 
@@ -107,10 +111,12 @@ class _PartOneFrameState extends State<PartOneFrame> {
   }
 
   void init() async {
-    Reference audioRef = storage.ref().child('Q${widget.number}.mp3');
+    Reference audioRef = storage.ref().child('Q${widget.number + 1}.mp3');
     String audioURL = await audioRef.getDownloadURL();
-    String url =
-        await storage.ref().child('img/${widget.number}.jpg').getDownloadURL();
+    String url = await storage
+        .ref()
+        .child('img/${widget.number + 1}.jpg')
+        .getDownloadURL();
 
     setState(() {
       imageURL = url;
@@ -241,7 +247,7 @@ class _PartOneFrameState extends State<PartOneFrame> {
                         border: Border(
                             bottom: BorderSide(color: orange, width: 5))),
                     child: Text(
-                      'Q.${widget.number}',
+                      'Q.${widget.number + 1}',
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: orange,
@@ -275,9 +281,14 @@ class _PartOneFrameState extends State<PartOneFrame> {
                               padding: EdgeInsets.all(15),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: i == widget.ans[widget.number - 1]
-                                    ? orange
-                                    : white,
+                                color: widget.ans[widget.number] != "" &&
+                                        i == widget.rightAnswers[0]
+                                    ? green
+                                    : (widget.ans[widget.number] != "")
+                                        ? (i == widget.ans[widget.number]
+                                            ? red
+                                            : white)
+                                        : white,
                                 border: Border.all(color: black, width: 1.3),
                                 boxShadow: [
                                   BoxShadow(

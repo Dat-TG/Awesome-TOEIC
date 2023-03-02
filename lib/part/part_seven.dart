@@ -15,30 +15,57 @@ class PartSeven extends StatefulWidget {
 
 class _PartSevenState extends State<PartSeven> {
   int _curr = 1;
-  String numAnswers = '147-148';
+  String numAnswers = '1-2';
   int totalQues = 54;
   List<String> _answer = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
+  late List<String> rightAnswerSelect;
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      _answer[number - 1] = ans;
+      _answer[number] = ans;
       print(_answer);
     });
   }
 
   @override
   void initState() {
-    super.initState();
     for (int i = 0; i < totalQues; i++) {
       _answer.add("");
     }
+    super.initState();
+    rightAnswerSelect = compareAnswersToRightAnswers();
+  }
+
+  List<String> compareAnswersToRightAnswers() {
+    List<String> rightAns = [];
+    for (int i = 0; i < widget.data.length; i++) {
+      for (int k = 0;
+          k < widget.data.elementAt(i)['list_answers'].length;
+          k++) {
+        for (int j = 0; j < 4; j++) {
+          if (widget.data.elementAt(i)['list_right_answer'][k] ==
+              widget.data.elementAt(i)['list_answers'][k][j]) {
+            if (j == 0) {
+              rightAns.add("A");
+            } else if (j == 1) {
+              rightAns.add("B");
+            } else if (j == 2) {
+              rightAns.add("C");
+            } else {
+              rightAns.add("D");
+            }
+          }
+        }
+      }
+    }
+    return rightAns;
   }
 
   @override
   Widget build(BuildContext context) {
-    _curr = 1;
+    _curr = 0;
     return Scaffold(
         appBar: AppBarPractice(
           numAnswers: numAnswers,
@@ -50,7 +77,7 @@ class _PartSevenState extends State<PartSeven> {
             controller: controllerFrame,
             onPageChanged: (number) {
               setState(() {
-                int numAnswerCurrent = 147;
+                int numAnswerCurrent = 1;
                 for (int i = 0; i < number; i++) {
                   numAnswerCurrent += convertListDynamicToListListString(
                           widget.data[i]['list_answers'])
@@ -85,6 +112,7 @@ class _PartSevenState extends State<PartSeven> {
                       widget.data[i]['list_question']),
                   answers: convertListDynamicToListListString(
                       widget.data[i]['list_answers']),
+                  rightAnswersSelect: rightAnswerSelect,
                   getAnswer: (number, value) => callbackAnswer(number, value),
                   ans: _answer,
                   isShow: isShow,
@@ -100,10 +128,11 @@ class _PartSevenState extends State<PartSeven> {
 
 class PartSevenFrame extends StatefulWidget {
   final List<int> number;
-  final List<String> question, img, ans;
+  final List<String> question, img, ans, rightAnswersSelect;
   final List<List<String>> answers;
   final Function(int, String) getAnswer;
   final Function(bool) cancelShowExplan;
+
   final bool isShow;
   // Note, reason
 
@@ -114,6 +143,7 @@ class PartSevenFrame extends StatefulWidget {
       required this.answers,
       required this.getAnswer,
       required this.img,
+      required this.rightAnswersSelect,
       required this.ans,
       required this.cancelShowExplan,
       required this.isShow});
@@ -217,7 +247,7 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                                       i < widget.question.length;
                                       i++)
                                     QuestionFrame(
-                                      number: widget.number[i],
+                                      number: widget.number[i] + 1,
                                       question: widget.question[i],
                                       answers: widget.answers[i],
                                     ),
@@ -260,7 +290,7 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                             child: Row(
                               children: [
                                 Text(
-                                  'Q.$index',
+                                  'Q.${index + 1}',
                                   textAlign: TextAlign.left,
                                   style: TextStyle(
                                       color:
@@ -317,12 +347,23 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                                             padding: EdgeInsets.all(15),
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: i ==
-                                                      widget.ans[
-                                                          widget.number[size] -
-                                                              1]
-                                                  ? orange
-                                                  : white,
+                                              color: widget.ans[widget
+                                                              .number[size]] !=
+                                                          "" &&
+                                                      i ==
+                                                          widget.rightAnswersSelect[
+                                                              widget
+                                                                  .number[size]]
+                                                  ? green
+                                                  : (widget.ans[widget
+                                                              .number[size]] !=
+                                                          "")
+                                                      ? (i ==
+                                                              widget.ans[widget
+                                                                  .number[size]]
+                                                          ? red
+                                                          : white)
+                                                      : white,
                                               border: Border.all(
                                                   color: black, width: 1.3),
                                               boxShadow: [
