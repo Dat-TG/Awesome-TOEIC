@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "546046472911",
+    "firebase_url": "https://toeic-app-flutter-default-rtdb.firebaseio.com",
     "project_id": "toeic-app-flutter",
     "storage_bucket": "toeic-app-flutter.appspot.com"
   },
@@ -14,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "546046472911-1j5k8pebsb9li6fqqnoqtfanudvhrrnr.apps.googleusercontent.com",
+          "client_id": "546046472911-vb2p2hll2va4bjeua25nj5o21agg0o01.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.toeic_app",
+            "certificate_hash": "12fcc45cf7e124cf1acee19370a0cfbabd9b6d23"
+          }
+        },
+        {
+          "client_id": "546046472911-kg9ffbrsjn4r22nbvmidfiidkgreh416.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
