@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toeic_app/main.dart';
 import 'package:toeic_app/sign_up.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'constants.dart';
@@ -13,6 +14,7 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> {
   TextEditingController emailText = TextEditingController();
   TextEditingController passwordText = TextEditingController();
+  String error = "";
   bool _passwordVisible = false;
 
   @override
@@ -63,9 +65,10 @@ class _SignInState extends State<SignIn> {
                           icon: Icon(Icons.email_outlined, size: 30),
                           labelText: "Email",
                           border: OutlineInputBorder(),
-                          errorText: "asdasd",
-                          errorBorder: OutlineInputBorder(),
-                          focusedBorder: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: colorApp, width: 2.0),
+                          ),
                           contentPadding: EdgeInsets.only(left: 20))),
                 ),
                 Padding(
@@ -85,12 +88,15 @@ class _SignInState extends State<SignIn> {
                                     : Icons.visibility_off,
                               ),
                               onPressed: () {
-                                // Update the state i.e. toogle the state of passwordVisible variable
                                 setState(() {
                                   _passwordVisible = !_passwordVisible;
                                 });
                               }),
                           border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                const BorderSide(color: colorApp, width: 2.0),
+                          ),
                           contentPadding: EdgeInsets.only(left: 20))),
                 ),
               ],
@@ -98,6 +104,21 @@ class _SignInState extends State<SignIn> {
           ),
           SizedBox(
             height: 10,
+          ),
+          Container(
+            constraints: BoxConstraints(minHeight: 0, maxHeight: 40),
+            child: error != ""
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text(
+                      error,
+                      style: TextStyle(
+                          fontSize: 17,
+                          color: red,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  )
+                : SizedBox.shrink(),
           ),
           Row(
             mainAxisSize: MainAxisSize.min,
@@ -110,17 +131,45 @@ class _SignInState extends State<SignIn> {
                   padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
                   child: ElevatedButton(
                       onPressed: () async {
+                        // Dialog to show status login for user
+                        showDialog(
+                            context: context,
+                            builder: (context) => Center(
+                                  child: CircularProgressIndicator(),
+                                ));
                         try {
                           await FirebaseAuth.instance
                               .signInWithEmailAndPassword(
                                   email: emailText.text,
                                   password: passwordText.text);
+
+                          navigatorKey.currentState
+                              ?.popUntil((route) => route.isFirst);
+                          // Set pop state is Practice page
                         } on FirebaseAuthException catch (e) {
+                          Navigator.of(context, rootNavigator: true)
+                              .pop('dialog');
                           print(e.code);
-                          if (e.code == 'user-not-found') {
-                            print('No user found for that email.');
+                          if (e.code == 'unknown') {
+                            setState(() {
+                              error = "Vui lòng nhập đủ thông tin";
+                            });
+                          } else if (e.code == 'invalid-email') {
+                            setState(() {
+                              error = 'Email không hợp lệ';
+                            });
+                          } else if (e.code == 'user-not-found') {
+                            setState(() {
+                              error = 'Không tồn tại email này';
+                            });
                           } else if (e.code == 'wrong-password') {
-                            print('Wrong password provided for that user.');
+                            setState(() {
+                              error = 'Mật khẩu không đúng';
+                            });
+                          } else {
+                            setState(() {
+                              error = e.message ?? "";
+                            });
                           }
                         }
                       },
@@ -211,31 +260,6 @@ class _SignInState extends State<SignIn> {
           )
         ]),
       ),
-    );
-  }
-}
-
-class TextEditForm extends StatefulWidget {
-  final String label;
-  final IconData icon;
-  const TextEditForm({super.key, required this.label, required this.icon});
-
-  @override
-  State<TextEditForm> createState() => _TextEditFormState();
-}
-
-class _TextEditFormState extends State<TextEditForm> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-      child: TextFormField(
-          cursorColor: colorApp,
-          decoration: InputDecoration(
-              icon: Icon(widget.icon, size: 30),
-              labelText: widget.label,
-              border: OutlineInputBorder(),
-              contentPadding: EdgeInsets.only(left: 20))),
     );
   }
 }
