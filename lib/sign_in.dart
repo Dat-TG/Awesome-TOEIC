@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toeic_app/forgot_password.dart';
 import 'package:toeic_app/main.dart';
 import 'package:toeic_app/sign_up.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -142,10 +143,9 @@ class _SignInState extends State<SignIn> {
                               .signInWithEmailAndPassword(
                                   email: emailText.text,
                                   password: passwordText.text);
-
                           navigatorKey.currentState
                               ?.popUntil((route) => route.isFirst);
-                          // Set pop state is Practice page
+                          
                         } on FirebaseAuthException catch (e) {
                           Navigator.of(context, rootNavigator: true)
                               .pop('dialog');
@@ -234,7 +234,28 @@ class _SignInState extends State<SignIn> {
             ],
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 20, bottom: 20),
+            padding: const EdgeInsets.only(top: 20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ForgotPassword()));
+                  },
+                  child: Text(
+                    'Quên mật khẩu',
+                    style: TextStyle(
+                        fontSize: 17,
+                        color: orange,
+                        decoration: TextDecoration.underline),
+                  ),
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10, bottom: 20),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -257,7 +278,7 @@ class _SignInState extends State<SignIn> {
                 )
               ],
             ),
-          )
+          ),
         ]),
       ),
     );
