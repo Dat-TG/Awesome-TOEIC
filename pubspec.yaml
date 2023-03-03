@@ -49,6 +49,7 @@ dependencies:
     cloud_firestore: ^4.4.3
     firebase_storage: ^11.0.14
     timezone: ^0.8.0
+    google_sign_in: ^6.0.2
     firebase_auth: ^4.2.9
     email_validator: ^2.1.17
 

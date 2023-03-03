@@ -1,4 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:toeic_app/auth/google_sign_in.dart';
+import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/forgot_password.dart';
 import 'package:toeic_app/main.dart';
 import 'package:toeic_app/sign_up.dart';
@@ -203,7 +207,19 @@ class _SignInState extends State<SignIn> {
                 child: Padding(
                   padding: const EdgeInsets.only(left: 20, right: 20),
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final result = await signInWithGoogle();
+                        print("User");
+                        print(result.user?.email);
+                        if (result.user != null) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                        intialIndex: 4,
+                                      )));
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                           shape: StadiumBorder(),
                           backgroundColor: Colors.white),
