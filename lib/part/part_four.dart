@@ -20,15 +20,42 @@ class PartFour extends StatefulWidget {
 class _PartFourState extends State<PartFour> {
   int _curr = 1;
   int totalQues = 3; //Example
-  List<String> _answer = [];
+  List<String> _answer = [], rightAnswersSelect = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
   String numAnswers = "1-3";
 
   void callbackAnswer(int number, String value) {
     setState(() {
-      _answer[number - 1] = value;
+      if (_answer[number - 1] == "") _answer[number - 1] = value;
+      print(_answer);
     });
+  }
+
+  List<String> compareAnswersToRightAnswers() {
+    List<String> rightAns = [];
+    for (int i = 0; i < widget.data.length; i++) {
+      for (int k = 0;
+          k < widget.data.elementAt(i)['list_answers'].length;
+          k++) {
+        for (int j = 0; j < 4; j++) {
+          if (answersOption.contains(widget.data[i]['list_right_answer'][k])) {}
+          if (widget.data.elementAt(i)['list_right_answer'][k] ==
+              widget.data.elementAt(i)['list_answers'][k][j]) {
+            if (j == 0) {
+              rightAns.add("A");
+            } else if (j == 1) {
+              rightAns.add("B");
+            } else if (j == 2) {
+              rightAns.add("C");
+            } else {
+              rightAns.add("D");
+            }
+          }
+        }
+      }
+    }
+    return rightAns;
   }
 
   @override
@@ -39,6 +66,8 @@ class _PartFourState extends State<PartFour> {
       for (int i = 0; i < totalQues; i++) {
         _answer.add("");
       }
+      rightAnswersSelect = compareAnswersToRightAnswers();
+      print(rightAnswersSelect);
     });
   }
 
@@ -85,6 +114,7 @@ class _PartFourState extends State<PartFour> {
                       isShow = s;
                     });
                   },
+                  rightAnswers: rightAnswersSelect,
                 ),
             ]));
   }
@@ -99,6 +129,7 @@ class PartFourFrame extends StatefulWidget {
   final Function(bool) cancelShowExplan;
   final bool isShow;
   final List<String> images;
+  final List<String> rightAnswers;
   // Note, reason
 
   const PartFourFrame(
@@ -111,7 +142,8 @@ class PartFourFrame extends StatefulWidget {
       required this.getAnswer,
       required this.ans,
       required this.cancelShowExplan,
-      required this.isShow});
+      required this.isShow,
+      required this.rightAnswers});
 
   @override
   State<PartFourFrame> createState() => _PartFourFrameState();
@@ -377,12 +409,25 @@ class _PartFourFrameState extends State<PartFourFrame> {
                                             padding: EdgeInsets.all(15),
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: i ==
-                                                      widget.ans[
-                                                          widget.number[size] -
-                                                              1]
-                                                  ? orange
-                                                  : white,
+                                              color: widget.ans[widget.number[size] -
+                                                              1] !=
+                                                          "" &&
+                                                      i ==
+                                                          widget.rightAnswers[
+                                                              widget.number[size] -
+                                                                  1]
+                                                  ? green
+                                                  : (widget.ans[
+                                                              widget.number[size] -
+                                                                  1] !=
+                                                          "")
+                                                      ? (i ==
+                                                              widget.ans[widget
+                                                                      .number[size] -
+                                                                  1]
+                                                          ? red
+                                                          : white)
+                                                      : white,
                                               border: Border.all(
                                                   color: black, width: 1.3),
                                               boxShadow: [

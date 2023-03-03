@@ -89,10 +89,13 @@ class _PartTwoState extends State<PartTwo> {
             children: [
               for (int i = 0; i < widget.data.length; i++)
                 PartTwoFrame(
-                    audioPath: widget.data[i]['audio'],
-                    number: i + 1,
-                    getAnswer: (numb, value) => callbackAnswer(numb, value),
-                    ans: _answer),
+                  audioPath: widget.data[i]['audio'],
+                  number: i + 1,
+                  getAnswer: (numb, value) => callbackAnswer(numb, value),
+                  ans: _answer,
+                  rightAnswers: convertListDynamicToListString(
+                      widget.data[i]['list_right_answer']),
+                ),
             ]));
   }
 }
@@ -100,7 +103,7 @@ class _PartTwoState extends State<PartTwo> {
 class PartTwoFrame extends StatefulWidget {
   final int number;
   final String audioPath;
-  final List<String> ans;
+  final List<String> ans, rightAnswers;
   final Function(int, String) getAnswer;
   // Note, reason
 
@@ -109,7 +112,8 @@ class PartTwoFrame extends StatefulWidget {
       required this.number,
       required this.audioPath,
       required this.getAnswer,
-      required this.ans});
+      required this.ans,
+      required this.rightAnswers});
 
   @override
   State<PartTwoFrame> createState() => _PartTwoFrameState();
@@ -161,9 +165,7 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
                 child: Text(
                   "Nghe và chọn câu trả lời phù hợp",
                   textAlign: TextAlign.left,
-                  style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
                 ),
               ),
               Padding(
@@ -241,9 +243,14 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: i == widget.ans[widget.number - 1]
-                                ? orange
-                                : white,
+                            color: widget.ans[widget.number - 1] != "" &&
+                                    i == widget.rightAnswers[0]
+                                ? green
+                                : (widget.ans[widget.number - 1] != "")
+                                    ? (i == widget.ans[widget.number - 1]
+                                        ? red
+                                        : white)
+                                    : white,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(
