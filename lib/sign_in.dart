@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/sign_up.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'constants.dart';
 
 class SignIn extends StatefulWidget {
@@ -10,6 +11,10 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  TextEditingController emailText = TextEditingController();
+  TextEditingController passwordText = TextEditingController();
+  bool _passwordVisible = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,9 +53,46 @@ class _SignInState extends State<SignIn> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                TextEditForm(label: "Username", icon: Icons.email_outlined),
-                TextEditForm(
-                    label: "Password", icon: Icons.lock_outline_rounded),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 10, left: 20, right: 20, bottom: 10),
+                  child: TextFormField(
+                      controller: emailText,
+                      cursorColor: colorApp,
+                      decoration: InputDecoration(
+                          icon: Icon(Icons.email_outlined, size: 30),
+                          labelText: "Email",
+                          border: OutlineInputBorder(),
+                          errorText: "asdasd",
+                          errorBorder: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.only(left: 20))),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 10, left: 20, right: 20, bottom: 10),
+                  child: TextFormField(
+                      controller: passwordText,
+                      cursorColor: colorApp,
+                      obscureText: !_passwordVisible,
+                      decoration: InputDecoration(
+                          icon: Icon(Icons.lock_outline_rounded, size: 30),
+                          labelText: "Password",
+                          suffixIcon: IconButton(
+                              icon: Icon(
+                                _passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                // Update the state i.e. toogle the state of passwordVisible variable
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              }),
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.only(left: 20))),
+                ),
               ],
             ),
           ),
@@ -67,7 +109,21 @@ class _SignInState extends State<SignIn> {
                 child: Padding(
                   padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
                   child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        try {
+                          await FirebaseAuth.instance
+                              .signInWithEmailAndPassword(
+                                  email: emailText.text,
+                                  password: passwordText.text);
+                        } on FirebaseAuthException catch (e) {
+                          print(e.code);
+                          if (e.code == 'user-not-found') {
+                            print('No user found for that email.');
+                          } else if (e.code == 'wrong-password') {
+                            print('Wrong password provided for that user.');
+                          }
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                           shape: StadiumBorder(), backgroundColor: colorApp),
                       child: Padding(

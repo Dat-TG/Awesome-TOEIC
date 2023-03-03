@@ -49,6 +49,7 @@ dependencies:
     cloud_firestore: ^4.4.3
     firebase_storage: ^11.0.14
     timezone: ^0.8.0
+    firebase_auth: ^4.2.9
 
 dev_dependencies:
     flutter_test:

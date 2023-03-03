@@ -351,7 +351,7 @@ class _DirectionState extends State<Direction> {
                                     ? CircularProgressIndicator()
                                     : ElevatedButton(
                                         onPressed: () async {
-                                          // TODO:  CALL API BEFORE START PRACTICE
+                                          // ? Call API
                                           if (widget.part == 0) {
                                             Navigator.push(
                                                 context,
@@ -403,7 +403,7 @@ class _DirectionState extends State<Direction> {
                                                         listTapWidget[
                                                             widget.part]));
 
-                                          
+                        
                                         },
                                         style: ElevatedButton.styleFrom(
                                             shape: StadiumBorder(),

@@ -48,13 +48,56 @@ class _SignUpState extends State<SignUp> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                TextEditForm(label: "Tên", icon: Icons.alternate_email_sharp),
-                TextEditForm(label: "Username", icon: Icons.email_outlined),
-                TextEditForm(label: "SDT", icon: Icons.phone),
-                TextEditForm(
-                    label: "Password", icon: Icons.lock_outline_rounded),
-                TextEditForm(
-                    label: "Verify password", icon: Icons.lock_outline_rounded),
+                Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, left: 20, right: 20, bottom: 10),
+                    child: TextFormField(
+                        cursorColor: colorApp,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.alternate_email_sharp, size: 30),
+                            labelText: "Tên",
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 20)))),
+                Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, left: 20, right: 20, bottom: 10),
+                    child: TextFormField(
+                        cursorColor: colorApp,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.email_outlined, size: 30),
+                            labelText: "Email",
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 20)))),
+                Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, left: 20, right: 20, bottom: 10),
+                    child: TextFormField(
+                        cursorColor: colorApp,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.phone, size: 30),
+                            labelText: "SDT",
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 20)))),
+                Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, left: 20, right: 20, bottom: 10),
+                    child: TextFormField(
+                        cursorColor: colorApp,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.lock_outline_rounded, size: 30),
+                            labelText: "Password",
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 20)))),
+                Padding(
+                    padding: const EdgeInsets.only(
+                        top: 10, left: 20, right: 20, bottom: 10),
+                    child: TextFormField(
+                        cursorColor: colorApp,
+                        decoration: InputDecoration(
+                            icon: Icon(Icons.lock_outline_rounded, size: 30),
+                            labelText: "Verify password",
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.only(left: 20)))),
               ],
             ),
           ),
