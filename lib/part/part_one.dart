@@ -61,6 +61,9 @@ class _PartOneState extends State<PartOne> {
                     isShow: isShow,
                     rightAnswers: convertListDynamicToListString(
                         widget.data[i]['list_right_answer']),
+                    listNameImages: convertListDynamicToListString(
+                        widget.data[i]['images']),
+                    audio: widget.data[i]['audio'],
                     cancelShowExplan: (s) {
                       setState(() {
                         isShow = s;
@@ -76,7 +79,8 @@ class PartOneFrame extends StatefulWidget {
   final Function(int, String) getAnswer;
   final bool isShow;
   final Function(bool) cancelShowExplan;
-  final List<String> rightAnswers;
+  final List<String> rightAnswers, listNameImages;
+  final String audio;
   // Note, reason
 
   const PartOneFrame(
@@ -85,6 +89,8 @@ class PartOneFrame extends StatefulWidget {
       required this.getAnswer,
       required this.ans,
       required this.rightAnswers,
+      required this.listNameImages,
+      required this.audio,
       required this.isShow,
       required this.cancelShowExplan});
 
@@ -111,11 +117,11 @@ class _PartOneFrameState extends State<PartOneFrame> {
   }
 
   void init() async {
-    Reference audioRef = storage.ref().child('Q${widget.number + 1}.mp3');
+    Reference audioRef = storage.ref().child(widget.audio);
     String audioURL = await audioRef.getDownloadURL();
     String url = await storage
         .ref()
-        .child('img/${widget.number + 1}.jpg')
+        .child('img/${widget.listNameImages[0]}')
         .getDownloadURL();
 
     setState(() {

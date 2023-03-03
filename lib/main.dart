@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/scheduler.dart' as scheduler;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:toeic_app/api/data.dart';
 
 import 'home_page.dart';
 import 'constants.dart';
@@ -15,6 +16,8 @@ import 'others/get_It.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+final navigatorKey = GlobalKey<NavigatorState>();
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,16 +45,18 @@ class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.light;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   int start = 0;
-
+  int doc = 32;
   @override
   void initState() {
     super.initState();
     _loadTheme();
+
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: MyApp._title,
       theme: ThemeData(),
       darkTheme: ThemeData.dark(),

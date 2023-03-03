@@ -84,7 +84,7 @@ class _PartSevenState extends State<PartSeven> {
                       .length;
                 }
                 numAnswers =
-                    '${numAnswerCurrent + 147} - ${numAnswerCurrent + convertListDynamicToListListString(widget.data[number]['list_answers']).length - 1 + 147}';
+                    '${numAnswerCurrent} - ${numAnswerCurrent + convertListDynamicToListListString(widget.data[number]['list_answers']).length - 1}';
               });
             },
             children: [
@@ -99,15 +99,6 @@ class _PartSevenState extends State<PartSeven> {
                         j++)
                       _curr++
                   ],
-                  img: [
-                    for (int j = 0;
-                        j <
-                            convertListDynamicToListString(
-                                    widget.data[i]['images'])
-                                .length;
-                        j++)
-                      "assets/img/test_1.jpg"
-                  ],
                   question: convertListDynamicToListString(
                       widget.data[i]['list_question']),
                   answers: convertListDynamicToListListString(
@@ -115,6 +106,8 @@ class _PartSevenState extends State<PartSeven> {
                   rightAnswersSelect: rightAnswerSelect,
                   getAnswer: (number, value) => callbackAnswer(number, value),
                   ans: _answer,
+                  listNameImages:
+                      convertListDynamicToListString(widget.data[i]['images']),
                   isShow: isShow,
                   cancelShowExplan: (s) {
                     setState(() {
@@ -128,7 +121,7 @@ class _PartSevenState extends State<PartSeven> {
 
 class PartSevenFrame extends StatefulWidget {
   final List<int> number;
-  final List<String> question, img, ans, rightAnswersSelect;
+  final List<String> question, ans, rightAnswersSelect, listNameImages;
   final List<List<String>> answers;
   final Function(int, String) getAnswer;
   final Function(bool) cancelShowExplan;
@@ -141,8 +134,8 @@ class PartSevenFrame extends StatefulWidget {
       required this.number,
       required this.question,
       required this.answers,
+      required this.listNameImages,
       required this.getAnswer,
-      required this.img,
       required this.rightAnswersSelect,
       required this.ans,
       required this.cancelShowExplan,
@@ -157,20 +150,25 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
   PageController controllerAnswer = PageController();
   late int _currAns;
   FirebaseStorage storage = FirebaseStorage.instance;
-  String imageURL = "";
+  List<String> imageURLs = [];
+  Future<List<String>> imageURL = Future(() => []);
   @override
   void initState() {
-    init();
     super.initState();
     _currAns = widget.number[0];
+    imageURL = _getImageURLs();
   }
 
-  void init() async {
-    String url = await storage.ref().child('img/1.jpg').getDownloadURL();
-
-    setState(() {
-      imageURL = url;
-    });
+  Future<List<String>> _getImageURLs() async {
+    List<String> imgURL = [];
+    for (int i = 0; i < widget.listNameImages.length; i++) {
+      String url = await storage
+          .ref()
+          .child('img/${widget.listNameImages[i]}')
+          .getDownloadURL();
+      imgURL.add(url);
+    }
+    return imgURL;
   }
 
   @override
@@ -195,30 +193,46 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                           minHeight: 50,
                           maxHeight: MediaQuery.of(context).size.height * 0.4),
                       padding: const EdgeInsets.fromLTRB(5, 5, 0, 10),
-                      child: SingleChildScrollView(
-                          child: Center(
-                        child: Column(
-                          children: [
-                            for (int i = 0; i < widget.img.length; i++)
-                              Container(
-                                margin: EdgeInsets.only(top: 10, bottom: 10),
-                                child: imageURL != ""
-                                    ? Image.network(imageURL,
-                                        width: 340,
-                                        height: 300,
-                                        fit: BoxFit.fill)
-                                    : SizedBox(
-                                        width: 340,
-                                        height: 300,
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        )),
-                              )
-                          ],
-                        ),
-                      )),
+                      child: FutureBuilder<List<String>>(
+                          future: imageURL,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return (Center(
+                                child: Text("404: Error"),
+                              ));
+                            } else if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else {
+                              final data = snapshot.data;
+                              return SingleChildScrollView(
+                                  child: Center(
+                                child: Column(
+                                  children: [
+                                    for (int i = 0; i < data!.length; i++)
+                                      Container(
+                                        margin: EdgeInsets.only(
+                                            top: 10, bottom: 10),
+                                        child: data[i] != ""
+                                            ? Image.network(data[i],
+                                                width: 340,
+                                                height: 300,
+                                                fit: BoxFit.fill)
+                                            : SizedBox(
+                                                width: 340,
+                                                height: 300,
+                                                child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                  ),
+                                                )),
+                                      )
+                                  ],
+                                ),
+                              ));
+                            }
+                          }),
                     ),
                     Container(
                       width: MediaQuery.of(context).size.width,
