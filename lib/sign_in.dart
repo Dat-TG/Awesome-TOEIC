@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/auth/google_sign_in.dart';
 import 'package:toeic_app/home_page.dart';
+import 'package:toeic_app/settings_page.dart';
 import 'package:toeic_app/sign_up.dart';
 import 'constants.dart';
 
@@ -103,12 +104,14 @@ class _SignInState extends State<SignIn> {
                       onPressed: () async {
                         final result = await signInWithGoogle();
                         print("User");
-                        print(result.user);
+                        print(result.user?.email);
                         if (result.user != null) {
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => HomePage()));
+                                  builder: (context) => HomePage(
+                                        intialIndex: 4,
+                                      )));
                         }
                       },
                       style: ElevatedButton.styleFrom(

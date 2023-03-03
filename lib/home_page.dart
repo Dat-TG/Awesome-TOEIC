@@ -8,17 +8,20 @@ import 'settings_page.dart';
 import 'constants.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final int intialIndex;
+  const HomePage({super.key, required this.intialIndex});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _selectedIndex = widget.intialIndex;
     _loadTheme();
   }
 
@@ -30,7 +33,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 

@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/settings/language_form.dart';
 import 'package:toeic_app/settings/remind_dialog.dart';
 import 'package:toeic_app/settings/time_remind_picker.dart';
@@ -19,11 +22,15 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  String photoURL = 'assets/img/default_avatar.png';
+  User? user;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loadTheme();
+    print("photoURL $photoURL");
+    print("user $user");
   }
 
   final List<String> entries = <String>[
@@ -72,55 +79,81 @@ class _SettingsPageState extends State<SettingsPage> {
             alignment: Alignment.centerLeft,
             child: (entries.elementAt(index) != 'Giao diện tối')
                 ? ListTile(
-                    leading: Icon(
-                      icons.elementAt(index),
-                      color: colorApp,
-                    ),
+                    leading: (index > 0)
+                        ? Icon(
+                            icons.elementAt(index),
+                            color: colorApp,
+                          )
+                        : (user != null)
+                            ? (photoURL == 'assets/img/default_avatar.png')
+                                ? Image.asset(photoURL)
+                                : CircleAvatar(
+                                    backgroundColor: colorApp,
+                                    radius: 20,
+                                    child: CircleAvatar(
+                                        backgroundImage:
+                                            NetworkImage(photoURL)))
+                            : Icon(
+                                icons.elementAt(index),
+                                color: colorApp,
+                              ),
                     title: index > 0
                         ? Text(
                             entries.elementAt(index),
                             style: const TextStyle(
                                 fontWeight: FontWeight.w400, fontSize: 16),
                           )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SignIn()));
-                                  },
-                                  style: TextButton.styleFrom(
-                                      padding: const EdgeInsets.only(left: 0)),
-                                  child: const Text(
-                                    'Đăng nhập',
-                                    style: TextStyle(
-                                        color: colorApp,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16),
-                                  ),
-                                ),
-                                const Text(' | '),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => SignUp()));
-                                  },
-                                  style: TextButton.styleFrom(
-                                      padding: const EdgeInsets.only(left: 0)),
-                                  child: const Text(
-                                    'Đăng ký',
-                                    style: TextStyle(
-                                        color: colorApp,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16),
-                                  ),
-                                )
-                              ]),
+                        : (user == null)
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SignIn()));
+                                      },
+                                      style: TextButton.styleFrom(
+                                          padding:
+                                              const EdgeInsets.only(left: 0)),
+                                      child: const Text(
+                                        'Đăng nhập',
+                                        style: TextStyle(
+                                            color: colorApp,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16),
+                                      ),
+                                    ),
+                                    const Text(' | '),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SignUp()));
+                                      },
+                                      style: TextButton.styleFrom(
+                                          padding:
+                                              const EdgeInsets.only(left: 0)),
+                                      child: const Text(
+                                        'Đăng ký',
+                                        style: TextStyle(
+                                            color: colorApp,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16),
+                                      ),
+                                    )
+                                  ])
+                            : Text(
+                                user!.displayName!,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 17,
+                                    color: colorApp),
+                              ),
                     // ignore: avoid_print
                     onTap: () => {
                       if (entries.elementAt(index) == "Ngôn ngữ")
@@ -177,7 +210,33 @@ class _SettingsPageState extends State<SettingsPage> {
                                           TextStyle(color: Colors.orange[500]))
                             ],
                           )
-                        : Column(),
+                        : (index == 0 && user != null)
+                            ? Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  TextButton(
+                                    onPressed: () async {
+                                      await FirebaseAuth.instance.signOut();
+                                      await GoogleSignIn().signOut();
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => HomePage(
+                                                    intialIndex: 4,
+                                                  )));
+                                    },
+                                    child: Text(
+                                      "Đăng xuất",
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: orange,
+                                          decoration: TextDecoration.underline),
+                                    ),
+                                  )
+                                ],
+                              )
+                            : Column(),
                   )
                 : SwitchListTile(
                     value: isDarkMode,
@@ -244,6 +303,8 @@ class _SettingsPageState extends State<SettingsPage> {
         default:
           break;
       }
+      user = FirebaseAuth.instance.currentUser;
+      if (user != null) photoURL = user!.photoURL!;
     });
   }
 
