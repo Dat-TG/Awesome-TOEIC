@@ -233,8 +233,10 @@ class _SignUpState extends State<SignUp> {
                                 .createUserWithEmailAndPassword(
                                     email: emailText.text.trim(),
                                     password: passwordText.text.trim());
-                            await userCredential.user
-                                ?.updateDisplayName(nameText.text.trim());
+                            if (userCredential.additionalUserInfo!.isNewUser) {
+                              await userCredential.user
+                                  ?.updateDisplayName(nameText.text.trim());
+                            }
                             await UserService().insertUser(userCredential.user,
                                 phone: phoneText.text);
                             await FirebaseAuth.instance
