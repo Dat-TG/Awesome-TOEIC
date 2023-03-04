@@ -1,7 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:toeic_app/api/get_questions_answers.dart';
 import 'package:toeic_app/part/part_five.dart';
 import 'package:toeic_app/part/part_four.dart';
 import 'package:toeic_app/part/part_one.dart';
@@ -395,15 +394,7 @@ class _DirectionState extends State<Direction> {
                                                 MaterialPageRoute(
                                                     builder: (context) =>
                                                         PartSeven(data: data)));
-                                          } else
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        listTapWidget[
-                                                            widget.part]));
-
-                        
+                                          }
                                         },
                                         style: ElevatedButton.styleFrom(
                                             shape: StadiumBorder(),

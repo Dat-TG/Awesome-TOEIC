@@ -1,14 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toeic_app/part/part_five.dart';
-import 'package:toeic_app/part/part_four.dart';
-import 'package:toeic_app/part/part_one.dart';
-import 'package:toeic_app/part/part_seven.dart';
-import 'package:toeic_app/part/part_six.dart';
-import 'package:toeic_app/part/part_three.dart';
-import 'package:toeic_app/part/part_two.dart';
 import 'package:toeic_app/settings/language_form.dart';
-import 'settings_page.dart';
 
 const String appName = "TOEIC APP";
 const String appIcon = 'assets/img/headphones.png';
@@ -40,6 +32,40 @@ List<String> convertListDynamicToListString(List<dynamic> data) {
   }
   return newList;
 }
+
+// get question -answer from cloud storage
+Future<List<Map<String, dynamic>>> getQuestionsAndAnswers(int partID) async {
+  List<Map<String, dynamic>> data = [];
+  Map<String, dynamic> temp;
+  await FirebaseFirestore.instance
+      .collection("Questions")
+      .where('part_id', isEqualTo: partID)
+      .get()
+      .then((value) async => {
+            for (int i = 0; i < value.docs.length; i++)
+              {
+                temp = value.docs[i].data(),
+                temp['list_answers'] = [],
+                data.add(temp),
+                for (int j = 0; j < temp['list_answers_id'].length; j++)
+                  {
+                    await FirebaseFirestore.instance
+                        .collection("Answers")
+                        .where(FieldPath.documentId,
+                            isEqualTo: temp['list_answers_id'][j].toString())
+                        .get()
+                        .then((value) => {
+                              temp['list_answers']
+                                  .add(value.docs[0].data()['list_answers']),
+                              //print("answer ${temp['list_answers'][j]}")
+                            })
+                  }
+              },
+            print(value.docs.length)
+          });
+  return data;
+}
+
 
 List<List<String>> convertListDynamicToListListString(List<dynamic> data) {
   List<List<String>> newList = [];
@@ -90,16 +116,6 @@ final List<String> listTitle = [
   'Part 5',
   'Part 6',
   'Part 7'
-];
-
-final List<Widget> listTapWidget = [
-  Text("1"),
-  Text("2"),
-  Text("3"),
-  Text("4"),
-  Text("5"),
-  Text("6"),
-  Text("7")
 ];
 
 final List<String> listDirectionEng = [

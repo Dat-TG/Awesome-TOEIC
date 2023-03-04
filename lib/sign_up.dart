@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:toeic_app/services/user_service.dart';
 import 'package:toeic_app/sign_in.dart';
 import 'package:toeic_app/main.dart';
 import 'constants.dart';
@@ -234,7 +235,12 @@ class _SignUpState extends State<SignUp> {
                                     password: passwordText.text.trim());
                             await userCredential.user
                                 ?.updateDisplayName(nameText.text.trim());
-
+                            await UserService().insertUser(userCredential.user,
+                                phone: phoneText.text);
+                            await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                    email: emailText.text,
+                                    password: passwordText.text);
                             navigatorKey.currentState
                                 ?.popUntil((route) => route.isFirst);
                           } on FirebaseAuthException catch (e) {
