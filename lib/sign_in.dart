@@ -148,6 +148,8 @@ class _SignInState extends State<SignIn> {
                               .signInWithEmailAndPassword(
                                   email: emailText.text,
                                   password: passwordText.text);
+                          Navigator.pop(context);
+                          Navigator.pop(context);
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
