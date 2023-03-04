@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:toeic_app/services/user_service.dart';
 import 'package:toeic_app/sign_in.dart';
 import 'package:toeic_app/main.dart';
@@ -227,7 +228,6 @@ class _SignUpState extends State<SignUp> {
                               builder: (context) => Center(
                                     child: CircularProgressIndicator(),
                                   ));
-
                           try {
                             final userCredential = await FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
@@ -239,12 +239,15 @@ class _SignUpState extends State<SignUp> {
                             }
                             await UserService().insertUser(userCredential.user,
                                 phone: phoneText.text);
-                            await FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                    email: emailText.text,
-                                    password: passwordText.text);
                             navigatorKey.currentState
                                 ?.popUntil((route) => route.isFirst);
+                            Fluttertoast.showToast(
+                                msg: "Đăng ký tài khoản thành công",
+                                toastLength: Toast.LENGTH_SHORT,
+                                backgroundColor: Colors.blueAccent[200],
+                                textColor: Colors.white,
+                                fontSize: 17,
+                                gravity: ToastGravity.BOTTOM);
                           } on FirebaseAuthException catch (e) {
                             print('${e.code} ----- ${e.message}');
                             Navigator.of(context, rootNavigator: true)

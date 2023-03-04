@@ -53,6 +53,7 @@ dependencies:
     firebase_auth: ^4.2.9
     email_validator: ^2.1.17
     flutter_facebook_auth: ^5.0.8
+    fluttertoast: ^8.2.1
 
 dev_dependencies:
     flutter_test:
