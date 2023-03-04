@@ -148,7 +148,11 @@ class _SettingsPageState extends State<SettingsPage> {
                                     )
                                   ])
                             : Text(
-                                user!.displayName!,
+                                (user != null)
+                                    ? (user!.displayName != null)
+                                        ? user!.displayName!
+                                        : ""
+                                    : "",
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 17,
@@ -304,7 +308,9 @@ class _SettingsPageState extends State<SettingsPage> {
           break;
       }
       user = FirebaseAuth.instance.currentUser;
-      if (user != null) photoURL = user!.photoURL!;
+      if (user != null) {
+        if (user!.photoURL != null) photoURL = user!.photoURL!;
+      }
     });
   }
 

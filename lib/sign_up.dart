@@ -113,7 +113,7 @@ class _SignUpState extends State<SignUp> {
                               : null,
                           decoration: InputDecoration(
                               icon: Icon(Icons.phone, size: 30),
-                              labelText: "SDT",
+                              labelText: "Số điện thoại",
                               border: OutlineInputBorder(),
                               focusedBorder: OutlineInputBorder(
                                 borderSide: const BorderSide(
@@ -135,7 +135,7 @@ class _SignUpState extends State<SignUp> {
                                   : null,
                           decoration: InputDecoration(
                               icon: Icon(Icons.lock_outline_rounded, size: 30),
-                              labelText: "Password",
+                              labelText: "Mật khẩu",
                               border: OutlineInputBorder(),
                               suffixIcon: IconButton(
                                   icon: Icon(
@@ -168,7 +168,7 @@ class _SignUpState extends State<SignUp> {
                                   : null,
                           decoration: InputDecoration(
                               icon: Icon(Icons.lock_outline_rounded, size: 30),
-                              labelText: "Verify password",
+                              labelText: "Xác nhận mật khẩu",
                               border: OutlineInputBorder(),
                               suffixIcon: IconButton(
                                   icon: Icon(
@@ -228,10 +228,12 @@ class _SignUpState extends State<SignUp> {
                                   ));
 
                           try {
-                            await FirebaseAuth.instance
+                            final userCredential = await FirebaseAuth.instance
                                 .createUserWithEmailAndPassword(
                                     email: emailText.text.trim(),
                                     password: passwordText.text.trim());
+                            await userCredential.user
+                                ?.updateDisplayName(nameText.text.trim());
 
                             navigatorKey.currentState
                                 ?.popUntil((route) => route.isFirst);

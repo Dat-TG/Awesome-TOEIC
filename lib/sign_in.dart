@@ -85,7 +85,7 @@ class _SignInState extends State<SignIn> {
                       obscureText: !_passwordVisible,
                       decoration: InputDecoration(
                           icon: Icon(Icons.lock_outline_rounded, size: 30),
-                          labelText: "Password",
+                          labelText: "Mật khẩu",
                           suffixIcon: IconButton(
                               icon: Icon(
                                 _passwordVisible
@@ -147,9 +147,11 @@ class _SignInState extends State<SignIn> {
                               .signInWithEmailAndPassword(
                                   email: emailText.text,
                                   password: passwordText.text);
-                          navigatorKey.currentState
-                              ?.popUntil((route) => route.isFirst);
-                          
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      HomePage(intialIndex: 4)));
                         } on FirebaseAuthException catch (e) {
                           Navigator.of(context, rootNavigator: true)
                               .pop('dialog');
@@ -256,8 +258,10 @@ class _SignInState extends State<SignIn> {
               children: [
                 TextButton(
                   onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => ForgotPassword()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ForgotPassword()));
                   },
                   child: Text(
                     'Quên mật khẩu',
