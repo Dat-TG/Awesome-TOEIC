@@ -232,8 +232,10 @@ class _SignUpState extends State<SignUp> {
                                 .createUserWithEmailAndPassword(
                                     email: emailText.text.trim(),
                                     password: passwordText.text.trim());
-                            await userCredential.user
-                                ?.updateDisplayName(nameText.text.trim());
+                            if (userCredential.additionalUserInfo!.isNewUser) {
+                              await userCredential.user
+                                  ?.updateDisplayName(nameText.text.trim());
+                            }
 
                             navigatorKey.currentState
                                 ?.popUntil((route) => route.isFirst);

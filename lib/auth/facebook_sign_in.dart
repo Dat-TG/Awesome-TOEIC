@@ -10,5 +10,12 @@ Future<UserCredential> signInWithFacebook() async {
       FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
   // Once signed in, return the UserCredential
-  return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  final result =
+      await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+
+  if (result.additionalUserInfo!.isNewUser) {
+    await result.user?.updatePhotoURL(
+        "${result.user!.photoURL}?height=500&access_token=${result.credential!.accessToken}");
+  }
+  return result;
 }

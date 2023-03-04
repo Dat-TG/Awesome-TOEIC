@@ -215,6 +215,7 @@ class _SignInState extends State<SignIn> {
                         print("User");
                         print(result.user?.email);
                         if (result.user != null) {
+                          Navigator.pop(context);
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
@@ -267,9 +268,8 @@ class _SignInState extends State<SignIn> {
                         final result = await signInWithFacebook();
                         print("User");
                         print(result.user?.email);
-                        await result.user?.updatePhotoURL(
-                            "${result.user!.photoURL}?height=500&access_token=${result.credential!.accessToken}");
                         if (result.user != null) {
+                          Navigator.pop(context);
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
