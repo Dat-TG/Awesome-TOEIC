@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:toeic_app/auth/facebook_sign_in.dart';
 import 'package:toeic_app/auth/google_sign_in.dart';
 import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/forgot_password.dart';
@@ -240,6 +241,61 @@ class _SignInState extends State<SignIn> {
                             ),
                             Text(
                               'Đăng nhập bằng Google',
+                              style:
+                                  TextStyle(fontSize: 17, color: Colors.black),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      )),
+                ),
+              )
+            ],
+          ),
+          Padding(padding: EdgeInsets.only(top: 20)),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: MediaQuery.of(context).size.width > 500
+                    ? 500
+                    : MediaQuery.of(context).size.width,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 20),
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        final result = await signInWithFacebook();
+                        print("User");
+                        print(result.user?.email);
+                        await result.user?.updatePhotoURL(
+                            "${result.user!.photoURL}?height=500&access_token=${result.credential!.accessToken}");
+                        if (result.user != null) {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => HomePage(
+                                        intialIndex: 4,
+                                      )));
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          shape: StadiumBorder(),
+                          backgroundColor: Colors.white),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Image.asset(
+                              'assets/img/facebook.png',
+                              width: 20,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Đăng nhập bằng Facebook',
                               style:
                                   TextStyle(fontSize: 17, color: Colors.black),
                               textAlign: TextAlign.center,
