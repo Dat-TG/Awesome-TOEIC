@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:toeic_app/constants.dart';
 import 'package:toeic_app/home_page.dart';
+import 'package:toeic_app/settings/edit_profile.dart';
 import 'package:toeic_app/settings/language_form.dart';
 import 'package:toeic_app/settings/remind_dialog.dart';
 import 'package:toeic_app/settings/time_remind_picker.dart';
@@ -32,10 +33,15 @@ class _SettingsPageState extends State<SettingsPage> {
     _loadTheme();
     print("photoURL $photoURL");
     print("user $user");
+    if (user == null) {
+      entries.removeAt(1);
+      icons.removeAt(1);
+    }
   }
 
   final List<String> entries = <String>[
     'Đăng nhập | Đăng ký',
+    'Chỉnh sửa tài khoản',
     'Bí quyết sử dụng ứng dụng hiệu quả',
     'Ngôn ngữ',
     'Giao diện tối',
@@ -52,6 +58,7 @@ class _SettingsPageState extends State<SettingsPage> {
   ];
   final List<IconData> icons = <IconData>[
     Icons.login,
+    Icons.edit,
     Icons.book,
     Icons.language,
     Icons.dark_mode,
@@ -271,6 +278,29 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                 );
                               })
+                        }
+                      else if (entries.elementAt(index) ==
+                          "Chỉnh sửa tài khoản")
+                        {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Scaffold(
+                                        appBar: AppBar(
+                                          centerTitle: true,
+                                          title: Text("Chỉnh sửa tài khoản"),
+                                          backgroundColor: colorApp,
+                                        ),
+                                        body: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            EditProfileForm(),
+                                          ],
+                                        ),
+                                      )))
                         }
                     },
                     trailing: (entries.elementAt(index) == "Phiên bản" ||
