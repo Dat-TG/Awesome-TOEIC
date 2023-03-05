@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/part/app_bar.dart';
+import 'package:toeic_app/part/result.dart';
 import './../constants.dart';
 import 'question_frame.dart';
 
@@ -15,9 +16,10 @@ class _PartFiveState extends State<PartFive> {
   int totalQues = 30;
   List<String> _answers = [];
   List<List<String>> answersData = [];
-  PageController controller = PageController();
+  PageController controller = PageController(initialPage: 29);
   bool isShow = false;
   late List<String> rightAnsText;
+  bool isDialog = true;
 
   void callbackAnswer(int number, String ans) {
     setState(() {
@@ -34,7 +36,14 @@ class _PartFiveState extends State<PartFive> {
       }
     });
     super.initState();
+
     rightAnsText = compareAnswersToRightAnswers();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   List<String> compareAnswersToRightAnswers() {
@@ -66,31 +75,119 @@ class _PartFiveState extends State<PartFive> {
           answers: listDirectionEng,
           ansTrans: listDirectionVn,
         ),
-        body: PageView(
-            scrollDirection: Axis.horizontal,
-            controller: controller,
-            onPageChanged: (number) {
-              setState(() {
-                _curr = number + 1;
-              });
-            },
-            children: [
-              for (int i = 0; i < totalQues; i++)
-                PartFiveFrame(
-                    number: i,
-                    question: widget.data[i]['list_question'][0],
-                    answers: convertListDynamicToListString(
-                        widget.data.elementAt(i)['list_answers'][0]),
-                    getAnswer: (number, value) => callbackAnswer(number, value),
-                    ans: _answers,
-                    rightAnswers: rightAnsText,
-                    isShow: isShow,
-                    cancelShowExplan: (s) {
-                      setState(() {
-                        isShow = s;
-                      });
-                    })
-            ]));
+        body: NotificationListener<ScrollNotification>(
+          onNotification: (scrollNotification) {
+            if (scrollNotification is OverscrollNotification &&
+                controller.page == totalQues - 1) {
+              showGeneralDialog(
+                  context: context,
+                  transitionDuration: Duration(milliseconds: 300),
+                  transitionBuilder: (context, anim1, anim2, child) {
+                    return SlideTransition(
+                      position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                          .animate(anim1),
+                      child: child,
+                    );
+                  },
+                  pageBuilder: (context, anim1, anim2) => AlertDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(6.0))),
+                        icon: Row(
+                          children: [
+                            Icon(
+                              Icons.assignment_turned_in_rounded,
+                              color: colorApp,
+                              size: 30,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "Nộp bài ?",
+                              style: TextStyle(
+                                  fontSize: 21, fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        content: Text(
+                          "Bạn có thể xem kết quả và đáp án, sau khi đã nộp bài.",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                          textAlign: TextAlign.justify,
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: colorApp,
+                                  padding:
+                                      EdgeInsets.only(left: 25, right: 25)),
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Result()));
+                              },
+                              child: Text(
+                                "Nộp",
+                                style: TextStyle(fontSize: 15),
+                                textAlign: TextAlign.center,
+                              )),
+                          SizedBox(width: 2),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: white.withOpacity(0.6),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(6.0)),
+                                    side: BorderSide(color: black)),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                  decoration: BoxDecoration(),
+                                  width: 50,
+                                  child: Center(
+                                      child: Text(
+                                    "Hủy bỏ",
+                                    style:
+                                        TextStyle(color: black, fontSize: 15),
+                                    textAlign: TextAlign.center,
+                                  )))),
+                          SizedBox(width: 4),
+                        ],
+                      ));
+            }
+            return true;
+          },
+          child: PageView(
+              scrollDirection: Axis.horizontal,
+              controller: controller,
+              onPageChanged: (number) {
+                setState(() {
+                  _curr = number + 1;
+                });
+              },
+              children: [
+                for (int i = 0; i < totalQues; i++)
+                  PartFiveFrame(
+                      number: i,
+                      question: widget.data[i]['list_question'][0],
+                      answers: convertListDynamicToListString(
+                          widget.data.elementAt(i)['list_answers'][0]),
+                      getAnswer: (number, value) =>
+                          callbackAnswer(number, value),
+                      ans: _answers,
+                      rightAnswers: rightAnsText,
+                      isShow: isShow,
+                      cancelShowExplan: (s) {
+                        setState(() {
+                          isShow = s;
+                        });
+                      })
+              ]),
+        ));
   }
 }
 
