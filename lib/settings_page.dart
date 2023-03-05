@@ -8,6 +8,7 @@ import 'package:toeic_app/settings/remind_dialog.dart';
 import 'package:toeic_app/settings/time_remind_picker.dart';
 import 'package:toeic_app/sign_in.dart';
 import 'package:toeic_app/sign_up.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
@@ -195,6 +196,81 @@ class _SettingsPageState extends State<SettingsPage> {
                               return RemindDialog();
                             },
                           )
+                        }
+                      else if (entries.elementAt(index) ==
+                          "Điều khoản và chính sách")
+                        {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  iconPadding: EdgeInsets.zero,
+                                  titlePadding: EdgeInsets.zero,
+                                  actionsOverflowAlignment:
+                                      OverflowBarAlignment.end,
+                                  content: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      TextButton(
+                                          onPressed: () async {
+                                            if (!await launchUrl(
+                                              Uri.parse(
+                                                  "https://www.freeprivacypolicy.com/live/59d652b0-3425-48bd-a7d7-ab4b13140e8d"),
+                                              mode: LaunchMode.inAppWebView,
+                                              webViewConfiguration:
+                                                  const WebViewConfiguration(
+                                                      headers: <String, String>{
+                                                    'my_header_key':
+                                                        'my_header_value'
+                                                  }),
+                                            )) {
+                                              throw Exception(
+                                                  'Could not launch url');
+                                            }
+                                          },
+                                          child: Text(
+                                            "Chính sách quyền riêng tư",
+                                            style: TextStyle(
+                                                color: Colors.blue,
+                                                decoration:
+                                                    TextDecoration.underline),
+                                          )),
+                                      TextButton(
+                                          onPressed: () async {
+                                            if (!await launchUrl(
+                                              Uri.parse(
+                                                  "https://www.freeprivacypolicy.com/live/641c7aa2-fa91-4884-94b6-26b71f090c40"),
+                                              mode: LaunchMode.inAppWebView,
+                                              webViewConfiguration:
+                                                  const WebViewConfiguration(
+                                                      headers: <String, String>{
+                                                    'my_header_key':
+                                                        'my_header_value'
+                                                  }),
+                                            )) {
+                                              throw Exception(
+                                                  'Could not launch url');
+                                            }
+                                          },
+                                          child: Text("Điều khoản dịch vụ",
+                                              style: TextStyle(
+                                                  color: Colors.blue,
+                                                  decoration: TextDecoration
+                                                      .underline)))
+                                    ],
+                                  ),
+                                  title: ListTile(
+                                    title: Text("Điều khoản và chính sách"),
+                                    leading: Icon(
+                                      Icons.list,
+                                      color: colorApp,
+                                    ),
+                                  ),
+                                );
+                              })
                         }
                     },
                     trailing: (entries.elementAt(index) == "Phiên bản" ||

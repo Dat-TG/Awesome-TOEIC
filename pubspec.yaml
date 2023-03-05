@@ -54,6 +54,7 @@ dependencies:
     email_validator: ^2.1.17
     flutter_facebook_auth: ^5.0.8
     fluttertoast: ^8.2.1
+    url_launcher: ^6.1.10
 
 dev_dependencies:
     flutter_test:

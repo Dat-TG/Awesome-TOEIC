@@ -18,7 +18,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final navigatorKey = GlobalKey<NavigatorState>();
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupLocator();
@@ -50,7 +49,6 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _loadTheme();
-
   }
 
   @override
@@ -131,8 +129,8 @@ Future<void> showRemindNotification() async {
       const NotificationDetails(
           android: AndroidNotificationDetails(
         'your channel id',
-        'your channel name',
-        'your channel description',
+        'Nhắc nhở học tập',
+        'Nhắc nhở thời gian học tập',
         importance: Importance.max,
         priority: Priority.high,
         ongoing: true,
