@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:toeic_app/constants.dart';
+
+import '../auth/verify_phone.dart';
 
 // Create a Form widget.
 class EditProfileForm extends StatefulWidget {
@@ -45,7 +49,9 @@ class EditProfileFormState extends State<EditProfileForm> {
       if (user != null) {
         nameText.text = user.displayName ?? "";
         emailText.text = user.providerData[0].email ?? user.email!;
-        phoneText.text = user.phoneNumber ?? "";
+        if (user.phoneNumber != null) {
+          phoneText.text = "0${user.phoneNumber?.substring(3)}";
+        }
       }
       DOBText.text = tempDOB ?? "";
     });
@@ -149,18 +155,75 @@ class EditProfileFormState extends State<EditProfileForm> {
                     backgroundColor: colorApp),
                 onPressed: () async {
                   // Validate returns true if the form is valid, or false otherwise.
-                  try {
-                    print(
-                        "info: ${nameText.text}, ${phoneText.text}, ${DOBText.text}");
-                  } catch (err) {
-                    print(err);
-                  }
                   if (_editProfileFormKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Processing Data')),
-                    );
+                    try {
+                      showDialog(
+                          context: context,
+                          builder: (context) => Center(
+                                child: CircularProgressIndicator(),
+                              ));
+                      print(
+                          "info: ${nameText.text}, ${phoneText.text}, ${DOBText.text}");
+                      User? user = FirebaseAuth.instance.currentUser;
+                      user?.updateDisplayName(nameText.text);
+                      await FirebaseFirestore.instance
+                          .collection("Users")
+                          .doc(user!.uid)
+                          .update({'DOB': DOBText.text});
+                      if (phoneText.text != user.phoneNumber) {
+                        await FirebaseAuth.instance.verifyPhoneNumber(
+                          phoneNumber: "+84${phoneText.text.substring(1)}",
+                          verificationCompleted:
+                              (PhoneAuthCredential credential) {
+                            FirebaseAuth.instance.currentUser
+                                ?.updatePhoneNumber(credential);
+                          },
+                          verificationFailed: (FirebaseAuthException e) {
+                            Fluttertoast.showToast(
+                                msg: "Xác thực số điện thoại không thành công",
+                                toastLength: Toast.LENGTH_LONG,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 17,
+                                gravity: ToastGravity.BOTTOM);
+                            Navigator.pop(context);
+                          },
+                          codeSent: (String verificationId, int? resendToken) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyVerify(
+                                          vertificationID: verificationId,
+                                        )));
+                          },
+                          codeAutoRetrievalTimeout: (String verificationId) {},
+                        );
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Scaffold(
+                                      appBar: AppBar(
+                                        centerTitle: true,
+                                        title: Text("Chỉnh sửa tài khoản"),
+                                        backgroundColor: colorApp,
+                                      ),
+                                      body: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          EditProfileForm(),
+                                        ],
+                                      ),
+                                    )));
+                      }
+                    } catch (err) {
+                      print(err);
+                      Navigator.pop(context);
+                    }
                   }
                 },
                 child: const Text('Xác nhận'),

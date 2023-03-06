@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pinput/pinput.dart';
 import 'package:toeic_app/auth/phone_auth_screen.dart';
@@ -124,16 +125,42 @@ class _MyVerifyState extends State<MyVerify> {
                                 verificationId: widget.vertificationID,
                                 smsCode: codeController.text);
 
+                        if (credential.token != null) {
+                          FirebaseAuth.instance.currentUser
+                              ?.updatePhoneNumber(credential);
+                        } else {
+                          Fluttertoast.showToast(
+                              msg:
+                                  "Xác thực thất bại! Mã xác thực không chính xác",
+                              toastLength: Toast.LENGTH_LONG,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 17,
+                              gravity: ToastGravity.BOTTOM);
+                        }
+
                         // Sign the user in (or link) with the credential
-                        FirebaseAuth.instance.currentUser
-                            ?.updatePhoneNumber(credential);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
                                     HomePage(intialIndex: 4)));
-                      } catch (err) {
-                        print(err);
+                      } on PlatformException catch (err) {
+                        await FirebaseAuth.instance.signOut();
+                        print("Lỗi xác thực $err");
+                        Fluttertoast.showToast(
+                            msg:
+                                "Xác thực số điện thoại không thành công \n Lỗi: $err",
+                            toastLength: Toast.LENGTH_LONG,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 17,
+                            gravity: ToastGravity.BOTTOM);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    HomePage(intialIndex: 4)));
                       }
                     },
                     child: Text("Xác thực số điện thoại")),

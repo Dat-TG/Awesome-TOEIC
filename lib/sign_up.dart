@@ -239,10 +239,9 @@ class _SignUpState extends State<SignUp> {
                               await userCredential.user
                                   ?.updateDisplayName(nameText.text.trim());
                               if (phoneText.text != "") {
-                                phoneText.text =
-                                    "+84${phoneText.text.substring(1)}";
                                 await FirebaseAuth.instance.verifyPhoneNumber(
-                                  phoneNumber: phoneText.text,
+                                  phoneNumber:
+                                      "+84${phoneText.text.substring(1)}",
                                   verificationCompleted:
                                       (PhoneAuthCredential credential) {
                                     FirebaseAuth.instance.currentUser
@@ -258,6 +257,7 @@ class _SignUpState extends State<SignUp> {
                                         textColor: Colors.white,
                                         fontSize: 17,
                                         gravity: ToastGravity.BOTTOM);
+                                    Navigator.pop(context);
                                   },
                                   codeSent: (String verificationId,
                                       int? resendToken) {

@@ -90,10 +90,8 @@ class _MyPhoneState extends State<MyPhone> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () async {
-                      textController.text =
-                          "+84${textController.text.substring(1)}";
                       await FirebaseAuth.instance.verifyPhoneNumber(
-                        phoneNumber: textController.text,
+                        phoneNumber: "+84${textController.text.substring(1)}",
                         verificationCompleted:
                             (PhoneAuthCredential credential) {
                           FirebaseAuth.instance.currentUser
