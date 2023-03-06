@@ -4,6 +4,8 @@ import 'package:flutter/scheduler.dart' as scheduler;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:toeic_app/data/data.dart';
 
+import 'auth/phone_auth_screen.dart';
+import 'auth/verify_phone.dart';
 import 'home_page.dart';
 import 'constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';

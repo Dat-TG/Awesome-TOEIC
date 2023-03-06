@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
@@ -15,13 +16,47 @@ class EditProfileForm extends StatefulWidget {
 // Create a corresponding State class.
 // This class holds data related to the form.
 class EditProfileFormState extends State<EditProfileForm> {
-  final User? user = FirebaseAuth.instance.currentUser;
+  String? DOB;
+  String? displayName;
+  String? email;
+  String? phone;
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
   // Note: This is a GlobalKey<FormState>,
   // not a GlobalKey<MyCustomFormState>.
   final _editProfileFormKey = GlobalKey<FormState>();
+  TextEditingController nameText = TextEditingController();
+  TextEditingController emailText = TextEditingController();
+  TextEditingController phoneText = TextEditingController();
+  TextEditingController DOBText = TextEditingController();
+
+  Future<void> getInitValue() async {
+    Map<String, dynamic>? data;
+    String? tempDOB;
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .get()
+        .then((value) => {data = value.data(), tempDOB = data!["DOB"] ?? ""});
+    User? user = FirebaseAuth.instance.currentUser;
+    setState(() {
+      print("user $user");
+      if (user != null) {
+        nameText.text = user.displayName ?? "";
+        emailText.text = user.providerData[0].email ?? user.email!;
+        phoneText.text = user.phoneNumber ?? "";
+      }
+      DOBText.text = tempDOB ?? "";
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getInitValue().then((value) => {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +64,7 @@ class EditProfileFormState extends State<EditProfileForm> {
     return Form(
       key: _editProfileFormKey,
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
@@ -46,7 +81,7 @@ class EditProfileFormState extends State<EditProfileForm> {
                   )),
                   labelText: 'Tên',
                 ),
-                initialValue: user!.displayName,
+                controller: nameText,
               ),
             ),
             Padding(
@@ -60,8 +95,8 @@ class EditProfileFormState extends State<EditProfileForm> {
                   )),
                   labelText: 'Email',
                 ),
-                initialValue: user!.email,
                 enabled: false,
+                controller: emailText,
               ),
             ),
             Padding(
@@ -75,7 +110,7 @@ class EditProfileFormState extends State<EditProfileForm> {
                   )),
                   labelText: 'Số điện thoại',
                 ),
-                initialValue: user!.phoneNumber,
+                controller: phoneText,
               ),
             ),
             Padding(
@@ -89,7 +124,20 @@ class EditProfileFormState extends State<EditProfileForm> {
                   )),
                   labelText: 'Ngày sinh',
                 ),
-                initialValue: "",
+                controller: DOBText,
+                onTap: () async {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  DateTime? date = DateTime(1900);
+                  date = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime(2100));
+                  if (date != null) {
+                    DOBText.text =
+                        "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(2, '0')}";
+                  }
+                },
               ),
             ),
             Center(
@@ -99,8 +147,14 @@ class EditProfileFormState extends State<EditProfileForm> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30)),
                     backgroundColor: colorApp),
-                onPressed: () {
+                onPressed: () async {
                   // Validate returns true if the form is valid, or false otherwise.
+                  try {
+                    print(
+                        "info: ${nameText.text}, ${phoneText.text}, ${DOBText.text}");
+                  } catch (err) {
+                    print(err);
+                  }
                   if (_editProfileFormKey.currentState!.validate()) {
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.

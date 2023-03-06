@@ -2,6 +2,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:toeic_app/auth/verify_phone.dart';
+import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/services/user_service.dart';
 import 'package:toeic_app/sign_in.dart';
 import 'package:toeic_app/main.dart';
@@ -236,11 +238,57 @@ class _SignUpState extends State<SignUp> {
                             if (userCredential.additionalUserInfo!.isNewUser) {
                               await userCredential.user
                                   ?.updateDisplayName(nameText.text.trim());
+                              if (phoneText.text != "") {
+                                phoneText.text =
+                                    "+84${phoneText.text.substring(1)}";
+                                await FirebaseAuth.instance.verifyPhoneNumber(
+                                  phoneNumber: phoneText.text,
+                                  verificationCompleted:
+                                      (PhoneAuthCredential credential) {
+                                    FirebaseAuth.instance.currentUser
+                                        ?.updatePhoneNumber(credential);
+                                  },
+                                  verificationFailed:
+                                      (FirebaseAuthException e) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Xác thực số điện thoại không thành công",
+                                        toastLength: Toast.LENGTH_LONG,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white,
+                                        fontSize: 17,
+                                        gravity: ToastGravity.BOTTOM);
+                                  },
+                                  codeSent: (String verificationId,
+                                      int? resendToken) {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => MyVerify(
+                                                  vertificationID:
+                                                      verificationId,
+                                                )));
+                                  },
+                                  codeAutoRetrievalTimeout:
+                                      (String verificationId) {},
+                                );
+                              }
                             }
+                            await FirebaseAuth.instance
+                                .signInWithEmailAndPassword(
+                                    email: emailText.text,
+                                    password: passwordText.text);
                             await UserService().insertUser(userCredential.user,
                                 phone: phoneText.text);
-                            navigatorKey.currentState
-                                ?.popUntil((route) => route.isFirst);
+                            if (phoneText.text == "") {
+                              navigatorKey.currentState
+                                  ?.popUntil((route) => route.isFirst);
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomePage(intialIndex: 4)));
+                            }
                             Fluttertoast.showToast(
                                 msg: "Đăng ký tài khoản thành công",
                                 toastLength: Toast.LENGTH_SHORT,
