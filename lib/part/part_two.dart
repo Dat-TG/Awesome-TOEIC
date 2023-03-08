@@ -1,7 +1,8 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:toeic_app/main.dart';
+import 'package:toeic_app/part/result.dart';
+import 'package:toeic_app/part/submit_dialog.dart';
 
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
@@ -18,26 +19,29 @@ class PartTwo extends StatefulWidget {
 class _PartTwoState extends State<PartTwo> {
   int _curr = 1;
   int totalQues = 4; // Example
-  List<String> _answer = [];
+  List<String> _answers = [];
   PageController controller = PageController();
+  late List<String> rightAnsChoice;
+  bool isDialog = true;
 
   @override
   void initState() {
-    super.initState();
     setState(() {
       totalQues = widget.data.length;
-      _answer = [];
-      for (int i = 0; i < totalQues; i++) {
-        _answer.add("");
+      _answers = [];
+      rightAnsChoice = [];
+      for (int i = 0; i < widget.data.length; i++) {
+        _answers.add("");
+        rightAnsChoice.add(widget.data[i]['list_right_answer'][0]);
       }
     });
+    super.initState();
   }
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      _answer[number - 1] = ans;
+      _answers[number - 1] = ans;
     });
-    print(_answer);
   }
 
   @override
@@ -78,27 +82,51 @@ class _PartTwoState extends State<PartTwo> {
             )
           ],
         ),
-        body: PageView(
-            scrollDirection: Axis.horizontal,
-            controller: controller,
-            onPageChanged: (number) {
-              setState(() {
-                _curr = number + 1;
-              });
+        body: NotificationListener<ScrollNotification>(
+            onNotification: (scrollNotification) {
+              if (scrollNotification is OverscrollNotification &&
+                  controller.page == totalQues - 1) {
+                showGeneralDialog(
+                    context: context,
+                    transitionDuration: Duration(milliseconds: 300),
+                    transitionBuilder: (context, anim1, anim2, child) {
+                      return SlideTransition(
+                        position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                            .animate(anim1),
+                        child: child,
+                      );
+                    },
+                    pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                        direct: Result(
+                            part: 1,
+                            listAnswers: _answers,
+                            listRightAnswers: rightAnsChoice)));
+              }
+              return true;
             },
-            children: [
-              for (int i = 0; i < widget.data.length; i++)
-                PartTwoFrame(
-                  audioPath: widget.data[i]['audio'],
-                  number: i + 1,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer,
-                  rightAnswers: convertListDynamicToListString(
-                      widget.data[i]['list_right_answer']),
-                ),
-            ]));
+            child: PageView(
+                scrollDirection: Axis.horizontal,
+                controller: controller,
+                onPageChanged: (number) {
+                  setState(() {
+                    _curr = number + 1;
+                  });
+                },
+                children: [
+                  for (int i = 0; i < widget.data.length; i++)
+                    PartTwoFrame(
+                      audioPath: widget.data[i]['audio'],
+                      number: i + 1,
+                      getAnswer: (numb, value) => callbackAnswer(numb, value),
+                      ans: _answers,
+                      rightAnswers: convertListDynamicToListString(
+                          widget.data[i]['list_right_answer']),
+                    ),
+                ])));
   }
 }
+
+// -----------------------------------------
 
 class PartTwoFrame extends StatefulWidget {
   final int number;

@@ -1,14 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/home_page.dart';
+import 'package:toeic_app/part/review_answer.dart';
 
 class Result extends StatefulWidget {
-  const Result({super.key});
+  final List<String> listAnswers, listRightAnswers;
+  final int part;
+  const Result(
+      {super.key,
+      required this.part,
+      required this.listAnswers,
+      required this.listRightAnswers});
 
   @override
   State<Result> createState() => _ResultState();
 }
 
 class _ResultState extends State<Result> {
+  int total = 0, correct = 0;
+  double progress = 1;
+
+  @override
+  void initState() {
+    setState(() {
+      total = widget.listAnswers.length;
+    });
+    for (int i = 0; i < widget.listAnswers.length; i++) {
+      if (widget.listAnswers[i] == widget.listRightAnswers[i]) {
+        setState(() {
+          correct += 1;
+        });
+      }
+    }
+    progress = correct / total * 1.0;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +57,11 @@ class _ResultState extends State<Result> {
                         IconButton(
                           icon: Icon(Icons.arrow_back),
                           onPressed: () {
-                            Navigator.of(context).pop();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        HomePage(intialIndex: 0)),
+                                (Route<dynamic> route) => false);
                           },
                         ),
                       ],
@@ -63,7 +94,7 @@ class _ResultState extends State<Result> {
                     Padding(
                       padding: const EdgeInsets.only(top: 5, bottom: 5),
                       child: Text(
-                        'Mô tả hình ảnh',
+                        listDesc[widget.part],
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w500,
@@ -72,7 +103,7 @@ class _ResultState extends State<Result> {
                       ),
                     ),
                     Text(
-                      '(Nghe hiểu)',
+                      widget.part < 5 ? '(Nghe hiểu)' : '(Đọc hiểu)',
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
@@ -87,7 +118,7 @@ class _ResultState extends State<Result> {
                           Padding(
                             padding: const EdgeInsets.only(top: 20, bottom: 10),
                             child: Text(
-                              'Kết quả: 3/3',
+                              'Kết quả: $correct/$total',
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.start,
@@ -127,7 +158,7 @@ class _ResultState extends State<Result> {
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.w500)),
                                         Text(
-                                          '100%',
+                                          '${double.parse((progress * 100).toStringAsFixed(2))}%',
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.w500),
@@ -145,15 +176,15 @@ class _ResultState extends State<Result> {
                                             backgroundColor: colorApp3,
                                             valueColor:
                                                 AlwaysStoppedAnimation<Color>(
-                                              colorApp,
+                                              progress < 0.5 ? red : colorApp,
                                             ),
-                                            value: 0.6,
+                                            value: progress,
                                           ),
                                         ),
                                       ),
                                     ),
                                     Text(
-                                      'Tiếp tục cố gắng',
+                                      progress < 0.5 ? 'Tiếp tục cố gắng' : '',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: 18,
@@ -174,7 +205,15 @@ class _ResultState extends State<Result> {
                       Expanded(
                         flex: 1,
                         child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ReviewAnswers(
+                                          listAnswers: widget.listAnswers,
+                                          listRightAnswers:
+                                              widget.listRightAnswers)));
+                            },
                             style: ElevatedButton.styleFrom(
                                 shape: StadiumBorder(),
                                 backgroundColor: colorApp),
@@ -191,7 +230,17 @@ class _ResultState extends State<Result> {
                       Expanded(
                         flex: 1,
                         child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          HomePage(intialIndex: 0)),
+                                  (Route<dynamic> route) => false);
+                              // Navigator.pop(context);
+                              // Navigator.push(
+                              //     context,
+                              //     );
+                            },
                             style: ElevatedButton.styleFrom(
                                 shape: StadiumBorder(),
                                 backgroundColor: colorApp),

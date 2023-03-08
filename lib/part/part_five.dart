@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import 'package:toeic_app/part/result.dart';
+import 'package:toeic_app/part/submit_dialog.dart';
 import './../constants.dart';
 import 'question_frame.dart';
+import './../utils/convert_ans_text_to_choice.dart';
 
 class PartFive extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -18,13 +20,12 @@ class _PartFiveState extends State<PartFive> {
   List<List<String>> answersData = [];
   PageController controller = PageController(initialPage: 29);
   bool isShow = false;
-  late List<String> rightAnsText;
+  late List<String> rightAnsChoice;
   bool isDialog = true;
 
   void callbackAnswer(int number, String ans) {
     setState(() {
       if (_answers[number] == "") _answers[number] = ans;
-      print(_answers);
     });
   }
 
@@ -34,10 +35,9 @@ class _PartFiveState extends State<PartFive> {
       for (int i = 0; i < totalQues; i++) {
         _answers.add("");
       }
+      rightAnsChoice = convertAnsTextToChoice(widget.data);
     });
     super.initState();
-
-    rightAnsText = compareAnswersToRightAnswers();
   }
 
   @override
@@ -46,29 +46,9 @@ class _PartFiveState extends State<PartFive> {
     super.dispose();
   }
 
-  List<String> compareAnswersToRightAnswers() {
-    List<String> rightAns = [];
-    for (int i = 0; i < widget.data.length; i++) {
-      for (int j = 0; j < 4; j++) {
-        if (widget.data.elementAt(i)['list_right_answer'][0] ==
-            widget.data.elementAt(i)['list_answers'][0][j]) {
-          if (j == 0) {
-            rightAns.add("A");
-          } else if (j == 1) {
-            rightAns.add("B");
-          } else if (j == 2) {
-            rightAns.add("C");
-          } else {
-            rightAns.add("D");
-          }
-        }
-      }
-    }
-    return rightAns;
-  }
-
   @override
   Widget build(BuildContext context) {
+    print('rightAnsChoice:  $rightAnsChoice');
     return Scaffold(
         appBar: AppBarPractice(
           numAnswers: '$_curr',
@@ -89,75 +69,11 @@ class _PartFiveState extends State<PartFive> {
                       child: child,
                     );
                   },
-                  pageBuilder: (context, anim1, anim2) => AlertDialog(
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(6.0))),
-                        icon: Row(
-                          children: [
-                            Icon(
-                              Icons.assignment_turned_in_rounded,
-                              color: colorApp,
-                              size: 30,
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Nộp bài ?",
-                              style: TextStyle(
-                                  fontSize: 21, fontWeight: FontWeight.bold),
-                            )
-                          ],
-                        ),
-                        content: Text(
-                          "Bạn có thể xem kết quả và đáp án, sau khi đã nộp bài.",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w400),
-                          textAlign: TextAlign.justify,
-                        ),
-                        actions: [
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: colorApp,
-                                  padding:
-                                      EdgeInsets.only(left: 25, right: 25)),
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => Result()));
-                              },
-                              child: Text(
-                                "Nộp",
-                                style: TextStyle(fontSize: 15),
-                                textAlign: TextAlign.center,
-                              )),
-                          SizedBox(width: 2),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: white.withOpacity(0.6),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(6.0)),
-                                    side: BorderSide(color: black)),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Container(
-                                  decoration: BoxDecoration(),
-                                  width: 50,
-                                  child: Center(
-                                      child: Text(
-                                    "Hủy bỏ",
-                                    style:
-                                        TextStyle(color: black, fontSize: 15),
-                                    textAlign: TextAlign.center,
-                                  )))),
-                          SizedBox(width: 4),
-                        ],
-                      ));
+                  pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                      direct: Result(
+                          part: 4,
+                          listAnswers: _answers,
+                          listRightAnswers: rightAnsChoice)));
             }
             return true;
           },
@@ -179,7 +95,7 @@ class _PartFiveState extends State<PartFive> {
                       getAnswer: (number, value) =>
                           callbackAnswer(number, value),
                       ans: _answers,
-                      rightAnswers: rightAnsText,
+                      rightAnswers: rightAnsChoice,
                       isShow: isShow,
                       cancelShowExplan: (s) {
                         setState(() {
@@ -190,6 +106,8 @@ class _PartFiveState extends State<PartFive> {
         ));
   }
 }
+
+// -------------------------------------------------------------
 
 class PartFiveFrame extends StatefulWidget {
   final int number;
@@ -217,7 +135,6 @@ class PartFiveFrame extends StatefulWidget {
   State<PartFiveFrame> createState() => _PartFiveFrameState();
 }
 
-// --------------------------------------------------------------------
 class _PartFiveFrameState extends State<PartFiveFrame> {
   @override
   void initState() {

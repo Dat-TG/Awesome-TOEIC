@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:toeic_app/part/result.dart';
+import 'package:toeic_app/part/submit_dialog.dart';
 
 import './../constants.dart';
 import 'app_bar.dart';
 import 'question_frame.dart';
+import './../utils/convert_ans_text_to_choice.dart';
 
 class PartSix extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -15,61 +18,30 @@ class PartSix extends StatefulWidget {
 class _PartSixState extends State<PartSix> {
   int _curr = 1;
   int totalQues = 1;
-  List<String> _answer = [], rightAnswersSelect = [];
+  List<String> _answers = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
   String numAnswers = "1-4";
+  late List<String> rightAnsChoice;
+  bool isDialog = true;
 
   void callbackAnswer(int number, String value) {
     setState(() {
-      if (_answer[number - 1] == "") _answer[number - 1] = value;
-      print(_answer);
+      if (_answers[number - 1] == "") _answers[number - 1] = value;
     });
-  }
-
-  List<String> compareAnswersToRightAnswers() {
-    List<String> rightAns = [];
-    for (int i = 0; i < widget.data.length; i++) {
-      for (int k = 0;
-          k < widget.data.elementAt(i)['list_answers'].length;
-          k++) {
-        for (int j = 0; j < 4; j++) {
-          if (answersOption.contains(widget.data[i]['list_right_answer'][k])) {}
-          if (widget.data.elementAt(i)['list_right_answer'][k] ==
-              widget.data.elementAt(i)['list_answers'][k][j]) {
-            if (j == 0) {
-              rightAns.add("A");
-            } else if (j == 1) {
-              rightAns.add("B");
-            } else if (j == 2) {
-              rightAns.add("C");
-            } else {
-              rightAns.add("D");
-            }
-          }
-        }
-      }
-    }
-    return rightAns;
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
   }
 
   @override
   void initState() {
-    super.initState();
     setState(() {
+      rightAnsChoice = [];
       totalQues = widget.data.length * 4;
       for (int i = 0; i < totalQues; i++) {
-        _answer.add("");
+        _answers.add("");
       }
-      rightAnswersSelect = compareAnswersToRightAnswers();
-      print(rightAnswersSelect);
+      rightAnsChoice = convertListAnsTextToListChoice(widget.data);
     });
+    super.initState();
   }
 
   @override
@@ -81,42 +53,65 @@ class _PartSixState extends State<PartSix> {
           answers: listDirectionEng,
           ansTrans: listDirectionVn,
         ),
-        body: PageView(
-            scrollDirection: Axis.horizontal,
-            controller: controllerFrame,
-            onPageChanged: (number) {
-              setState(() {
-                numAnswers = "${number * 4 + 1}-${number * 4 + 4}";
-              });
+        body: NotificationListener<ScrollNotification>(
+            onNotification: (scrollNotification) {
+              if (scrollNotification is OverscrollNotification &&
+                  controllerFrame.page == widget.data.length - 1) {
+                showGeneralDialog(
+                    context: context,
+                    transitionDuration: Duration(milliseconds: 300),
+                    transitionBuilder: (context, anim1, anim2, child) {
+                      return SlideTransition(
+                        position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                            .animate(anim1),
+                        child: child,
+                      );
+                    },
+                    pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                        direct: Result(
+                            part: 5,
+                            listAnswers: _answers,
+                            listRightAnswers: rightAnsChoice)));
+              }
+              return true;
             },
-            children: [
-              for (int i = 0; i < widget.data.length; i++)
-                PartSixFrame(
-                  number: [
-                    for (int j = 0;
-                        j <
-                            convertListDynamicToListListString(
-                                    widget.data[i]['list_answers'])
-                                .length;
-                        j++)
-                      _curr++
-                  ],
-                  paragraph: widget.data[i]['content'],
-                  question: List<String>.from(
-                      widget.data[i]['list_question'] as List),
-                  answers: convertListDynamicToListListString(
-                      widget.data[i]['list_answers']),
-                  getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answer,
-                  isShow: isShow,
-                  cancelShowExplan: (s) {
-                    setState(() {
-                      isShow = s;
-                    });
-                  },
-                  rightAnswers: rightAnswersSelect,
-                ),
-            ]));
+            child: PageView(
+                scrollDirection: Axis.horizontal,
+                controller: controllerFrame,
+                onPageChanged: (number) {
+                  setState(() {
+                    numAnswers = "${number * 4 + 1}-${number * 4 + 4}";
+                  });
+                },
+                children: [
+                  for (int i = 0; i < widget.data.length; i++)
+                    PartSixFrame(
+                      number: [
+                        for (int j = 0;
+                            j <
+                                convertListDynamicToListListString(
+                                        widget.data[i]['list_answers'])
+                                    .length;
+                            j++)
+                          _curr++
+                      ],
+                      paragraph: widget.data[i]['content'],
+                      question: List<String>.from(
+                          widget.data[i]['list_question'] as List),
+                      answers: convertListDynamicToListListString(
+                          widget.data[i]['list_answers']),
+                      getAnswer: (number, value) =>
+                          callbackAnswer(number, value),
+                      ans: _answers,
+                      isShow: isShow,
+                      cancelShowExplan: (s) {
+                        setState(() {
+                          isShow = s;
+                        });
+                      },
+                      rightAnswers: rightAnsChoice,
+                    ),
+                ])));
   }
 }
 

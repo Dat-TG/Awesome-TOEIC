@@ -20,6 +20,7 @@ Color white = Colors.white;
 Color black = Colors.black;
 Color green = Colors.green;
 Color red = Colors.red;
+Color transparent = Colors.red.withOpacity(0);
 
 bool isDarkMode = false;
 
@@ -65,7 +66,6 @@ Future<List<Map<String, dynamic>>> getQuestionsAndAnswers(int partID) async {
           });
   return data;
 }
-
 
 List<List<String>> convertListDynamicToListListString(List<dynamic> data) {
   List<List<String>> newList = [];

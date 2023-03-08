@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:toeic_app/part/part_one.dart';
-
+import 'package:toeic_app/part/result.dart';
+import 'package:toeic_app/part/submit_dialog.dart';
 import './../constants.dart';
+import './../utils/convert_ans_text_to_choice.dart';
 import 'app_bar.dart';
 import 'question_frame.dart';
 
@@ -20,42 +22,17 @@ class PartThree extends StatefulWidget {
 class _PartThreeState extends State<PartThree> {
   int _curr = 1;
   int totalQues = 3; //Example
-  List<String> _answer = [], rightAnswersSelect = [];
+  List<String> _answers = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
   String numAnswers = "1-3";
+  late List<String> rightAnsChoice;
+  bool isDialog = true;
 
   void callbackAnswer(int number, String value) {
     setState(() {
-      if (_answer[number - 1] == "") _answer[number - 1] = value;
-      print(_answer);
+      if (_answers[number - 1] == "") _answers[number - 1] = value;
     });
-  }
-
-  List<String> compareAnswersToRightAnswers() {
-    List<String> rightAns = [];
-    for (int i = 0; i < widget.data.length; i++) {
-      for (int k = 0;
-          k < widget.data.elementAt(i)['list_answers'].length;
-          k++) {
-        for (int j = 0; j < 4; j++) {
-          if (answersOption.contains(widget.data[i]['list_right_answer'][k])) {}
-          if (widget.data.elementAt(i)['list_right_answer'][k] ==
-              widget.data.elementAt(i)['list_answers'][k][j]) {
-            if (j == 0) {
-              rightAns.add("A");
-            } else if (j == 1) {
-              rightAns.add("B");
-            } else if (j == 2) {
-              rightAns.add("C");
-            } else {
-              rightAns.add("D");
-            }
-          }
-        }
-      }
-    }
-    return rightAns;
   }
 
   @override
@@ -64,12 +41,9 @@ class _PartThreeState extends State<PartThree> {
     setState(() {
       totalQues = widget.data.length * 3;
       for (int i = 0; i < totalQues; i++) {
-        _answer.add("");
+        _answers.add("");
       }
-      rightAnswersSelect = compareAnswersToRightAnswers();
-      print("rightanswerselect");
-      print(rightAnswersSelect.length);
-      print(rightAnswersSelect);
+      rightAnsChoice = convertListAnsTextToListChoice(widget.data);
     });
   }
 
@@ -82,43 +56,67 @@ class _PartThreeState extends State<PartThree> {
           answers: listDirectionEng,
           ansTrans: listDirectionVn,
         ),
-        body: PageView(
-            scrollDirection: Axis.horizontal,
-            controller: controllerFrame,
-            onPageChanged: (number) {
-              setState(() {
-                numAnswers = "${number * 3 + 1}-${number * 3 + 3}";
-              });
+        body: NotificationListener<ScrollNotification>(
+            onNotification: (scrollNotification) {
+              if (scrollNotification is OverscrollNotification &&
+                  controllerFrame.page == widget.data.length - 1) {
+                showGeneralDialog(
+                    context: context,
+                    transitionDuration: Duration(milliseconds: 300),
+                    transitionBuilder: (context, anim1, anim2, child) {
+                      return SlideTransition(
+                        position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                            .animate(anim1),
+                        child: child,
+                      );
+                    },
+                    pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                        direct: Result(
+                            part: 2,
+                            listAnswers: _answers,
+                            listRightAnswers: rightAnsChoice)));
+              }
+              return true;
             },
-            children: [
-              for (int i = 0; i < widget.data.length; i++)
-                PartThreeFrame(
-                  number: [
-                    for (int j = 0;
-                        j <
-                            convertListDynamicToListListString(
-                                    widget.data[i]['list_answers'])
-                                .length;
-                        j++)
-                      _curr++
-                  ],
-                  audioPath: widget.data[i]['audio'],
-                  images: List<String>.from(widget.data[i]['images'] as List),
-                  question: List<String>.from(
-                      widget.data[i]['list_question'] as List),
-                  answers: convertListDynamicToListListString(
-                      widget.data[i]['list_answers']),
-                  getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answer,
-                  isShow: isShow,
-                  cancelShowExplan: (s) {
-                    setState(() {
-                      isShow = s;
-                    });
-                  },
-                  rightAnswers: rightAnswersSelect,
-                ),
-            ]));
+            child: PageView(
+                scrollDirection: Axis.horizontal,
+                controller: controllerFrame,
+                onPageChanged: (number) {
+                  setState(() {
+                    numAnswers = "${number * 3 + 1}-${number * 3 + 3}";
+                  });
+                },
+                children: [
+                  for (int i = 0; i < widget.data.length; i++)
+                    PartThreeFrame(
+                      number: [
+                        for (int j = 0;
+                            j <
+                                convertListDynamicToListListString(
+                                        widget.data[i]['list_answers'])
+                                    .length;
+                            j++)
+                          _curr++
+                      ],
+                      audioPath: widget.data[i]['audio'],
+                      images:
+                          List<String>.from(widget.data[i]['images'] as List),
+                      question: List<String>.from(
+                          widget.data[i]['list_question'] as List),
+                      answers: convertListDynamicToListListString(
+                          widget.data[i]['list_answers']),
+                      getAnswer: (number, value) =>
+                          callbackAnswer(number, value),
+                      ans: _answers,
+                      isShow: isShow,
+                      cancelShowExplan: (s) {
+                        setState(() {
+                          isShow = s;
+                        });
+                      },
+                      rightAnswers: rightAnsChoice,
+                    ),
+                ])));
   }
 }
 
@@ -213,12 +211,6 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 15, 0, 15),
-                        child: Text(
-                          "Nghe và chọn câu trả lời phù hợp",
-                          style: TextStyle(fontSize: 16),
-                        )),
                     Container(
                         decoration: BoxDecoration(
                           color: white,
