@@ -7,6 +7,8 @@ import 'package:toeic_app/auth/phone_auth_screen.dart';
 import 'package:toeic_app/constants.dart';
 import 'package:toeic_app/home_page.dart';
 
+import '../main.dart';
+
 class MyVerify extends StatefulWidget {
   final String vertificationID;
   const MyVerify({super.key, required this.vertificationID});
@@ -124,14 +126,19 @@ class _MyVerifyState extends State<MyVerify> {
                             PhoneAuthProvider.credential(
                                 verificationId: widget.vertificationID,
                                 smsCode: codeController.text);
-
                         if (credential.token != null) {
                           FirebaseAuth.instance.currentUser
                               ?.updatePhoneNumber(credential);
+                          Fluttertoast.showToast(
+                              msg: "Xác thực số điện thoại thành công",
+                              toastLength: Toast.LENGTH_LONG,
+                              backgroundColor: Colors.green.shade400,
+                              textColor: Colors.white,
+                              fontSize: 17,
+                              gravity: ToastGravity.BOTTOM);
                         } else {
                           Fluttertoast.showToast(
-                              msg:
-                                  "Xác thực thất bại! Mã xác thực không chính xác",
+                              msg: "Mã xác thực không chính xác!",
                               toastLength: Toast.LENGTH_LONG,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
@@ -140,7 +147,9 @@ class _MyVerifyState extends State<MyVerify> {
                         }
 
                         // Sign the user in (or link) with the credential
-                        Navigator.push(
+                        navigatorKey.currentState
+                            ?.popUntil((route) => route.isFirst);
+                        Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
@@ -156,6 +165,8 @@ class _MyVerifyState extends State<MyVerify> {
                             textColor: Colors.white,
                             fontSize: 17,
                             gravity: ToastGravity.BOTTOM);
+                        navigatorKey.currentState
+                            ?.popUntil((route) => route.isFirst);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -169,8 +180,12 @@ class _MyVerifyState extends State<MyVerify> {
                 children: [
                   TextButton(
                       onPressed: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => MyPhone()));
+                        navigatorKey.currentState
+                            ?.popUntil((route) => route.isFirst);
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyPhone()),
+                        );
                       },
                       child: Text(
                         "Thay đổi số điện thoại khác ?",

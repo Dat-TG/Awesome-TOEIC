@@ -4,8 +4,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../auth/verify_phone.dart';
+import '../main.dart';
 
 // Create a Form widget.
 class EditProfileForm extends StatefulWidget {
@@ -135,13 +137,15 @@ class EditProfileFormState extends State<EditProfileForm> {
                   FocusScope.of(context).requestFocus(FocusNode());
                   DateTime? date = DateTime(1900);
                   date = await showDatePicker(
+                      locale: const Locale('vi', 'VN'),
+                      initialEntryMode: DatePickerEntryMode.input,
                       context: context,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(1900),
                       lastDate: DateTime(2100));
                   if (date != null) {
                     DOBText.text =
-                        "${date.day.toString().padLeft(2, '0')}-${date.month.toString().padLeft(2, '0')}-${date.year.toString().padLeft(2, '0')}";
+                        "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString().padLeft(2, '0')}";
                   }
                 },
               ),
@@ -156,14 +160,15 @@ class EditProfileFormState extends State<EditProfileForm> {
                 onPressed: () async {
                   // Validate returns true if the form is valid, or false otherwise.
                   if (_editProfileFormKey.currentState!.validate()) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => Center(
+                              child: CircularProgressIndicator(),
+                            ));
+
                     // If the form is valid, display a snackbar. In the real world,
                     // you'd often call a server or save the information in a database.
                     try {
-                      showDialog(
-                          context: context,
-                          builder: (context) => Center(
-                                child: CircularProgressIndicator(),
-                              ));
                       print(
                           "info: ${nameText.text}, ${phoneText.text}, ${DOBText.text}");
                       User? user = FirebaseAuth.instance.currentUser;
@@ -172,7 +177,10 @@ class EditProfileFormState extends State<EditProfileForm> {
                           .collection("Users")
                           .doc(user!.uid)
                           .update({'DOB': DOBText.text});
-                      if (phoneText.text != user.phoneNumber) {
+                      if ("+84${phoneText.text.substring(1)}" !=
+                          user.phoneNumber) {
+                        print(
+                            "phone text ${phoneText.text} user phone ${user.phoneNumber}");
                         await FirebaseAuth.instance.verifyPhoneNumber(
                           phoneNumber: "+84${phoneText.text.substring(1)}",
                           verificationCompleted:
@@ -188,7 +196,6 @@ class EditProfileFormState extends State<EditProfileForm> {
                                 textColor: Colors.white,
                                 fontSize: 17,
                                 gravity: ToastGravity.BOTTOM);
-                            Navigator.pop(context);
                           },
                           codeSent: (String verificationId, int? resendToken) {
                             Navigator.push(
@@ -200,29 +207,49 @@ class EditProfileFormState extends State<EditProfileForm> {
                           },
                           codeAutoRetrievalTimeout: (String verificationId) {},
                         );
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Scaffold(
-                                      appBar: AppBar(
-                                        centerTitle: true,
-                                        title: Text("Chỉnh sửa tài khoản"),
-                                        backgroundColor: colorApp,
-                                      ),
-                                      body: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          EditProfileForm(),
-                                        ],
-                                      ),
-                                    )));
                       }
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Scaffold(
+                                    appBar: AppBar(
+                                      centerTitle: true,
+                                      title: Text("Chỉnh sửa tài khoản"),
+                                      backgroundColor: colorApp,
+                                    ),
+                                    body: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        EditProfileForm(),
+                                      ],
+                                    ),
+                                  )));
                     } catch (err) {
                       print(err);
-                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => Scaffold(
+                                    appBar: AppBar(
+                                      centerTitle: true,
+                                      title: Text("Chỉnh sửa tài khoản"),
+                                      backgroundColor: colorApp,
+                                    ),
+                                    body: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        EditProfileForm(),
+                                      ],
+                                    ),
+                                  )));
                     }
                   }
                 },

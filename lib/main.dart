@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/scheduler.dart' as scheduler;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:toeic_app/data/data.dart';
 
 import 'auth/phone_auth_screen.dart';
@@ -63,6 +64,8 @@ class _MyAppState extends State<MyApp> {
       themeMode: _themeMode,
       home: HomePage(intialIndex: 0),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [GlobalMaterialLocalizations.delegate],
+      supportedLocales: [const Locale('en'), const Locale('vi')],
     );
   }
 

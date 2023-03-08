@@ -107,12 +107,13 @@ class _MyPhoneState extends State<MyPhone> {
                               gravity: ToastGravity.BOTTOM);
                         },
                         codeSent: (String verificationId, int? resendToken) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyVerify(
-                                        vertificationID: verificationId,
-                                      )));
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MyVerify(
+                                      vertificationID: verificationId,
+                                    )),
+                          );
                         },
                         codeAutoRetrievalTimeout: (String verificationId) {},
                       );

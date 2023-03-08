@@ -56,6 +56,8 @@ dependencies:
     fluttertoast: ^8.2.1
     url_launcher: ^6.1.10
     pinput: ^2.2.31
+    flutter_localizations:
+        sdk: flutter
 
 dev_dependencies:
     flutter_test:
