@@ -22,12 +22,12 @@ class PartFour extends StatefulWidget {
 
 class _PartFourState extends State<PartFour> {
   int _curr = 1;
-  int totalQues = 3; //Example
+  late int totalQues;
   List<String> _answers = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
   String numAnswers = "1-3";
-  late List<String> rightAnsChoice;
+  late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
   void callbackAnswer(int number, String value) {
@@ -40,7 +40,11 @@ class _PartFourState extends State<PartFour> {
   void initState() {
     setState(() {
       rightAnsChoice = [];
+      listQuestionsID = [];
       totalQues = widget.data.length * 3;
+      for (int j = 0; j < widget.data.length; j++) {
+        listQuestionsID.add(widget.data[j]['id']);
+      }
       for (int i = 0; i < totalQues; i++) {
         _answers.add("");
       }
@@ -73,6 +77,9 @@ class _PartFourState extends State<PartFour> {
                       );
                     },
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                        listQuestionsID: listQuestionsID,
+                        part: 4,
+                        listAnswers: _answers,
                         direct: Result(
                             part: 3,
                             listAnswers: _answers,

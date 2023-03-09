@@ -5,7 +5,6 @@ import 'package:toeic_app/auth/facebook_sign_in.dart';
 import 'package:toeic_app/auth/google_sign_in.dart';
 import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/forgot_password.dart';
-import 'package:toeic_app/main.dart';
 import 'package:toeic_app/sign_up.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'constants.dart';

@@ -22,7 +22,7 @@ class _PartSixState extends State<PartSix> {
   PageController controllerFrame = PageController();
   bool isShow = false;
   String numAnswers = "1-4";
-  late List<String> rightAnsChoice;
+  late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
   void callbackAnswer(int number, String value) {
@@ -35,9 +35,13 @@ class _PartSixState extends State<PartSix> {
   void initState() {
     setState(() {
       rightAnsChoice = [];
+      listQuestionsID = [];
       totalQues = widget.data.length * 4;
       for (int i = 0; i < totalQues; i++) {
         _answers.add("");
+      }
+      for (int i = 0; i < widget.data.length; i++) {
+        listQuestionsID.add(widget.data[i]['id']);
       }
       rightAnsChoice = convertListAnsTextToListChoice(widget.data);
     });
@@ -68,6 +72,9 @@ class _PartSixState extends State<PartSix> {
                       );
                     },
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                        listQuestionsID: listQuestionsID,
+                      part: 6,
+                      listAnswers: _answers,
                         direct: Result(
                             part: 5,
                             listAnswers: _answers,

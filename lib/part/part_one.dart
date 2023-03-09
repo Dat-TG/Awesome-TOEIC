@@ -18,18 +18,19 @@ class PartOne extends StatefulWidget {
 
 class _PartOneState extends State<PartOne> {
   int _curr = 1;
-  int totalQues = 6;
   List<String> _answers = [];
   PageController controller = PageController();
   bool isShow = false;
-  late List<String> rightAnsChoice;
+  late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
   @override
   void initState() {
     setState(() {
       rightAnsChoice = [];
+      listQuestionsID = [];
       for (int i = 0; i < widget.data.length; i++) {
+        listQuestionsID.add(widget.data[i]['id']);
         _answers.add("");
         rightAnsChoice.add(widget.data[i]['list_right_answer'][0]);
       }
@@ -52,6 +53,7 @@ class _PartOneState extends State<PartOne> {
 
   @override
   Widget build(BuildContext context) {
+    print(listQuestionsID);
     return Scaffold(
         appBar: AppBarPractice(
           numAnswers: '$_curr',
@@ -61,7 +63,7 @@ class _PartOneState extends State<PartOne> {
         body: NotificationListener<ScrollNotification>(
             onNotification: (scrollNotification) {
               if (scrollNotification is OverscrollNotification &&
-                  controller.page == totalQues - 1) {
+                  controller.page == widget.data.length - 1) {
                 showGeneralDialog(
                     context: context,
                     transitionDuration: Duration(milliseconds: 300),
@@ -73,6 +75,9 @@ class _PartOneState extends State<PartOne> {
                       );
                     },
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                        listQuestionsID: listQuestionsID,
+                        part: 1,
+                        listAnswers: _answers,
                         direct: Result(
                             part: 0,
                             listAnswers: _answers,
@@ -89,7 +94,7 @@ class _PartOneState extends State<PartOne> {
                   });
                 },
                 children: [
-                  for (int i = 0; i < totalQues; i++)
+                  for (int i = 0; i < widget.data.length; i++)
                     PartOneFrame(
                         number: i,
                         getAnswer: (numb, value) => callbackAnswer(numb, value),

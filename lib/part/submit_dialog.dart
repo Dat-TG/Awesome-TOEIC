@@ -1,17 +1,35 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/services/exercise_service.dart';
 
 class SubmitDialog extends StatefulWidget {
   final Widget direct;
-  const SubmitDialog({super.key, required this.direct});
+  final List<String> listQuestionsID, listAnswers;
+  final int part;
+  
+  const SubmitDialog(
+      {super.key, required this.direct, required this.listQuestionsID, required this.listAnswers, required this.part});
 
   @override
   State<SubmitDialog> createState() => _SubmitDialogState();
 }
 
 class _SubmitDialogState extends State<SubmitDialog> {
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  String uid = "";
+
+  @override
+  void initState() {
+    setState(() {
+      uid = firebaseAuth.currentUser!.uid;
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('listQuestionsID: ${widget.listQuestionsID}');
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(6.0))),
@@ -41,8 +59,11 @@ class _SubmitDialogState extends State<SubmitDialog> {
             style: ElevatedButton.styleFrom(
                 backgroundColor: colorApp,
                 padding: EdgeInsets.only(left: 25, right: 25)),
-            onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
+            onPressed: () async {
+              if (uid != "") {
+                await ExerciseService().insertDoneExercise(widget.listQuestionsID, uid, widget.listAnswers, widget.part);
+              }
+              await Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => widget.direct),
                   (Route<dynamic> route) => false);
             },
@@ -76,8 +97,3 @@ class _SubmitDialogState extends State<SubmitDialog> {
     );
   }
 }
-
-// Result(
-//                                             part: 4,
-//                                             listAnswers: _answers,
-//                                             listRightAnswers: rightAnsChoice)

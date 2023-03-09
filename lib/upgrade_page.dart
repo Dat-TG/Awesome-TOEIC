@@ -1,7 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

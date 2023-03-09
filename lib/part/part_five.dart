@@ -15,12 +15,11 @@ class PartFive extends StatefulWidget {
 
 class _PartFiveState extends State<PartFive> {
   int _curr = 1;
-  int totalQues = 30;
   List<String> _answers = [];
   List<List<String>> answersData = [];
-  PageController controller = PageController(initialPage: 29);
+  PageController controller = PageController();
   bool isShow = false;
-  late List<String> rightAnsChoice;
+  late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
   void callbackAnswer(int number, String ans) {
@@ -32,7 +31,9 @@ class _PartFiveState extends State<PartFive> {
   @override
   void initState() {
     setState(() {
-      for (int i = 0; i < totalQues; i++) {
+      listQuestionsID = [];
+      for (int i = 0; i < widget.data.length; i++) {
+        listQuestionsID.add(widget.data[i]['id']);
         _answers.add("");
       }
       rightAnsChoice = convertAnsTextToChoice(widget.data);
@@ -48,7 +49,6 @@ class _PartFiveState extends State<PartFive> {
 
   @override
   Widget build(BuildContext context) {
-    print('rightAnsChoice:  $rightAnsChoice');
     return Scaffold(
         appBar: AppBarPractice(
           numAnswers: '$_curr',
@@ -58,7 +58,7 @@ class _PartFiveState extends State<PartFive> {
         body: NotificationListener<ScrollNotification>(
           onNotification: (scrollNotification) {
             if (scrollNotification is OverscrollNotification &&
-                controller.page == totalQues - 1) {
+                controller.page == widget.data.length - 1) {
               showGeneralDialog(
                   context: context,
                   transitionDuration: Duration(milliseconds: 300),
@@ -70,6 +70,9 @@ class _PartFiveState extends State<PartFive> {
                     );
                   },
                   pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                      listQuestionsID: listQuestionsID,
+                      part: 5,
+                      listAnswers: _answers,
                       direct: Result(
                           part: 4,
                           listAnswers: _answers,
@@ -86,7 +89,7 @@ class _PartFiveState extends State<PartFive> {
                 });
               },
               children: [
-                for (int i = 0; i < totalQues; i++)
+                for (int i = 0; i < widget.data.length; i++)
                   PartFiveFrame(
                       number: i,
                       question: widget.data[i]['list_question'][0],

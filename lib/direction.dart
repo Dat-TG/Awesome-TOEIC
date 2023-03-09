@@ -22,7 +22,7 @@ class Direction extends StatefulWidget {
 }
 
 class _DirectionState extends State<Direction> {
-  String _dropDownValue = "10"; // Set default value: 10
+  String _dropDownValue = "2";
   bool _isTest = false;
   @override
   Widget build(BuildContext context) {
@@ -33,6 +33,7 @@ class _DirectionState extends State<Direction> {
 
           if (snapshot.connectionState == ConnectionState.done) {
             data = snapshot.data as List<Map<String, dynamic>>;
+            if (data.isEmpty) _dropDownValue = "None";
           }
 
           return Scaffold(
@@ -232,184 +233,202 @@ class _DirectionState extends State<Direction> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Số câu hỏi: ',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, right: 10),
-                                          child: Container(
-                                            height: 30,
-                                            decoration: BoxDecoration(
-                                              color: colorBox,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: colorBoxShadow,
-                                                  spreadRadius: 2,
-                                                  blurRadius: 3,
-                                                  offset: Offset(0,
-                                                      1), // changes position of shadow
-                                                )
-                                              ],
+                          child: snapshot.connectionState ==
+                                  ConnectionState.waiting
+                              ? CircularProgressIndicator()
+                              : Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Số câu hỏi: ',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
                                             ),
-                                            child: DropdownButton(
-                                              hint: _dropDownValue == null
-                                                  ? Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        left: 15,
-                                                        right: 10,
-                                                      ),
-                                                      child: Text(""),
-                                                    )
-                                                  : Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        left: 15,
-                                                        right: 10,
-                                                      ),
-                                                      child: Text(
-                                                        _dropDownValue,
-                                                        style: TextStyle(
-                                                            color: textColor),
-                                                      ),
-                                                    ),
-                                              items: ['10', '20', '30']
-                                                  .map((val) =>
-                                                      DropdownMenuItem<String>(
-                                                          value: val,
-                                                          child: Text(val)))
-                                                  .toList(),
-                                              onChanged: (value) {
+                                            Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10, right: 10),
+                                                child: Container(
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: colorBox,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(5)),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: colorBoxShadow,
+                                                        spreadRadius: 2,
+                                                        blurRadius: 3,
+                                                        offset: Offset(0,
+                                                            1), // changes position of shadow
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: DropdownButton(
+                                                    hint: _dropDownValue == null
+                                                        ? Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              left: 15,
+                                                              right: 10,
+                                                            ),
+                                                            child: Text(""),
+                                                          )
+                                                        : Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              left: 15,
+                                                              right: 10,
+                                                            ),
+                                                            child: Text(
+                                                              _dropDownValue,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      textColor),
+                                                            ),
+                                                          ),
+                                                    items: [
+                                                      for (int i = 0;
+                                                          i < data.length;
+                                                          i++)
+                                                        (i + 1).toString()
+                                                    ]
+                                                        .map((val) =>
+                                                            DropdownMenuItem<
+                                                                    String>(
+                                                                value: val,
+                                                                child:
+                                                                    Text(val)))
+                                                        .toList(),
+                                                    menuMaxHeight: 200,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _dropDownValue = value!;
+                                                      });
+                                                    },
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
+                                                  ),
+                                                ))
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Kiểm tra: ',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            Switch(
+                                              value: _isTest,
+                                              onChanged: (bool newValue) {
                                                 setState(() {
-                                                  _dropDownValue = value!;
+                                                  _isTest = newValue;
                                                 });
                                               },
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
                                             ),
-                                          ))
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Kiểm tra: ',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Switch(
-                                        value: _isTest,
-                                        onChanged: (bool newValue) {
-                                          setState(() {
-                                            _isTest = newValue;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              _isTest
-                                  ? Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.access_time_rounded,
-                                          color:
-                                              Color.fromARGB(255, 255, 123, 0),
+                                          ],
                                         ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          '4m 20s',
-                                          style: TextStyle(fontSize: 15),
-                                        )
                                       ],
+                                    ),
+                                    _isTest
+                                        ? Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.access_time_rounded,
+                                                color: Color.fromARGB(
+                                                    255, 255, 123, 0),
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                '4m 20s',
+                                                style: TextStyle(fontSize: 15),
+                                              )
+                                            ],
+                                          )
+                                        : SizedBox.shrink(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 10, top: 20),
+                                      child: ElevatedButton(
+                                          onPressed: () async {
+                                            data = data.sublist(
+                                                0, int.parse(_dropDownValue));
+                                            // ? Call API
+                                            if (widget.part == 0) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartOne(data: data)));
+                                            } else if (widget.part == 1) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartTwo(data: data)));
+                                            } else if (widget.part == 2) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartThree(
+                                                              data: data)));
+                                            } else if (widget.part == 3) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        PartFour(data: data),
+                                                  ));
+                                            } else if (widget.part == 4) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartFive(
+                                                              data: data)));
+                                            } else if (widget.part == 5) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartSix(data: data)));
+                                            } else if (widget.part == 6) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartSeven(
+                                                              data: data)));
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              shape: StadiumBorder(),
+                                              backgroundColor: colorApp),
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                40, 15, 40, 15),
+                                            child: Text(
+                                              'Bắt đầu nào',
+                                              style: TextStyle(fontSize: 17),
+                                            ),
+                                          )),
                                     )
-                                  : SizedBox.shrink(),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 10, top: 20),
-                                child: snapshot.connectionState ==
-                                        ConnectionState.waiting
-                                    ? CircularProgressIndicator()
-                                    : ElevatedButton(
-                                        onPressed: () async {
-                                          // ? Call API
-                                          if (widget.part == 0) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartOne(data: data)));
-                                          } else if (widget.part == 1) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartTwo(data: data)));
-                                          } else if (widget.part == 2) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartThree(data: data)));
-                                          } else if (widget.part == 3) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PartFour(data: data),
-                                                ));
-                                          } else if (widget.part == 4) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartFive(data: data)));
-                                          } else if (widget.part == 5) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartSix(data: data)));
-                                          } else if (widget.part == 6) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartSeven(data: data)));
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            shape: StadiumBorder(),
-                                            backgroundColor: colorApp),
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              40, 15, 40, 15),
-                                          child: Text(
-                                            'Bắt đầu nào',
-                                            style: TextStyle(fontSize: 17),
-                                          ),
-                                        )),
-                              )
-                            ],
-                          ),
+                                  ],
+                                ),
                         )
                       ],
                     ));

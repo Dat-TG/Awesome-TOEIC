@@ -21,7 +21,7 @@ class _PartTwoState extends State<PartTwo> {
   int totalQues = 4; // Example
   List<String> _answers = [];
   PageController controller = PageController();
-  late List<String> rightAnsChoice;
+  late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
   @override
@@ -30,7 +30,9 @@ class _PartTwoState extends State<PartTwo> {
       totalQues = widget.data.length;
       _answers = [];
       rightAnsChoice = [];
+      listQuestionsID = [];
       for (int i = 0; i < widget.data.length; i++) {
+        listQuestionsID.add(widget.data[i]['id']);
         _answers.add("");
         rightAnsChoice.add(widget.data[i]['list_right_answer'][0]);
       }
@@ -97,6 +99,9 @@ class _PartTwoState extends State<PartTwo> {
                       );
                     },
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                        listQuestionsID: listQuestionsID,
+                        part: 2,
+                        listAnswers: _answers,
                         direct: Result(
                             part: 1,
                             listAnswers: _answers,

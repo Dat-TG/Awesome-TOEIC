@@ -5,7 +5,6 @@ import 'package:toeic_app/constants.dart';
 import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/settings/language_form.dart';
 import 'package:toeic_app/settings/remind_dialog.dart';
-import 'package:toeic_app/settings/time_remind_picker.dart';
 import 'package:toeic_app/sign_in.dart';
 import 'package:toeic_app/sign_up.dart';
 import 'main.dart';

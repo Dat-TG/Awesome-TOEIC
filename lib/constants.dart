@@ -46,6 +46,7 @@ Future<List<Map<String, dynamic>>> getQuestionsAndAnswers(int partID) async {
             for (int i = 0; i < value.docs.length; i++)
               {
                 temp = value.docs[i].data(),
+                temp['id'] = value.docs[i].id,
                 temp['list_answers'] = [],
                 data.add(temp),
                 for (int j = 0; j < temp['list_answers_id'].length; j++)

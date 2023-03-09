@@ -19,11 +19,10 @@ class PartSeven extends StatefulWidget {
 class _PartSevenState extends State<PartSeven> {
   int _curr = 1;
   String numAnswers = '1-2';
-  int totalQues = 54;
   List<String> _answers = [];
   PageController controllerFrame = PageController();
   bool isShow = false;
-  late List<String> rightAnsChoice;
+  late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
   void callbackAnswer(int number, String ans) {
@@ -34,9 +33,20 @@ class _PartSevenState extends State<PartSeven> {
 
   @override
   void initState() {
-    for (int i = 0; i < totalQues; i++) {
-      _answers.add("");
-    }
+    setState(() {
+      listQuestionsID = [];
+      for (int i = 0; i < widget.data.length; i++) {
+        listQuestionsID.add(widget.data[i]['id']);
+        for (int j = 0;
+            j <
+                convertListDynamicToListString(widget.data[i]['list_question'])
+                    .length;
+            j++) {
+          _answers.add("");
+        }
+      }
+    });
+
     rightAnsChoice = convertListAnsTextToListChoice(widget.data);
     super.initState();
   }
@@ -66,6 +76,9 @@ class _PartSevenState extends State<PartSeven> {
                       );
                     },
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                        listQuestionsID: listQuestionsID,
+                        part: 7,
+                        listAnswers: _answers,
                         direct: Result(
                             part: 6,
                             listAnswers: _answers,

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/scheduler.dart' as scheduler;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:toeic_app/data/data.dart';
 
 import 'home_page.dart';
 import 'constants.dart';
