@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
 
@@ -51,7 +52,16 @@ class _PartSixState extends State<PartSix> {
   @override
   Widget build(BuildContext context) {
     _curr = 1;
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        bool confirm = await cancelDialog(context);
+        if (confirm) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      child: Scaffold(
         appBar: AppBarPractice(
           numAnswers: numAnswers,
           answers: listDirectionEng,
@@ -74,11 +84,8 @@ class _PartSixState extends State<PartSix> {
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
                         listQuestionsID: listQuestionsID,
                       part: 6,
-                      listAnswers: _answers,
-                        direct: Result(
-                            part: 5,
-                            listAnswers: _answers,
-                            listRightAnswers: rightAnsChoice)));
+                              listRightAnswers: rightAnsChoice,
+                              listUserChoice: _answers,));
               }
               return true;
             },
@@ -118,7 +125,7 @@ class _PartSixState extends State<PartSix> {
                       },
                       rightAnswers: rightAnsChoice,
                     ),
-                ])));
+                ]))));
   }
 }
 

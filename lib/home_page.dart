@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_app/test_page.dart';
 import 'package:toeic_app/upgrade_page.dart';
-import 'others/get_It.dart';
+import 'package:toeic_app/utils/change_color_by_theme.dart';
+import 'utils/get_It.dart';
 import 'practice_page.dart';
 import 'settings_page.dart';
 import 'constants.dart';
@@ -17,11 +18,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+
+
   @override
   void initState() {
-    super.initState();
     _selectedIndex = widget.intialIndex;
     _loadTheme();
+    super.initState();
   }
 
   Future<void> _loadTheme() async {
@@ -69,7 +72,6 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       body: _widgetOptions[_selectedIndex],
-      // body: Practice(),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: bottomNavColor,
         items: const <BottomNavigationBarItem>[

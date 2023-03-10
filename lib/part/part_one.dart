@@ -2,11 +2,13 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 
 class PartOne extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -54,7 +56,16 @@ class _PartOneState extends State<PartOne> {
   @override
   Widget build(BuildContext context) {
     print(listQuestionsID);
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        bool confirm = await cancelDialog(context);
+        if (confirm) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      child: Scaffold(
         appBar: AppBarPractice(
           numAnswers: '$_curr',
           answers: listDirectionEng,
@@ -75,13 +86,11 @@ class _PartOneState extends State<PartOne> {
                       );
                     },
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
-                        listQuestionsID: listQuestionsID,
-                        part: 1,
-                        listAnswers: _answers,
-                        direct: Result(
-                            part: 0,
-                            listAnswers: _answers,
-                            listRightAnswers: rightAnsChoice)));
+                          listQuestionsID: listQuestionsID,
+                          part: 1,
+                          listUserChoice: _answers,
+                          listRightAnswers: rightAnsChoice,
+                        ));
               }
               return true;
             },
@@ -110,7 +119,9 @@ class _PartOneState extends State<PartOne> {
                             isShow = s;
                           });
                         })
-                ])));
+                ])),
+      ),
+    );
   }
 }
 

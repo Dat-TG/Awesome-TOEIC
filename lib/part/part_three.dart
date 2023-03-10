@@ -3,11 +3,13 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
 import 'package:toeic_app/part/part_one.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
 import './../constants.dart';
 import './../utils/convert_ans_text_to_choice.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 import 'app_bar.dart';
 import 'question_frame.dart';
 
@@ -54,76 +56,83 @@ class _PartThreeState extends State<PartThree> {
   @override
   Widget build(BuildContext context) {
     _curr = 1;
-    return Scaffold(
-        appBar: AppBarPractice(
-          numAnswers: numAnswers,
-          answers: listDirectionEng,
-          ansTrans: listDirectionVn,
-        ),
-        body: NotificationListener<ScrollNotification>(
-            onNotification: (scrollNotification) {
-              if (scrollNotification is OverscrollNotification &&
-                  controllerFrame.page == widget.data.length - 1) {
-                showGeneralDialog(
-                    context: context,
-                    transitionDuration: Duration(milliseconds: 300),
-                    transitionBuilder: (context, anim1, anim2, child) {
-                      return SlideTransition(
-                        position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
-                            .animate(anim1),
-                        child: child,
-                      );
-                    },
-                    pageBuilder: (context, anim1, anim2) => SubmitDialog(
-                        listQuestionsID: listQuestionsID,
-                        part: 3,
-                        listAnswers: _answers,
-                        direct: Result(
-                            part: 2,
-                            listAnswers: _answers,
-                            listRightAnswers: rightAnsChoice)));
-              }
-              return true;
-            },
-            child: PageView(
-                scrollDirection: Axis.horizontal,
-                controller: controllerFrame,
-                onPageChanged: (number) {
-                  setState(() {
-                    numAnswers = "${number * 3 + 1}-${number * 3 + 3}";
-                  });
+    return WillPopScope(
+        onWillPop: () async {
+          bool confirm = await cancelDialog(context);
+          if (confirm) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        child: Scaffold(
+            appBar: AppBarPractice(
+              numAnswers: numAnswers,
+              answers: listDirectionEng,
+              ansTrans: listDirectionVn,
+            ),
+            body: NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {
+                  if (scrollNotification is OverscrollNotification &&
+                      controllerFrame.page == widget.data.length - 1) {
+                    showGeneralDialog(
+                        context: context,
+                        transitionDuration: Duration(milliseconds: 300),
+                        transitionBuilder: (context, anim1, anim2, child) {
+                          return SlideTransition(
+                            position:
+                                Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                                    .animate(anim1),
+                            child: child,
+                          );
+                        },
+                        pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                            listQuestionsID: listQuestionsID,
+                            part: 3,
+                            listRightAnswers: rightAnsChoice,
+                            listUserChoice: _answers));
+                  }
+                  return true;
                 },
-                children: [
-                  for (int i = 0; i < widget.data.length; i++)
-                    PartThreeFrame(
-                      number: [
-                        for (int j = 0;
-                            j <
-                                convertListDynamicToListListString(
-                                        widget.data[i]['list_answers'])
-                                    .length;
-                            j++)
-                          _curr++
-                      ],
-                      audioPath: widget.data[i]['audio'],
-                      images:
-                          List<String>.from(widget.data[i]['images'] as List),
-                      question: List<String>.from(
-                          widget.data[i]['list_question'] as List),
-                      answers: convertListDynamicToListListString(
-                          widget.data[i]['list_answers']),
-                      getAnswer: (number, value) =>
-                          callbackAnswer(number, value),
-                      ans: _answers,
-                      isShow: isShow,
-                      cancelShowExplan: (s) {
-                        setState(() {
-                          isShow = s;
-                        });
-                      },
-                      rightAnswers: rightAnsChoice,
-                    ),
-                ])));
+                child: PageView(
+                    scrollDirection: Axis.horizontal,
+                    controller: controllerFrame,
+                    onPageChanged: (number) {
+                      setState(() {
+                        numAnswers = "${number * 3 + 1}-${number * 3 + 3}";
+                      });
+                    },
+                    children: [
+                      for (int i = 0; i < widget.data.length; i++)
+                        PartThreeFrame(
+                          number: [
+                            for (int j = 0;
+                                j <
+                                    convertListDynamicToListListString(
+                                            widget.data[i]['list_answers'])
+                                        .length;
+                                j++)
+                              _curr++
+                          ],
+                          audioPath: widget.data[i]['audio'],
+                          images: List<String>.from(
+                              widget.data[i]['images'] as List),
+                          question: List<String>.from(
+                              widget.data[i]['list_question'] as List),
+                          answers: convertListDynamicToListListString(
+                              widget.data[i]['list_answers']),
+                          getAnswer: (number, value) =>
+                              callbackAnswer(number, value),
+                          ans: _answers,
+                          isShow: isShow,
+                          cancelShowExplan: (s) {
+                            setState(() {
+                              isShow = s;
+                            });
+                          },
+                          rightAnswers: rightAnsChoice,
+                        ),
+                    ]))));
   }
 }
 

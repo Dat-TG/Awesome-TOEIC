@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/part/app_bar.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
 import './../constants.dart';
 import 'question_frame.dart';
 import './../utils/convert_ans_text_to_choice.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 
 class PartFive extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -49,64 +51,72 @@ class _PartFiveState extends State<PartFive> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBarPractice(
-          numAnswers: '$_curr',
-          answers: listDirectionEng,
-          ansTrans: listDirectionVn,
-        ),
-        body: NotificationListener<ScrollNotification>(
-          onNotification: (scrollNotification) {
-            if (scrollNotification is OverscrollNotification &&
-                controller.page == widget.data.length - 1) {
-              showGeneralDialog(
-                  context: context,
-                  transitionDuration: Duration(milliseconds: 300),
-                  transitionBuilder: (context, anim1, anim2, child) {
-                    return SlideTransition(
-                      position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
-                          .animate(anim1),
-                      child: child,
-                    );
-                  },
-                  pageBuilder: (context, anim1, anim2) => SubmitDialog(
-                      listQuestionsID: listQuestionsID,
-                      part: 5,
-                      listAnswers: _answers,
-                      direct: Result(
-                          part: 4,
-                          listAnswers: _answers,
-                          listRightAnswers: rightAnsChoice)));
-            }
+    return WillPopScope(
+        onWillPop: () async {
+          bool confirm = await cancelDialog(context);
+          if (confirm) {
             return true;
-          },
-          child: PageView(
-              scrollDirection: Axis.horizontal,
-              controller: controller,
-              onPageChanged: (number) {
-                setState(() {
-                  _curr = number + 1;
-                });
+          } else {
+            return false;
+          }
+        },
+        child: Scaffold(
+            appBar: AppBarPractice(
+              numAnswers: '$_curr',
+              answers: listDirectionEng,
+              ansTrans: listDirectionVn,
+            ),
+            body: NotificationListener<ScrollNotification>(
+              onNotification: (scrollNotification) {
+                if (scrollNotification is OverscrollNotification &&
+                    controller.page == widget.data.length - 1) {
+                  showGeneralDialog(
+                      context: context,
+                      transitionDuration: Duration(milliseconds: 300),
+                      transitionBuilder: (context, anim1, anim2, child) {
+                        return SlideTransition(
+                          position:
+                              Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                                  .animate(anim1),
+                          child: child,
+                        );
+                      },
+                      pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                            listQuestionsID: listQuestionsID,
+                            part: 5,
+                            listRightAnswers: rightAnsChoice,
+                            listUserChoice: _answers,
+                          ));
+                }
+                return true;
               },
-              children: [
-                for (int i = 0; i < widget.data.length; i++)
-                  PartFiveFrame(
-                      number: i,
-                      question: widget.data[i]['list_question'][0],
-                      answers: convertListDynamicToListString(
-                          widget.data.elementAt(i)['list_answers'][0]),
-                      getAnswer: (number, value) =>
-                          callbackAnswer(number, value),
-                      ans: _answers,
-                      rightAnswers: rightAnsChoice,
-                      isShow: isShow,
-                      cancelShowExplan: (s) {
-                        setState(() {
-                          isShow = s;
-                        });
-                      })
-              ]),
-        ));
+              child: PageView(
+                  scrollDirection: Axis.horizontal,
+                  controller: controller,
+                  onPageChanged: (number) {
+                    setState(() {
+                      _curr = number + 1;
+                    });
+                  },
+                  children: [
+                    for (int i = 0; i < widget.data.length; i++)
+                      PartFiveFrame(
+                          number: i,
+                          question: widget.data[i]['list_question'][0],
+                          answers: convertListDynamicToListString(
+                              widget.data.elementAt(i)['list_answers'][0]),
+                          getAnswer: (number, value) =>
+                              callbackAnswer(number, value),
+                          ans: _answers,
+                          rightAnswers: rightAnsChoice,
+                          isShow: isShow,
+                          cancelShowExplan: (s) {
+                            setState(() {
+                              isShow = s;
+                            });
+                          })
+                  ]),
+            )));
   }
 }
 

@@ -88,6 +88,7 @@ class _AppBarPracticeState extends State<AppBarPractice> {
           ),
         )
       ],
+      
     );
   }
 }

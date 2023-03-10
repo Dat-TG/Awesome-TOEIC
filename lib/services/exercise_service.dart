@@ -5,12 +5,19 @@ class ExerciseService {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<void> insertDoneExercise(List<String> listQuestionsID, String userID,
-      List<String> listAnswers, int part) async {
+      List<String> listAnswers, List<String> listRightAnswers, int part) async {
+    int correct = 0;
+    for (int i = 0; i < listAnswers.length; i++) {
+      if (listAnswers[i] == listRightAnswers[i]) {
+        correct += 1;
+      }
+    }
     await firestore.collection('DoneExercises').add({
       'list_questions_id': listQuestionsID,
       'uid': userID,
       'list_answers': listAnswers,
       'part': part,
+      'correct': correct,
       'time': DateFormat("yyyy-MM-dd HH:mm").format(DateTime.now())
     });
   }

@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:toeic_app/part/part_five.dart';
 import 'package:toeic_app/part/part_four.dart';
@@ -8,32 +9,49 @@ import 'package:toeic_app/part/part_seven.dart';
 import 'package:toeic_app/part/part_six.dart';
 import 'package:toeic_app/part/part_three.dart';
 import 'package:toeic_app/part/part_two.dart';
+import 'package:toeic_app/utils/get_qa.dart';
 
 import 'constants.dart';
 
 class Direction extends StatefulWidget {
-  final int part;
+  final int part, doneQuestion, correctQuestion;
+  final double progress;
 
   // Constructor
-  const Direction({super.key, required this.part});
+  const Direction(
+      {super.key,
+      required this.part,
+      required this.doneQuestion,
+      required this.correctQuestion,
+      required this.progress});
 
   @override
   State<Direction> createState() => _DirectionState();
 }
 
 class _DirectionState extends State<Direction> {
-  String _dropDownValue = "2";
+  String _dropDownValue = "5";
   bool _isTest = false;
+  Future<List<Map<String, dynamic>>> qas = Future(() => []);
+
+  @override
+  void initState() {
+    qas = getQuestionsAndAnswersFilterByUserID(
+        FirebaseAuth.instance.currentUser!.uid, widget.part + 1);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Object>(
-        future: getQuestionsAndAnswers(widget.part + 1),
+    return FutureBuilder<List<Map<String, dynamic>>>(
+        future: qas,
         builder: (context, snapshot) {
           List<Map<String, dynamic>> data = [];
 
           if (snapshot.connectionState == ConnectionState.done) {
             data = snapshot.data as List<Map<String, dynamic>>;
             if (data.isEmpty) _dropDownValue = "None";
+            if (data.length == 1) _dropDownValue = "1";
           }
 
           return Scaffold(
@@ -92,7 +110,7 @@ class _DirectionState extends State<Direction> {
                                         width: 10,
                                       ),
                                       Text(
-                                        '${listSentencesDone[widget.part]}',
+                                        '${widget.doneQuestion}',
                                         style: TextStyle(fontSize: 16),
                                       ),
                                     ]),
@@ -112,7 +130,7 @@ class _DirectionState extends State<Direction> {
                                             width: 10,
                                           ),
                                           Text(
-                                            '${listSentencesRight[widget.part]}',
+                                            '${widget.correctQuestion}',
                                             style: TextStyle(fontSize: 16),
                                           )
                                         ],
@@ -139,7 +157,7 @@ class _DirectionState extends State<Direction> {
                                                 AlwaysStoppedAnimation<Color>(
                                               colorApp,
                                             ),
-                                            value: listProgress[widget.part],
+                                            value: widget.progress,
                                           ),
                                         )
                                       ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:toeic_app/utils/change_color_by_theme.dart';
 
 import 'home_page.dart';
 import 'constants.dart';
@@ -10,12 +11,11 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'others/get_It.dart';
+import 'utils/get_It.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final navigatorKey = GlobalKey<NavigatorState>();
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _loadTheme();
-
+    print("asdfasedfasdfasdfasdfasdfasdf");
   }
 
   @override

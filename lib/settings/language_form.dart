@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
-import '../others/get_It.dart';
+import '../utils/get_It.dart';
 
 enum Language { english, vietnamese, french, spanish, chinese, russian }
 

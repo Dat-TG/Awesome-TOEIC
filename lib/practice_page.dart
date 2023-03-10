@@ -1,11 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
 import 'package:toeic_app/direction.dart';
 import 'package:toeic_app/question.dart';
+import 'package:toeic_app/services/statistic_service.dart';
+import 'package:toeic_app/utils/change_color_by_theme.dart';
 import 'package:toeic_app/vocabulary.dart';
 import 'constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'others/get_It.dart';
+import 'utils/get_It.dart';
 
 class Practice extends StatefulWidget {
   const Practice({super.key});
@@ -15,8 +18,12 @@ class Practice extends StatefulWidget {
 }
 
 class _PracticeState extends State<Practice> {
+  Future<Map<String, dynamic>> statistic = Future(() => {});
+
   @override
   void initState() {
+    statistic =
+        statisticPraticeByUserID(FirebaseAuth.instance.currentUser!.uid);
     super.initState();
     _loadTheme();
   }
@@ -31,207 +38,260 @@ class _PracticeState extends State<Practice> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Listening
-          Row(children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                'Nghe hiểu',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          ]),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              for (int i = 0; i < 4; i++)
-                Expanded(flex: 1, child: BoxContainer(part: i)),
-            ],
-          ),
+    return FutureBuilder(
+        future: statistic,
+        builder: (BuildContext context,
+            AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          if (snapshot.hasError) {
+            return (Center(
+              child: Text("404: Error"),
+            ));
+          } else {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  // Listening
+                  Row(children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        'Nghe hiểu',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  ]),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      for (int i = 0; i < 4; i++)
+                        Expanded(
+                            flex: 1,
+                            child: BoxContainer(
+                                part: i,
+                                doneQuestion: snapshot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? 0
+                                    : snapshot.data!['doneQuestion'][i],
+                                correctQuestion: snapshot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? 0
+                                    : snapshot.data!['correctQuestion'][i],
+                                progress: snapshot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? 0
+                                    : snapshot.data!['progress'][i])),
+                    ],
+                  ),
 
-          // Reading
-          Row(children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                'Đọc hiểu',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          ]),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              for (int i = 4; i < 7; i++)
-                Expanded(flex: 1, child: BoxContainer(part: i)),
-              Expanded(flex: 1, child: SizedBox())
-            ],
-          ),
+                  // Reading
+                  Row(children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        'Đọc hiểu',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  ]),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      for (int i = 4; i < 7; i++)
+                        Expanded(
+                            flex: 1,
+                            child: BoxContainer(
+                                part: i,
+                                doneQuestion: snapshot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? 0
+                                    : snapshot.data!['doneQuestion'][i],
+                                correctQuestion: snapshot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? 0
+                                    : snapshot.data!['correctQuestion'][i],
+                                progress: snapshot.connectionState ==
+                                        ConnectionState.waiting
+                                    ? 0
+                                    : snapshot.data!['progress'][i])),
+                      Expanded(flex: 1, child: SizedBox())
+                    ],
+                  ),
 
-          // Notebook
-          Row(children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Text(
-                'Sổ tay',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            )
-          ]),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: colorBox,
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorBoxShadow,
-                    spreadRadius: 2,
-                    blurRadius: 3,
-                    offset: Offset(0, 3), // changes position of shadow
-                  )
+                  // Notebook
+                  Row(children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        'Sổ tay',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  ]),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorBox,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorBoxShadow,
+                            spreadRadius: 2,
+                            blurRadius: 3,
+                            offset: Offset(0, 3), // changes position of shadow
+                          )
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            './assets/img/voca_icon.png',
+                                            width: 20,
+                                            height: 20,
+                                          ),
+                                          SizedBox(width: 6),
+                                          Text('Từ vựng',
+                                              style: TextStyle(fontSize: 14)),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 12, 0, 12),
+                                        child: Text(
+                                          '0',
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Vocabulary()));
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: colorApp,
+                                              textStyle: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                              )),
+                                          child: Text('Ôn tập'))
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 100,
+                                  width: 1,
+                                  child: const DecoratedBox(
+                                    decoration:
+                                        BoxDecoration(color: Colors.black),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Image.asset(
+                                            './assets/img/ques_icon.png',
+                                            width: 20,
+                                            height: 20,
+                                          ),
+                                          SizedBox(width: 6),
+                                          Text('Câu hỏi',
+                                              style: TextStyle(fontSize: 14)),
+                                        ],
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 12, 0, 12),
+                                        child: Text(
+                                          '0',
+                                          style: TextStyle(
+                                              fontSize: 25,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        Question()));
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: Color.fromRGBO(
+                                                  0, 204, 143, 1),
+                                              textStyle: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                              )),
+                                          child: Text('Ôn tập'))
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ))
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                        child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    './assets/img/voca_icon.png',
-                                    width: 20,
-                                    height: 20,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text('Từ vựng',
-                                      style: TextStyle(fontSize: 14)),
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0, 12, 0, 12),
-                                child: Text(
-                                  '0',
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                Vocabulary()));
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: colorApp,
-                                      textStyle: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                      )),
-                                  child: Text('Ôn tập'))
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: 100,
-                          width: 1,
-                          child: const DecoratedBox(
-                            decoration: BoxDecoration(color: Colors.black),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    './assets/img/ques_icon.png',
-                                    width: 20,
-                                    height: 20,
-                                  ),
-                                  SizedBox(width: 6),
-                                  Text('Câu hỏi',
-                                      style: TextStyle(fontSize: 14)),
-                                ],
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0, 12, 0, 12),
-                                child: Text(
-                                  '0',
-                                  style: TextStyle(
-                                      fontSize: 25,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Question()));
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Color.fromRGBO(0, 204, 143, 1),
-                                      textStyle: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                      )),
-                                  child: Text('Ôn tập'))
-                            ],
-                          ),
-                        ),
-                      ],
-                    ))
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+            );
+          }
+        });
   }
 }
 
 class BoxContainer extends StatelessWidget {
-  final int part; // Part 1-7 --> [0..6]
+  final int part, doneQuestion, correctQuestion;
+  final double progress;
 
-  const BoxContainer({super.key, required this.part});
+  const BoxContainer(
+      {super.key,
+      required this.part,
+      required this.doneQuestion,
+      required this.correctQuestion,
+      required this.progress});
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +304,11 @@ class BoxContainer extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => Direction(part: part)));
+                      builder: (context) => Direction(
+                          part: part,
+                          doneQuestion: doneQuestion,
+                          correctQuestion: correctQuestion,
+                          progress: progress)));
             },
             child: Container(
               height: 90,
@@ -280,7 +344,7 @@ class BoxContainer extends StatelessWidget {
                       valueColor: AlwaysStoppedAnimation<Color>(
                         colorApp,
                       ),
-                      value: listProgress[part],
+                      value: progress,
                     ),
                   )
                 ]),

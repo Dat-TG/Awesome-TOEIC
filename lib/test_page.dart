@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/utils/change_color_by_theme.dart';
 
-import 'others/get_It.dart';
+import 'utils/get_It.dart';
 
 class Test extends StatefulWidget {
   const Test({super.key});

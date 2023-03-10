@@ -3,10 +3,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
 import 'package:toeic_app/part/part_one.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
 import './../utils/convert_ans_text_to_choice.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 
 import './../constants.dart';
 import 'app_bar.dart';
@@ -56,7 +58,16 @@ class _PartFourState extends State<PartFour> {
   @override
   Widget build(BuildContext context) {
     _curr = 1;
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        bool confirm = await cancelDialog(context);
+        if (confirm) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      child: Scaffold(
         appBar: AppBarPractice(
           numAnswers: numAnswers,
           answers: listDirectionEng,
@@ -79,11 +90,9 @@ class _PartFourState extends State<PartFour> {
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
                         listQuestionsID: listQuestionsID,
                         part: 4,
-                        listAnswers: _answers,
-                        direct: Result(
-                            part: 3,
-                            listAnswers: _answers,
-                            listRightAnswers: rightAnsChoice)));
+                              listRightAnswers: rightAnsChoice,
+                              listUserChoice: _answers,
+                            ));
               }
               return true;
             },
@@ -125,7 +134,7 @@ class _PartFourState extends State<PartFour> {
                       },
                       rightAnswers: rightAnsChoice,
                     ),
-                ])));
+                ]))));
   }
 }
 

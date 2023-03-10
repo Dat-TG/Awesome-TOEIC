@@ -1,15 +1,21 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/services/exercise_service.dart';
 
 class SubmitDialog extends StatefulWidget {
-  final Widget direct;
-  final List<String> listQuestionsID, listAnswers;
+  final List<String> listQuestionsID, listRightAnswers, listUserChoice;
   final int part;
-  
+
   const SubmitDialog(
-      {super.key, required this.direct, required this.listQuestionsID, required this.listAnswers, required this.part});
+      {super.key,
+      required this.listQuestionsID,
+      required this.listRightAnswers,
+      required this.listUserChoice,
+      required this.part});
 
   @override
   State<SubmitDialog> createState() => _SubmitDialogState();
@@ -29,7 +35,6 @@ class _SubmitDialogState extends State<SubmitDialog> {
 
   @override
   Widget build(BuildContext context) {
-    print('listQuestionsID: ${widget.listQuestionsID}');
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(6.0))),
@@ -61,10 +66,20 @@ class _SubmitDialogState extends State<SubmitDialog> {
                 padding: EdgeInsets.only(left: 25, right: 25)),
             onPressed: () async {
               if (uid != "") {
-                await ExerciseService().insertDoneExercise(widget.listQuestionsID, uid, widget.listAnswers, widget.part);
+                await ExerciseService().insertDoneExercise(
+                    widget.listQuestionsID,
+                    uid,
+                    widget.listUserChoice,
+                    widget.listRightAnswers,
+                    widget.part);
               }
               await Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => widget.direct),
+                  MaterialPageRoute(
+                    builder: (context) => Result(
+                        part: widget.part - 1,
+                        listAnswers: widget.listUserChoice,
+                        listRightAnswers: widget.listRightAnswers),
+                  ),
                   (Route<dynamic> route) => false);
             },
             child: Text(

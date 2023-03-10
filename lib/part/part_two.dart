@@ -1,8 +1,10 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
@@ -48,86 +50,95 @@ class _PartTwoState extends State<PartTwo> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Transform.translate(
-              offset: Offset(-25, 0),
-              child: (Row(
-                children: [
-                  Text('Câu $_curr'),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13, right: 8),
-                    child: Icon(Icons.info_outline),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 13),
-                    child: Icon(Icons.settings_outlined),
-                  ),
-                  Icon(Icons.favorite_outline)
-                ],
-              ))),
-          backgroundColor: colorApp,
-          centerTitle: true,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: Center(
-                child: Text(
-                  'Giải thích',
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          ],
-        ),
-        body: NotificationListener<ScrollNotification>(
-            onNotification: (scrollNotification) {
-              if (scrollNotification is OverscrollNotification &&
-                  controller.page == totalQues - 1) {
-                showGeneralDialog(
-                    context: context,
-                    transitionDuration: Duration(milliseconds: 300),
-                    transitionBuilder: (context, anim1, anim2, child) {
-                      return SlideTransition(
-                        position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
-                            .animate(anim1),
-                        child: child,
-                      );
-                    },
-                    pageBuilder: (context, anim1, anim2) => SubmitDialog(
-                        listQuestionsID: listQuestionsID,
-                        part: 2,
-                        listAnswers: _answers,
-                        direct: Result(
-                            part: 1,
-                            listAnswers: _answers,
-                            listRightAnswers: rightAnsChoice)));
-              }
-              return true;
-            },
-            child: PageView(
-                scrollDirection: Axis.horizontal,
-                controller: controller,
-                onPageChanged: (number) {
-                  setState(() {
-                    _curr = number + 1;
-                  });
-                },
-                children: [
-                  for (int i = 0; i < widget.data.length; i++)
-                    PartTwoFrame(
-                      audioPath: widget.data[i]['audio'],
-                      number: i + 1,
-                      getAnswer: (numb, value) => callbackAnswer(numb, value),
-                      ans: _answers,
-                      rightAnswers: convertListDynamicToListString(
-                          widget.data[i]['list_right_answer']),
+    return WillPopScope(
+        onWillPop: () async {
+          bool confirm = await cancelDialog(context);
+          if (confirm) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              title: Transform.translate(
+                  offset: Offset(-25, 0),
+                  child: (Row(
+                    children: [
+                      Text('Câu $_curr'),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 13, right: 8),
+                        child: Icon(Icons.info_outline),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8, right: 13),
+                        child: Icon(Icons.settings_outlined),
+                      ),
+                      Icon(Icons.favorite_outline)
+                    ],
+                  ))),
+              backgroundColor: colorApp,
+              centerTitle: true,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Center(
+                    child: Text(
+                      'Giải thích',
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
+                      textAlign: TextAlign.center,
                     ),
-                ])));
+                  ),
+                )
+              ],
+            ),
+            body: NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {
+                  if (scrollNotification is OverscrollNotification &&
+                      controller.page == totalQues - 1) {
+                    showGeneralDialog(
+                        context: context,
+                        transitionDuration: Duration(milliseconds: 300),
+                        transitionBuilder: (context, anim1, anim2, child) {
+                          return SlideTransition(
+                            position:
+                                Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                                    .animate(anim1),
+                            child: child,
+                          );
+                        },
+                        pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                              listQuestionsID: listQuestionsID,
+                              part: 2,
+                              listRightAnswers: rightAnsChoice,
+                              listUserChoice: _answers,
+                            ));
+                  }
+                  return true;
+                },
+                child: PageView(
+                    scrollDirection: Axis.horizontal,
+                    controller: controller,
+                    onPageChanged: (number) {
+                      setState(() {
+                        _curr = number + 1;
+                      });
+                    },
+                    children: [
+                      for (int i = 0; i < widget.data.length; i++)
+                        PartTwoFrame(
+                          audioPath: widget.data[i]['audio'],
+                          number: i + 1,
+                          getAnswer: (numb, value) =>
+                              callbackAnswer(numb, value),
+                          ans: _answers,
+                          rightAnswers: convertListDynamicToListString(
+                              widget.data[i]['list_right_answer']),
+                        ),
+                    ]))));
   }
 }
 

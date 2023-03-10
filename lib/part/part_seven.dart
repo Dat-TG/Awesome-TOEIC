@@ -1,9 +1,11 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:toeic_app/part/app_bar.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
 import './../utils/convert_ans_text_to_choice.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 
 import './../constants.dart';
 import 'question_frame.dart';
@@ -53,84 +55,92 @@ class _PartSevenState extends State<PartSeven> {
 
   @override
   Widget build(BuildContext context) {
-    print('rightAnsChoice ${rightAnsChoice.length}');
     _curr = 0;
-    return Scaffold(
-        appBar: AppBarPractice(
-          numAnswers: numAnswers,
-          answers: listDirectionEng,
-          ansTrans: listDirectionVn,
-        ),
-        body: NotificationListener<ScrollNotification>(
-            onNotification: (scrollNotification) {
-              if (scrollNotification is OverscrollNotification &&
-                  controllerFrame.page == widget.data.length - 1) {
-                showGeneralDialog(
-                    context: context,
-                    transitionDuration: Duration(milliseconds: 300),
-                    transitionBuilder: (context, anim1, anim2, child) {
-                      return SlideTransition(
-                        position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
-                            .animate(anim1),
-                        child: child,
-                      );
-                    },
-                    pageBuilder: (context, anim1, anim2) => SubmitDialog(
-                        listQuestionsID: listQuestionsID,
-                        part: 7,
-                        listAnswers: _answers,
-                        direct: Result(
-                            part: 6,
-                            listAnswers: _answers,
-                            listRightAnswers: rightAnsChoice)));
-              }
-              return true;
-            },
-            child: PageView(
-                scrollDirection: Axis.horizontal,
-                controller: controllerFrame,
-                onPageChanged: (number) {
-                  setState(() {
-                    int numAnswerCurrent = 1;
-                    for (int i = 0; i < number; i++) {
-                      numAnswerCurrent += convertListDynamicToListListString(
-                              widget.data[i]['list_answers'])
-                          .length;
-                    }
-                    numAnswers =
-                        '$numAnswerCurrent - ${numAnswerCurrent + convertListDynamicToListListString(widget.data[number]['list_answers']).length - 1}';
-                  });
+    return WillPopScope(
+        onWillPop: () async {
+          bool confirm = await cancelDialog(context);
+          if (confirm) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        child: Scaffold(
+            appBar: AppBarPractice(
+              numAnswers: numAnswers,
+              answers: listDirectionEng,
+              ansTrans: listDirectionVn,
+            ),
+            body: NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {
+                  if (scrollNotification is OverscrollNotification &&
+                      controllerFrame.page == widget.data.length - 1) {
+                    showGeneralDialog(
+                        context: context,
+                        transitionDuration: Duration(milliseconds: 300),
+                        transitionBuilder: (context, anim1, anim2, child) {
+                          return SlideTransition(
+                            position:
+                                Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                                    .animate(anim1),
+                            child: child,
+                          );
+                        },
+                        pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                              listQuestionsID: listQuestionsID,
+                              part: 7,
+                              listRightAnswers: rightAnsChoice,
+                              listUserChoice: _answers,
+                            ));
+                  }
+                  return true;
                 },
-                children: [
-                  for (int i = 0; i < widget.data.length; i++)
-                    PartSevenFrame(
-                      number: [
-                        for (int j = 0;
-                            j <
-                                convertListDynamicToListListString(
-                                        widget.data[i]['list_answers'])
-                                    .length;
-                            j++)
-                          _curr++
-                      ],
-                      question: convertListDynamicToListString(
-                          widget.data[i]['list_question']),
-                      answers: convertListDynamicToListListString(
-                          widget.data[i]['list_answers']),
-                      rightAnswersSelect: rightAnsChoice,
-                      getAnswer: (number, value) =>
-                          callbackAnswer(number, value),
-                      ans: _answers,
-                      listNameImages: convertListDynamicToListString(
-                          widget.data[i]['images']),
-                      isShow: isShow,
-                      cancelShowExplan: (s) {
-                        setState(() {
-                          isShow = s;
-                        });
-                      },
-                    ),
-                ])));
+                child: PageView(
+                    scrollDirection: Axis.horizontal,
+                    controller: controllerFrame,
+                    onPageChanged: (number) {
+                      setState(() {
+                        int numAnswerCurrent = 1;
+                        for (int i = 0; i < number; i++) {
+                          numAnswerCurrent +=
+                              convertListDynamicToListListString(
+                                      widget.data[i]['list_answers'])
+                                  .length;
+                        }
+                        numAnswers =
+                            '$numAnswerCurrent - ${numAnswerCurrent + convertListDynamicToListListString(widget.data[number]['list_answers']).length - 1}';
+                      });
+                    },
+                    children: [
+                      for (int i = 0; i < widget.data.length; i++)
+                        PartSevenFrame(
+                          number: [
+                            for (int j = 0;
+                                j <
+                                    convertListDynamicToListListString(
+                                            widget.data[i]['list_answers'])
+                                        .length;
+                                j++)
+                              _curr++
+                          ],
+                          question: convertListDynamicToListString(
+                              widget.data[i]['list_question']),
+                          answers: convertListDynamicToListListString(
+                              widget.data[i]['list_answers']),
+                          rightAnswersSelect: rightAnsChoice,
+                          getAnswer: (number, value) =>
+                              callbackAnswer(number, value),
+                          ans: _answers,
+                          listNameImages: convertListDynamicToListString(
+                              widget.data[i]['images']),
+                          isShow: isShow,
+                          cancelShowExplan: (s) {
+                            setState(() {
+                              isShow = s;
+                            });
+                          },
+                        ),
+                    ]))));
   }
 }
 
