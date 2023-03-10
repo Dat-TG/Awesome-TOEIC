@@ -66,7 +66,6 @@ Future<List<Map<String, dynamic>>> getQuestionsAndAnswers(int partID) async {
   return data;
 }
 
-
 List<List<String>> convertListDynamicToListListString(List<dynamic> data) {
   List<List<String>> newList = [];
   for (int i = 0; i < data.length; i++) {
@@ -148,3 +147,14 @@ Language? enumLanguage;
 bool isRemind = false;
 
 String timeRemind = "00:00";
+
+Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
+    getAllTestSnapshot() async {
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> res = [];
+  final collection =
+      await FirebaseFirestore.instance.collection("Examinations").get();
+  for (int i = 0; i < collection.docs.length; i++) {
+    res.add(collection.docs[i]);
+  }
+  return res;
+}

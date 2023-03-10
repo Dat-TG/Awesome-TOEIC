@@ -27,7 +27,20 @@ Future<void> main() async {
   await initNotification();
   await showRemindNotification();
   await Firebase.initializeApp();
-
+  /*List<String> arr = [];
+  for (int i = 1; i <= 200; i++) {
+    final docRef =
+        FirebaseFirestore.instance.collection("Questions").doc(i.toString());
+    final doc = await docRef.get();
+    if (doc.exists) {
+      arr.add(i.toString());
+    }
+  }
+  print(arr);
+  FirebaseFirestore.instance
+      .collection("Examinations")
+      .doc("1")
+      .update({'list_question_id': arr});*/
   runApp(MyApp());
 }
 

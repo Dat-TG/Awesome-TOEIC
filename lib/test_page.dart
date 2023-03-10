@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/timezone.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/test/intro.dart';
 
 import 'others/get_It.dart';
 
@@ -12,8 +15,6 @@ class Test extends StatefulWidget {
 }
 
 class _TestState extends State<Test> {
-  final List<String> data = ["Test 1", "Test 2", "Test 3", "Test 4", "Test 5"];
-
   @override
   void initState() {
     // TODO: implement initState
@@ -31,92 +32,111 @@ class _TestState extends State<Test> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      itemCount: data.length,
-      itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.all(6.0),
-          child: Container(
-            height: 130,
-            decoration: BoxDecoration(
-              color: colorBox,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-              boxShadow: [
-                BoxShadow(
-                  color: colorBoxShadow,
-                  spreadRadius: 2,
-                  blurRadius: 3,
-                  offset: Offset(0, 3), // changes position of shadow
-                )
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        data[index],
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Icon(
-                        Icons.lock,
-                        color: colorApp,
-                        size: 23,
+    return FutureBuilder(
+        future: getAllTestSnapshot(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+          List<QueryDocumentSnapshot<Map<String, dynamic>>>? data = [];
+          if (snapshot.connectionState == ConnectionState.done) {
+            data = snapshot.data;
+          }
+          return ListView.separated(
+            itemCount: data?.length ?? 0,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.all(6.0),
+                child: Container(
+                  height: 130,
+                  decoration: BoxDecoration(
+                    color: colorBox,
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colorBoxShadow,
+                        spreadRadius: 2,
+                        blurRadius: 3,
+                        offset: Offset(0, 3), // changes position of shadow
                       )
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                    child: Row(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Thời gian',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: colorApp,
-                              fontSize: 15),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "$Test ${data?[index].reference.id}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            if (data?[index].data()['is_premium'])
+                              Icon(
+                                Icons.lock,
+                                color: colorApp,
+                                size: 23,
+                              )
+                          ],
                         ),
-                        Text(
-                          ': 120 phút | ',
-                          style: TextStyle(color: colorApp, fontSize: 15),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: Row(
+                            children: [
+                              Text(
+                                'Thời gian',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorApp,
+                                    fontSize: 15),
+                              ),
+                              Text(
+                                ': 120 phút | ',
+                                style: TextStyle(color: colorApp, fontSize: 15),
+                              ),
+                              Text(
+                                'Câu hỏi',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorApp,
+                                    fontSize: 15),
+                              ),
+                              Text(
+                                ': 200 câu',
+                                style: TextStyle(color: colorApp, fontSize: 15),
+                              ),
+                            ],
+                          ),
                         ),
-                        Text(
-                          'Câu hỏi',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: colorApp,
-                              fontSize: 15),
-                        ),
-                        Text(
-                          ': 200 câu',
-                          style: TextStyle(color: colorApp, fontSize: 15),
-                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => TestIntro(
+                                          testID:
+                                              data?[index].reference.id ?? "0",
+                                          data: data?[index])));
+                            },
+                            style: ElevatedButton.styleFrom(
+                                shape: StadiumBorder(),
+                                backgroundColor: colorApp),
+                            child: Text("Bắt đầu"))
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                      onPressed: () {
-                        print("abc");
-                      },
-                      style: ElevatedButton.styleFrom(
-                          shape: StadiumBorder(), backgroundColor: colorApp),
-                      child: Text("Bắt đầu"))
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-      separatorBuilder: (BuildContext context, int index) {
-        return SizedBox(height: 4);
-      },
-    );
+                ),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) {
+              return SizedBox(height: 4);
+            },
+          );
+        });
   }
 }
