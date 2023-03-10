@@ -21,7 +21,6 @@ class _PartSixState extends State<PartSix> {
   int totalQues = 1;
   List<String> _answers = [];
   PageController controllerFrame = PageController();
-  bool isShow = false;
   String numAnswers = "1-4";
   late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
@@ -117,12 +116,7 @@ class _PartSixState extends State<PartSix> {
                       getAnswer: (number, value) =>
                           callbackAnswer(number, value),
                       ans: _answers,
-                      isShow: isShow,
-                      cancelShowExplan: (s) {
-                        setState(() {
-                          isShow = s;
-                        });
-                      },
+                      
                       rightAnswers: rightAnsChoice,
                     ),
                 ]))));
@@ -135,8 +129,6 @@ class PartSixFrame extends StatefulWidget {
   final List<String> question, ans;
   final List<List<String>> answers;
   final Function(int, String) getAnswer;
-  final Function(bool) cancelShowExplan;
-  final bool isShow;
   final List<String> rightAnswers;
   // Note, reason
 
@@ -148,8 +140,6 @@ class PartSixFrame extends StatefulWidget {
       required this.answers,
       required this.getAnswer,
       required this.ans,
-      required this.cancelShowExplan,
-      required this.isShow,
       required this.rightAnswers});
 
   @override

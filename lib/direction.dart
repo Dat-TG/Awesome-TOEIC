@@ -30,7 +30,7 @@ class Direction extends StatefulWidget {
 }
 
 class _DirectionState extends State<Direction> {
-  String _dropDownValue = "5";
+  String _dropDownValue = "2";
   bool _isTest = false;
   Future<List<Map<String, dynamic>>> qas = Future(() => []);
 

@@ -5,6 +5,7 @@ Future<Map<String, dynamic>> statisticPraticeByUserID(String uid) async {
   List<double> progress = [for (int i = 0; i < 7; i++) 0];
   List<int> doneQuestionsForPart = [for (int i = 0; i < 7; i++) 0],
       correctQuestions = [for (int i = 0; i < 7; i++) 0];
+  Map<String, dynamic> listHistory = {};
 
   QuerySnapshot<Map<String, dynamic>> history = await FirebaseFirestore.instance
       .collection('DoneExercises')
@@ -14,18 +15,26 @@ Future<Map<String, dynamic>> statisticPraticeByUserID(String uid) async {
       await FirebaseFirestore.instance.collection('Part').get();
 
   for (int i = 0; i < history.docs.length; i++) {
+    DocumentSnapshot<Map<String, dynamic>> getDoc = await FirebaseFirestore
+        .instance
+        .collection('DoneExercises')
+        .doc(history.docs[i].id)
+        .get();
+    listHistory[history.docs[i].id] = getDoc.data();
+
     Map<String, dynamic> data = history.docs[i].data();
     int correct = data['correct'];
     doneQuestionsForPart[data['part'] - 1] +=
         convertListDynamicToListString(data['list_questions_id']).length;
     correctQuestions[data['part'] - 1] += correct;
   }
-  for (int i = 0; i < history.docs.length; i++) {
+  for (int i = 0; i < 7; i++) {
     progress[i] +=
         doneQuestionsForPart[i] / totalQuestion.docs[i]['NumberOfQuestion'];
   }
-  
+
   return {
+    'listHistory': listHistory,
     'doneQuestion': doneQuestionsForPart,
     'correctQuestion': correctQuestions,
     'progress': progress

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:flutter/rendering.dart';
 import 'package:toeic_app/direction.dart';
 import 'package:toeic_app/question.dart';
 import 'package:toeic_app/services/statistic_service.dart';
@@ -19,6 +20,8 @@ class Practice extends StatefulWidget {
 
 class _PracticeState extends State<Practice> {
   Future<Map<String, dynamic>> statistic = Future(() => {});
+  PageController historyController = PageController();
+  int currentHistoryPage = 0;
 
   @override
   void initState() {
@@ -50,7 +53,7 @@ class _PracticeState extends State<Practice> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  // Listening
+                  //   ------------------------------      Listening     ------------------------------
                   Row(children: [
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -87,7 +90,7 @@ class _PracticeState extends State<Practice> {
                     ],
                   ),
 
-                  // Reading
+                  //   ------------------------------      Reading     ------------------------------
                   Row(children: [
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -125,7 +128,7 @@ class _PracticeState extends State<Practice> {
                     ],
                   ),
 
-                  // Notebook
+                  //   ------------------------------      Notebook     ------------------------------
                   Row(children: [
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -213,9 +216,8 @@ class _PracticeState extends State<Practice> {
                                 SizedBox(
                                   height: 100,
                                   width: 1,
-                                  child: const DecoratedBox(
-                                    decoration:
-                                        BoxDecoration(color: Colors.black),
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(color: black),
                                   ),
                                 ),
                                 Expanded(
@@ -269,6 +271,204 @@ class _PracticeState extends State<Practice> {
                                 ),
                               ],
                             ))
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  //   ------------------------------      History     ------------------------------
+                  Row(children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text(
+                        'Lịch sử',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  ]),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorBox,
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorBoxShadow,
+                            spreadRadius: 2,
+                            blurRadius: 3,
+                            offset: Offset(0, 3), // changes position of shadow
+                          )
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 8, 15, 0),
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Expanded(
+                                    flex: 1,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 20),
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            currentHistoryPage = 0;
+                                          });
+                                          historyController
+                                              .jumpToPage(currentHistoryPage);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              bottom: 10, top: 5),
+                                          decoration: BoxDecoration(
+                                              border: currentHistoryPage == 0
+                                                  ? Border(
+                                                      bottom: BorderSide(
+                                                          color: colorApp,
+                                                          width: 3))
+                                                  : Border()),
+                                          child: Text('Luyện tập',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: currentHistoryPage == 0
+                                                      ? colorApp
+                                                      : black),
+                                              textAlign: TextAlign.center),
+                                        ),
+                                      ),
+                                    )),
+                                SizedBox(
+                                  height: 30,
+                                  width: 1,
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(color: black),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Padding(
+                                      padding: const EdgeInsets.only(left: 20),
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            currentHistoryPage = 1;
+                                          });
+                                          historyController
+                                              .jumpToPage(currentHistoryPage);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                              bottom: 10, top: 5),
+                                          decoration: BoxDecoration(
+                                              border: currentHistoryPage == 1
+                                                  ? Border(
+                                                      bottom: BorderSide(
+                                                          color: colorApp,
+                                                          width: 3))
+                                                  : Border()),
+                                          child: Text('Thi',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: currentHistoryPage == 1
+                                                      ? colorApp
+                                                      : black),
+                                              textAlign: TextAlign.center),
+                                        ),
+                                      )),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            SizedBox(
+                                height: 220,
+                                child: PageView(
+                                    scrollDirection: Axis.horizontal,
+                                    controller: historyController,
+                                    onPageChanged: (value) {
+                                      setState(() {
+                                        currentHistoryPage = value;
+                                      });
+                                    },
+                                    children: [
+                                      Column(
+                                        children: [
+                                          SizedBox(
+                                            height: 170,
+                                            child: Column(
+                                              children: snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting
+                                                  ? []
+                                                  : ListTile.divideTiles(
+                                                      context: context,
+                                                      tiles: (snapshot.data![
+                                                                  'listHistory']
+                                                              as Map<String,
+                                                                  dynamic>)
+                                                          .entries
+                                                          .take(3)
+                                                          .map(
+                                                            (history) =>
+                                                                ListTile(
+                                                              trailing: Text(
+                                                                  '${double.parse((history.value['correct'] / history.value['list_answers'].length * 100).toStringAsFixed(0))}%',
+                                                                  style: TextStyle(
+                                                                      color: history.value['correct'] / history.value['list_answers'].length < 0.5
+                                                                          ? red
+                                                                          : history.value['correct'] / history.value['list_answers'].length >= 0.5 && history.value['correct'] / history.value['list_answers'].length < 0.8
+                                                                              ? orange
+                                                                              : green,
+                                                                      fontSize: 17,
+                                                                      fontWeight: FontWeight.w600)),
+                                                              leading: Image.asset(
+                                                                  listImage[
+                                                                      history.value[
+                                                                              'part'] -
+                                                                          1],
+                                                                  width: 30,
+                                                                  height: 30),
+                                                              title: Text(
+                                                                  listDesc[history
+                                                                              .value[
+                                                                          'part'] -
+                                                                      1],
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16)),
+                                                            ),
+                                                          )).toList(),
+                                            ),
+                                          ),
+                                          TextButton(
+                                              onPressed: () {},
+                                              child: Text("Xem thêm"))
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          SizedBox(
+                                              height: 150,
+                                              child: Center(
+                                                child: Text(
+                                                    "Bạn chưa thi thử lần nào",
+                                                    style: TextStyle(
+                                                        fontSize: 18,
+                                                        fontWeight:
+                                                            FontWeight.w600)),
+                                              )),
+                                        ],
+                                      ),
+                                    ]))
                           ],
                         ),
                       ),

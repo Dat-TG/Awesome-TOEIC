@@ -23,7 +23,6 @@ class _PartSevenState extends State<PartSeven> {
   String numAnswers = '1-2';
   List<String> _answers = [];
   PageController controllerFrame = PageController();
-  bool isShow = false;
   late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
@@ -133,12 +132,7 @@ class _PartSevenState extends State<PartSeven> {
                           ans: _answers,
                           listNameImages: convertListDynamicToListString(
                               widget.data[i]['images']),
-                          isShow: isShow,
-                          cancelShowExplan: (s) {
-                            setState(() {
-                              isShow = s;
-                            });
-                          },
+              
                         ),
                     ]))));
   }
@@ -149,9 +143,7 @@ class PartSevenFrame extends StatefulWidget {
   final List<String> question, ans, rightAnswersSelect, listNameImages;
   final List<List<String>> answers;
   final Function(int, String) getAnswer;
-  final Function(bool) cancelShowExplan;
 
-  final bool isShow;
   // Note, reason
 
   const PartSevenFrame(
@@ -162,9 +154,7 @@ class PartSevenFrame extends StatefulWidget {
       required this.listNameImages,
       required this.getAnswer,
       required this.rightAnswersSelect,
-      required this.ans,
-      required this.cancelShowExplan,
-      required this.isShow});
+      required this.ans});
 
   @override
   State<PartSevenFrame> createState() => _PartSevenFrameState();

@@ -22,7 +22,6 @@ class _PartOneState extends State<PartOne> {
   int _curr = 1;
   List<String> _answers = [];
   PageController controller = PageController();
-  bool isShow = false;
   late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
@@ -108,17 +107,11 @@ class _PartOneState extends State<PartOne> {
                         number: i,
                         getAnswer: (numb, value) => callbackAnswer(numb, value),
                         ans: _answers,
-                        isShow: isShow,
                         rightAnswers: convertListDynamicToListString(
                             widget.data[i]['list_right_answer']),
                         listNameImages: convertListDynamicToListString(
                             widget.data[i]['images']),
-                        audio: widget.data[i]['audio'],
-                        cancelShowExplan: (s) {
-                          setState(() {
-                            isShow = s;
-                          });
-                        })
+                        audio: widget.data[i]['audio'])
                 ])),
       ),
     );
@@ -131,8 +124,6 @@ class PartOneFrame extends StatefulWidget {
   final int number;
   final List<String> ans;
   final Function(int, String) getAnswer;
-  final bool isShow;
-  final Function(bool) cancelShowExplan;
   final List<String> rightAnswers, listNameImages;
   final String audio;
   // Note, reason
@@ -144,9 +135,7 @@ class PartOneFrame extends StatefulWidget {
       required this.ans,
       required this.rightAnswers,
       required this.listNameImages,
-      required this.audio,
-      required this.isShow,
-      required this.cancelShowExplan});
+      required this.audio});
 
   @override
   State<PartOneFrame> createState() => _PartOneFrameState();

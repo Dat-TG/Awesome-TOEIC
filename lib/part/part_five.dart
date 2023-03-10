@@ -20,7 +20,6 @@ class _PartFiveState extends State<PartFive> {
   List<String> _answers = [];
   List<List<String>> answersData = [];
   PageController controller = PageController();
-  bool isShow = false;
   late List<String> rightAnsChoice, listQuestionsID;
   bool isDialog = true;
 
@@ -109,12 +108,7 @@ class _PartFiveState extends State<PartFive> {
                               callbackAnswer(number, value),
                           ans: _answers,
                           rightAnswers: rightAnsChoice,
-                          isShow: isShow,
-                          cancelShowExplan: (s) {
-                            setState(() {
-                              isShow = s;
-                            });
-                          })
+                          )
                   ]),
             )));
   }
@@ -129,8 +123,6 @@ class PartFiveFrame extends StatefulWidget {
   final List<String> answers;
   final List<String> rightAnswers;
   final Function(int, String) getAnswer;
-  final bool isShow;
-  final Function(bool) cancelShowExplan;
   // Note, reason
 
   const PartFiveFrame(
@@ -140,9 +132,7 @@ class PartFiveFrame extends StatefulWidget {
       required this.answers,
       required this.getAnswer,
       required this.rightAnswers,
-      required this.ans,
-      required this.isShow,
-      required this.cancelShowExplan});
+      required this.ans});
 
   @override
   State<PartFiveFrame> createState() => _PartFiveFrameState();

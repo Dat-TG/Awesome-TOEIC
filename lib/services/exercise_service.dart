@@ -21,4 +21,5 @@ class ExerciseService {
       'time': DateFormat("yyyy-MM-dd HH:mm").format(DateTime.now())
     });
   }
+
 }
