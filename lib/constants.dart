@@ -156,5 +156,26 @@ Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
   for (int i = 0; i < collection.docs.length; i++) {
     res.add(collection.docs[i]);
   }
+  print("question 1");
+  print(res[0].data());
   return res;
+}
+
+Future<List<DocumentSnapshot<Map<String, dynamic>>>> getAllQuestionSnapshot(
+    QueryDocumentSnapshot<Map<String, dynamic>>? data) async {
+  List<DocumentSnapshot<Map<String, dynamic>>> res = [];
+  for (String i in data!.data()['list_question_id'] ?? []) {
+    final question =
+        await FirebaseFirestore.instance.collection("Questions").doc(i).get();
+    res.add(question);
+  }
+  return res;
+}
+
+void printWarning(String text) {
+  print('\x1B[33m$text\x1B[0m');
+}
+
+void printError(String text) {
+  print('\x1B[31m$text\x1B[0m');
 }
