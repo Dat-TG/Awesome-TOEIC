@@ -26,10 +26,9 @@ class _TestIntroState extends State<TestIntro> {
     return FutureBuilder(
         future: getAllQuestionSnapshot(widget.data),
         builder: (context, snapshot) {
-          List<DocumentSnapshot<Map<String, dynamic>>> data = [];
+          List<Map<String, dynamic>> data = [];
           if (snapshot.connectionState == ConnectionState.done) {
-            data =
-                snapshot.data as List<DocumentSnapshot<Map<String, dynamic>>>;
+            data = snapshot.data as List<Map<String, dynamic>>;
           }
           return Scaffold(
             extendBodyBehindAppBar: true,

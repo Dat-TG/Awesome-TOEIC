@@ -161,13 +161,27 @@ Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
   return res;
 }
 
-Future<List<DocumentSnapshot<Map<String, dynamic>>>> getAllQuestionSnapshot(
+Future<List<Map<String, dynamic>>> getAllQuestionSnapshot(
     QueryDocumentSnapshot<Map<String, dynamic>>? data) async {
-  List<DocumentSnapshot<Map<String, dynamic>>> res = [];
+  List<Map<String, dynamic>> res = [];
   for (String i in data!.data()['list_question_id'] ?? []) {
     final question =
         await FirebaseFirestore.instance.collection("Questions").doc(i).get();
-    res.add(question);
+    question.data()!['list_answers'] = [];
+    Map<String, dynamic> data;
+    data = question.data()!;
+    data['list_answers'] = [];
+    for (int i = 0; i < data['list_answers_id'].length; i++) {
+      await FirebaseFirestore.instance
+          .collection("Answers")
+          .where(FieldPath.documentId,
+              isEqualTo: data['list_answers_id'][i].toString())
+          .get()
+          .then((value) => {
+                data['list_answers'].add(value.docs[0].data()['list_answers']),
+              });
+    }
+    res.add(data);
   }
   return res;
 }
