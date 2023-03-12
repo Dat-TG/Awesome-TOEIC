@@ -196,6 +196,7 @@ class _PartFourFrameState extends State<PartFourFrame> {
 
   @override
   Widget build(BuildContext context) {
+    playingAudio.add(_player);
     _player.play();
     return Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

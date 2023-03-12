@@ -139,6 +139,7 @@ class _PartOneFrameState extends State<PartOneFrame> {
 
   @override
   Widget build(BuildContext context) {
+    playingAudio.add(_player);
     _player.play();
 
     return Column(

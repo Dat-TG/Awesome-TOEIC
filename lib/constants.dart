@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:toeic_app/settings/language_form.dart';
 
 const String appName = "TOEIC APP";
@@ -193,3 +194,5 @@ void printWarning(String text) {
 void printError(String text) {
   print('\x1B[31m$text\x1B[0m');
 }
+
+List<AudioPlayer> playingAudio = [];
