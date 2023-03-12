@@ -27,10 +27,10 @@ class _AppBarTestingState extends State<AppBarTesting> {
     return AppBar(
       title: Transform.translate(
           offset: Offset(-25, 0),
-          child: (Row(
+          child: (Column(
             children: [
               if (widget.numAnswers != "")
-                Column(
+                Row(
                   children: [
                     Text(
                       "Câu ${widget.numAnswers}",
@@ -41,22 +41,25 @@ class _AppBarTestingState extends State<AppBarTesting> {
                     ),
                   ],
                 ),
+              Padding(padding: EdgeInsets.only(top: 4, bottom: 4)),
               if (widget.numAnswers != "")
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 5),
-                  child: Icon(Icons.info_outline),
-                ),
-              if (widget.numAnswers != "")
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 10),
-                  child: Icon(Icons.settings_outlined),
-                ),
-              if (widget.numAnswers != "")
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 10),
-                  child: Icon(Icons.view_carousel),
-                ),
-              if (widget.numAnswers != "") Icon(Icons.pause_circle_outline),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Icon(Icons.info_outline),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 10),
+                      child: Icon(Icons.settings_outlined),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 5, right: 10),
+                      child: Icon(Icons.view_carousel),
+                    ),
+                    Icon(Icons.pause_circle_outline),
+                  ],
+                )
             ],
           ))),
       backgroundColor: colorApp,

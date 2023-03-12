@@ -25,7 +25,7 @@ class _TestingState extends State<Testing> {
   List<List<Map<String, dynamic>>> listQuestion = [[], [], [], [], [], [], []];
   int _curr = 0;
   int _number = 0;
-  List<String> _answer = [];
+  List<String> _answer = [], rightAnswerSelect = [];
   bool isShow = false;
   @override
   void initState() {
@@ -48,9 +48,11 @@ class _TestingState extends State<Testing> {
         }
       }
     }
-    print(numAnswers);
     for (int i = 0; i < 200; i++) {
       _answer.add("");
+    }
+    for (int i = 1; i <= 7; i++) {
+      rightAnswerSelect.addAll(compareAnswersToRightAnswers(i));
     }
   }
 
@@ -93,6 +95,8 @@ class _TestingState extends State<Testing> {
     int startPart3 = 32;
     int startPart4 = 71;
     int startPart6 = 131;
+    int startPart5 = 100;
+    int startPart7 = 146;
     return Scaffold(
       appBar: AppBarTesting(
         numAnswers: numAnswers[_curr],
@@ -169,7 +173,7 @@ class _TestingState extends State<Testing> {
                   isShow = s;
                 });
               },
-              rightAnswers: compareAnswersToRightAnswers(3),
+              rightAnswers: rightAnswerSelect,
             ),
           PartIntro(part: 4),
           for (int i = listQuestion[0].length +
@@ -217,7 +221,7 @@ class _TestingState extends State<Testing> {
                   isShow = s;
                 });
               },
-              rightAnswers: compareAnswersToRightAnswers(4),
+              rightAnswers: rightAnswerSelect,
             ),
           PartIntro(part: 5),
           for (int i = listQuestion[0].length +
@@ -232,7 +236,7 @@ class _TestingState extends State<Testing> {
                       listQuestion[4].length;
               i++)
             PartFiveFrame(
-                number: i,
+                number: startPart5++,
                 question: listQuestion[4][i -
                     listQuestion[0].length -
                     listQuestion[1].length -
@@ -245,7 +249,7 @@ class _TestingState extends State<Testing> {
                     listQuestion[3].length)['list_answers'][0]),
                 getAnswer: (number, value) => callbackAnswer(number, value),
                 ans: _answer,
-                rightAnswers: compareAnswersToRightAnswers(5),
+                rightAnswers: rightAnswerSelect,
                 isShow: isShow,
                 cancelShowExplan: (s) {
                   setState(() {
@@ -306,7 +310,7 @@ class _TestingState extends State<Testing> {
                   isShow = s;
                 });
               },
-              rightAnswers: compareAnswersToRightAnswers(6),
+              rightAnswers: rightAnswerSelect,
             ),
           PartIntro(part: 7),
           for (int i = listQuestion[0].length +
@@ -337,7 +341,7 @@ class _TestingState extends State<Testing> {
                                 listQuestion[5].length]['list_answers'])
                             .length;
                     j++)
-                  _curr++
+                  startPart7++
               ],
               question: convertListDynamicToListString(listQuestion[6][i -
                   listQuestion[0].length -
@@ -353,7 +357,7 @@ class _TestingState extends State<Testing> {
                   listQuestion[3].length -
                   listQuestion[4].length -
                   listQuestion[5].length]['list_answers']),
-              rightAnswersSelect: compareAnswersToRightAnswers(7),
+              rightAnswersSelect: rightAnswerSelect,
               getAnswer: (number, value) => callbackAnswer(number, value),
               ans: _answer,
               listNameImages: convertListDynamicToListString(listQuestion[6][i -
