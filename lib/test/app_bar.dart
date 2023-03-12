@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 
 import '../constants.dart';
 import '../part/app_bar.dart';
+
+CountdownTimerController timerController = CountdownTimerController(
+    endTime: DateTime.now().millisecondsSinceEpoch + 1000 * 120 * 60);
 
 class AppBarTesting extends StatefulWidget implements PreferredSizeWidget {
   final String numAnswers;
@@ -65,21 +70,34 @@ class _AppBarTestingState extends State<AppBarTesting> {
       backgroundColor: colorApp,
       centerTitle: true,
       actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 20),
-          child: InkWell(
-            onTap: () {},
-            child: Center(
-              child: Text(
-                'Submit',
-                style: TextStyle(
-                    decoration: TextDecoration.underline,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16),
-                textAlign: TextAlign.center,
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: () {},
+                    child: Center(
+                      child: Text(
+                        'Submit',
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  CountdownTimer(
+                    onEnd: () {},
+                    controller: timerController,
+                  )
+                ],
               ),
             ),
-          ),
+          ],
         )
       ],
     );
