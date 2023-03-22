@@ -51,9 +51,16 @@ class _TestingState extends State<Testing> {
     for (int i = 0; i < 200; i++) {
       _answer.add("");
     }
+    for (int i = 0; i < listQuestion[0].length; i++) {
+      rightAnswerSelect.add(listQuestion[0][i]['list_right_answer'][0]);
+    }
+    for (int i = 0; i < listQuestion[1].length; i++) {
+      rightAnswerSelect.add(listQuestion[1][i]['list_right_answer'][0]);
+    }
     for (int i = 1; i <= 7; i++) {
       rightAnswerSelect.addAll(compareAnswersToRightAnswers(i));
     }
+    print(rightAnswerSelect);
   }
 
   void callbackAnswer(int number, String ans) {
@@ -100,6 +107,8 @@ class _TestingState extends State<Testing> {
     return Scaffold(
       appBar: AppBarTesting(
         numAnswers: numAnswers[_curr],
+        answer: rightAnswerSelect,
+        answerSelect: _answer,
       ),
       body: PageView(
         /// [PageView.scrollDirection] defaults to [Axis.horizontal].
