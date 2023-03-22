@@ -339,14 +339,26 @@ class AnswerPageView extends StatefulWidget {
 
 class _AnswerPageViewState extends State<AnswerPageView> {
   @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (readOrListenController.hasClients) {
+        readOrListenController.jumpToPage(curReadOrListen);
+      }
+    });
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: MediaQuery.of(context).size.height - 150,
       child: PageView(
+        physics: NeverScrollableScrollPhysics(),
         controller: readOrListenController,
         children: [
           ListeningPage(
-              answer: widget.answer, answerSelect: widget.answerSelect)
+              answer: widget.answer, answerSelect: widget.answerSelect),
+          ReadingPage(answer: widget.answer, answerSelect: widget.answerSelect)
         ],
       ),
     );
@@ -390,6 +402,7 @@ class _ReadOrListenBarState extends State<ReadOrListenBar> {
                     onPressed: () {
                       setState(() {
                         curReadOrListen = 0;
+                        readOrListenController.jumpToPage(0);
                       });
                     },
                     child: Text(
@@ -407,6 +420,7 @@ class _ReadOrListenBarState extends State<ReadOrListenBar> {
                     onPressed: () {
                       setState(() {
                         curReadOrListen = 1;
+                        readOrListenController.jumpToPage(1);
                       });
                     },
                     child: Text('Đọc Hiểu',
@@ -657,6 +671,136 @@ class _ListeningPageState extends State<ListeningPage> {
             ),
           Text('Part 4: Bài nói chuyện ngắn'),
           for (int i = 71; i < 100; i++)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text('Câu ${i + 1}'),
+                for (var j in answersOption)
+                  Container(
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: widget.answerSelect[i] != j
+                          ? white
+                          : widget.answer[i] == widget.answerSelect[i]
+                              ? green
+                              : red,
+                      border: Border.all(color: black, width: 1.3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorBoxShadow,
+                          spreadRadius: 2,
+                          blurRadius: 3,
+                          offset: Offset(0, 3), // changes position of shadow
+                        )
+                      ],
+                    ),
+                    child: Text(
+                      j,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class ReadingPage extends StatefulWidget {
+  final List<String> answer, answerSelect;
+  const ReadingPage(
+      {super.key, required this.answer, required this.answerSelect});
+
+  @override
+  State<ReadingPage> createState() => _ReadingPageState();
+}
+
+class _ReadingPageState extends State<ReadingPage> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(widget.answer);
+    print(widget.answerSelect);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Part 5: Điền vào câu'),
+          for (int i = 100; i < 130; i++)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text('Câu ${i + 1}'),
+                for (var j in answersOption)
+                  Container(
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: widget.answerSelect[i] != j
+                          ? white
+                          : widget.answer[i] == widget.answerSelect[i]
+                              ? green
+                              : red,
+                      border: Border.all(color: black, width: 1.3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorBoxShadow,
+                          spreadRadius: 2,
+                          blurRadius: 3,
+                          offset: Offset(0, 3), // changes position of shadow
+                        )
+                      ],
+                    ),
+                    child: Text(
+                      j,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+              ],
+            ),
+          Text('Part 6: Điền vào đoạn văn'),
+          for (int i = 130; i < 146; i++)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text('Câu ${i + 1}'),
+                for (var j in answersOption)
+                  Container(
+                    padding: EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: widget.answerSelect[i] != j
+                          ? white
+                          : widget.answer[i] == widget.answerSelect[i]
+                              ? green
+                              : red,
+                      border: Border.all(color: black, width: 1.3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: colorBoxShadow,
+                          spreadRadius: 2,
+                          blurRadius: 3,
+                          offset: Offset(0, 3), // changes position of shadow
+                        )
+                      ],
+                    ),
+                    child: Text(
+                      j,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+              ],
+            ),
+          Text('Part 7: Đọc hiểu đoạn văn'),
+          for (int i = 146; i < 200; i++)
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
