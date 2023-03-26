@@ -52,74 +52,76 @@ class _PartSixState extends State<PartSix> {
   Widget build(BuildContext context) {
     _curr = 1;
     return WillPopScope(
-      onWillPop: () async {
-        bool confirm = await cancelDialog(context);
-        if (confirm) {
-          return true;
-        } else {
-          return false;
-        }
-      },
-      child: Scaffold(
-        appBar: AppBarPractice(
-          numAnswers: numAnswers,
-          answers: listDirectionEng,
-          ansTrans: listDirectionVn,
-        ),
-        body: NotificationListener<ScrollNotification>(
-            onNotification: (scrollNotification) {
-              if (scrollNotification is OverscrollNotification &&
-                  controllerFrame.page == widget.data.length - 1) {
-                showGeneralDialog(
-                    context: context,
-                    transitionDuration: Duration(milliseconds: 300),
-                    transitionBuilder: (context, anim1, anim2, child) {
-                      return SlideTransition(
-                        position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
-                            .animate(anim1),
-                        child: child,
-                      );
-                    },
-                    pageBuilder: (context, anim1, anim2) => SubmitDialog(
-                        listQuestionsID: listQuestionsID,
-                      part: 6,
+        onWillPop: () async {
+          bool confirm = await cancelDialog(context);
+          if (confirm) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        child: Scaffold(
+            appBar: AppBarPractice(
+              numAnswers: numAnswers,
+              answers: listDirectionEng,
+              ansTrans: listDirectionVn,
+            ),
+            body: NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {
+                  if (scrollNotification is OverscrollNotification &&
+                      controllerFrame.page == widget.data.length - 1) {
+                    showGeneralDialog(
+                        context: context,
+                        transitionDuration: Duration(milliseconds: 300),
+                        transitionBuilder: (context, anim1, anim2, child) {
+                          return SlideTransition(
+                            position:
+                                Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                                    .animate(anim1),
+                            child: child,
+                          );
+                        },
+                        pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                              listQuestions: widget.data,
+                              listQuestionsID: listQuestionsID,
+                              part: 6,
                               listRightAnswers: rightAnsChoice,
-                              listUserChoice: _answers,));
-              }
-              return true;
-            },
-            child: PageView(
-                scrollDirection: Axis.horizontal,
-                controller: controllerFrame,
-                onPageChanged: (number) {
-                  setState(() {
-                    numAnswers = "${number * 4 + 1}-${number * 4 + 4}";
-                  });
+                              listUserChoice: _answers,
+                            ));
+                  }
+                  return true;
                 },
-                children: [
-                  for (int i = 0; i < widget.data.length; i++)
-                    PartSixFrame(
-                      number: [
-                        for (int j = 0;
-                            j <
-                                convertListDynamicToListListString(
-                                        widget.data[i]['list_answers'])
-                                    .length;
-                            j++)
-                          _curr++
-                      ],
-                      paragraph: widget.data[i]['content'],
-                      question: List<String>.from(
-                          widget.data[i]['list_question'] as List),
-                      answers: convertListDynamicToListListString(
-                          widget.data[i]['list_answers']),
-                      getAnswer: (number, value) =>
-                          callbackAnswer(number, value),
-                      ans: _answers,
-                      
-                      rightAnswers: rightAnsChoice,
-                    ),
-                ]))));
+                child: PageView(
+                    scrollDirection: Axis.horizontal,
+                    controller: controllerFrame,
+                    onPageChanged: (number) {
+                      setState(() {
+                        numAnswers = "${number * 4 + 1}-${number * 4 + 4}";
+                      });
+                    },
+                    children: [
+                      for (int i = 0; i < widget.data.length; i++)
+                        PartSixFrame(
+                          number: [
+                            for (int j = 0;
+                                j <
+                                    convertListDynamicToListListString(
+                                            widget.data[i]['list_answers'])
+                                        .length;
+                                j++)
+                              _curr++
+                          ],
+                          paragraph: widget.data[i]['content'],
+                          question: List<String>.from(
+                              widget.data[i]['list_question'] as List),
+                          answers: convertListDynamicToListListString(
+                              widget.data[i]['list_answers']),
+                          getAnswer: (number, value) =>
+                              callbackAnswer(number, value),
+                          ans: _answers,
+                          rightAnswers: rightAnsChoice,
+                        ),
+                    ]))));
   }
 }
 
@@ -185,7 +187,8 @@ class _PartSixFrameState extends State<PartSixFrame>
                           : MediaQuery.of(context).size.width * 2 / 3,
                       constraints: BoxConstraints(
                           minHeight: 50,
-                          maxHeight: MediaQuery.of(context).size.height * 0.4),
+                          maxHeight:
+                              MediaQuery.of(context).size.height * 0.365),
                       padding: const EdgeInsets.fromLTRB(5, 5, 0, 10),
                       child: SingleChildScrollView(
                           child: Center(

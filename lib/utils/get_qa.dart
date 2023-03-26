@@ -24,7 +24,6 @@ Future<List<Map<String, dynamic>>> getQuestionsAndAnswers(int partID) async {
                         .then((value) => {
                               temp['list_answers']
                                   .add(value.docs[0].data()['list_answers']),
-                              //print("answer ${temp['list_answers'][j]}")
                             })
                   }
               },
@@ -33,9 +32,8 @@ Future<List<Map<String, dynamic>>> getQuestionsAndAnswers(int partID) async {
   return data;
 }
 
-Future<List<Map<String, dynamic>>> getQuestionsAndAnswersByQID(
-    String id) async {
-  List<Map<String, dynamic>> data = [];
+Future<Map<String, dynamic>> getQuestionsAndAnswersByQID(String id) async {
+  Map<String, dynamic> data = {};
   dynamic temp;
 
   await FirebaseFirestore.instance.collection("Questions").doc(id).get().then(
@@ -43,7 +41,7 @@ Future<List<Map<String, dynamic>>> getQuestionsAndAnswersByQID(
           temp = value.data(),
           temp['id'] = value.id,
           temp['list_answers'] = [],
-          data.add(temp),
+          data = temp,
           for (int j = 0; j < temp['list_answers_id'].length; j++)
             {
               await FirebaseFirestore.instance
@@ -56,6 +54,34 @@ Future<List<Map<String, dynamic>>> getQuestionsAndAnswersByQID(
                             .add(value.docs[0].data()['list_answers']),
                       })
             }
+        },
+      );
+  return data;
+}
+
+Future<Map<String, dynamic>> getQuestionsByQID(String id) async {
+  Map<String, dynamic> data = {};
+  dynamic temp;
+
+  await FirebaseFirestore.instance.collection("Questions").doc(id).get().then(
+        (value) async => {
+          temp = value.data(),
+          temp['id'] = value.id,
+          data = temp,
+        },
+      );
+  return data;
+}
+
+Future<Map<String, dynamic>> getAnswersByID(String id) async {
+  Map<String, dynamic> data = {};
+  dynamic temp;
+
+  await FirebaseFirestore.instance.collection("Answers").doc(id).get().then(
+        (value) async => {
+          temp = value.data(),
+          temp['id'] = value.id,
+          data = temp,
         },
       );
   return data;

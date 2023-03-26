@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
 import 'package:toeic_app/home_page.dart';
-import 'package:toeic_app/part/review_answer.dart';
+import 'package:toeic_app/part/review_answer/review_answer.dart';
 
 class Result extends StatefulWidget {
   final List<String> listAnswers, listRightAnswers;
+  final List<Map<String, dynamic>> listQuestions;
   final int part;
   const Result(
       {super.key,
       required this.part,
       required this.listAnswers,
-      required this.listRightAnswers});
+      required this.listRightAnswers,
+      required this.listQuestions});
 
   @override
   State<Result> createState() => _ResultState();
@@ -170,21 +172,20 @@ class _ResultState extends State<Result> {
                                           top: 15, bottom: 15),
                                       child: SizedBox(
                                         height: 8,
-                                        child: Expanded(
-                                          flex: 1,
-                                          child: LinearProgressIndicator(
-                                            backgroundColor: colorApp3,
-                                            valueColor:
-                                                AlwaysStoppedAnimation<Color>(
-                                              progress < 0.5 ? red : colorApp,
-                                            ),
-                                            value: progress,
+                                        child: LinearProgressIndicator(
+                                          backgroundColor: colorApp3,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                            progress < 0.5 ? red : colorApp,
                                           ),
+                                          value: progress,
                                         ),
                                       ),
                                     ),
                                     Text(
-                                      progress < 0.5 ? 'Tiếp tục cố gắng' : '',
+                                      progress < 0.8
+                                          ? 'Tiếp tục cố gắng'
+                                          : 'Ráng giữ phong độ này bạn nhé',
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontSize: 18,
@@ -211,6 +212,7 @@ class _ResultState extends State<Result> {
                                   MaterialPageRoute(
                                       builder: (context) => ReviewAnswers(
                                           listAnswers: widget.listAnswers,
+                                          listQuestions: widget.listQuestions,
                                           listRightAnswers:
                                               widget.listRightAnswers)));
                             },
@@ -236,10 +238,7 @@ class _ResultState extends State<Result> {
                                       builder: (context) =>
                                           HomePage(intialIndex: 0)),
                                   (Route<dynamic> route) => false);
-                              // Navigator.pop(context);
-                              // Navigator.push(
-                              //     context,
-                              //     );
+                            
                             },
                             style: ElevatedButton.styleFrom(
                                 shape: StadiumBorder(),

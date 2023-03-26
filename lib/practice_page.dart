@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
-import 'package:flutter/rendering.dart';
 import 'package:toeic_app/direction.dart';
+import 'package:toeic_app/part/app_bar.dart';
+import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/question.dart';
 import 'package:toeic_app/services/statistic_service.dart';
 import 'package:toeic_app/utils/change_color_by_theme.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 import 'package:toeic_app/vocabulary.dart';
 import 'constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -420,6 +422,17 @@ class _PracticeState extends State<Practice> {
                                                           .map(
                                                             (history) =>
                                                                 ListTile(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) => Result(
+                                                                            listQuestions:
+                                                                                history.value['list_questions'],
+                                                                            listAnswers: convertListDynamicToListString(history.value['list_answers']),
+                                                                            listRightAnswers: convertListDynamicToListString(history.value['list_right_answers']),
+                                                                            part: history.value['part'] - 1)));
+                                                              },
                                                               trailing: Text(
                                                                   '${double.parse((history.value['correct'] / history.value['list_answers'].length * 100).toStringAsFixed(0))}%',
                                                                   style: TextStyle(
@@ -449,9 +462,45 @@ class _PracticeState extends State<Practice> {
                                                           )).toList(),
                                             ),
                                           ),
-                                          TextButton(
-                                              onPressed: () {},
-                                              child: Text("Xem thêm"))
+                                          snapshot.connectionState ==
+                                                  ConnectionState.waiting
+                                              ? SizedBox.shrink()
+                                              : snapshot.data!['listHistory']
+                                                          .length <=
+                                                      3
+                                                  ? SizedBox.shrink()
+                                                  : TextButton(
+                                                      onPressed: () {
+                                                        showModalBottomSheet<
+                                                                void>(
+                                                            context: context,
+                                                            isScrollControlled:
+                                                                true,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return DraggableScrollableSheet(
+                                                                  expand: false,
+                                                                  initialChildSize:
+                                                                      .8,
+                                                                  minChildSize:
+                                                                      .8,
+                                                                  maxChildSize:
+                                                                      .8,
+                                                                  builder: (BuildContext
+                                                                          context,
+                                                                      ScrollController
+                                                                          scrollController) {
+                                                                    return SeeMoreHistory(
+                                                                        histories:
+                                                                            snapshot.data![
+                                                                                'listHistory'],
+                                                                        correctQuestion:
+                                                                            snapshot.data!['correctQuestion']);
+                                                                  });
+                                                            });
+                                                      },
+                                                      child: Text("Xem thêm"))
                                         ],
                                       ),
                                       Column(
@@ -479,6 +528,240 @@ class _PracticeState extends State<Practice> {
             );
           }
         });
+  }
+}
+
+class SeeMoreHistory extends StatefulWidget {
+  final Map<String, dynamic> histories;
+  final List<int> correctQuestion;
+  const SeeMoreHistory(
+      {super.key, required this.histories, required this.correctQuestion});
+
+  @override
+  State<SeeMoreHistory> createState() => _SeeMoreHistoryState();
+}
+
+class _SeeMoreHistoryState extends State<SeeMoreHistory> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+            color: transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )),
+        child: Center(
+          child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: colorAppBold,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      )),
+                  child: Row(mainAxisSize: MainAxisSize.max, children: [
+                    Expanded(
+                        flex: 1,
+                        child: Text(
+                          'Lịch sử luyện tập',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.cancel,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ]),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                      child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: widget.histories.entries
+                          .map((history) => Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Result(
+                                                listQuestions: history
+                                                    .value['list_questions'],
+                                                listAnswers:
+                                                    convertListDynamicToListString(
+                                                        history.value[
+                                                            'list_answers']),
+                                                listRightAnswers:
+                                                    convertListDynamicToListString(
+                                                        history.value[
+                                                            'list_right_answers']),
+                                                part: history.value['part'] -
+                                                    1)));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: black.withOpacity(0.2)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          20, 20, 20, 20),
+                                      child: Row(
+                                        children: [
+                                          Image.asset(
+                                              listImage[
+                                                  history.value['part'] - 1],
+                                              width: 45,
+                                              height: 45),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15),
+                                              child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                            history
+                                                                .value['time'],
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: black
+                                                                    .withOpacity(
+                                                                        0.6))),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                            listDesc[history
+                                                                        .value[
+                                                                    'part'] -
+                                                                1],
+                                                            style: TextStyle(
+                                                                fontSize: 17,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: black)),
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 6,
+                                                              bottom: 8),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                              'Số câu hỏi: ${history.value['list_answers'].length}',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: black
+                                                                      .withOpacity(
+                                                                          0.8))),
+                                                          Text(
+                                                              '${double.parse((history.value['correct'] / history.value['list_answers'].length * 100).toStringAsFixed(0))}%',
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: history.value['correct'] / history.value['list_answers'].length <
+                                                                          0.5
+                                                                      ? red
+                                                                      : history.value['correct'] / history.value['list_answers'].length >= 0.5 &&
+                                                                              history.value['correct'] / history.value['list_answers'].length <
+                                                                                  0.8
+                                                                          ? orange
+                                                                          : green),
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .right),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: 8,
+                                                      child:
+                                                          LinearProgressIndicator(
+                                                        backgroundColor:
+                                                            colorApp3,
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                                Color>(
+                                                          history.value['correct'] /
+                                                                      history
+                                                                          .value[
+                                                                              'list_answers']
+                                                                          .length <
+                                                                  0.5
+                                                              ? orange
+                                                              : history.value['correct'] / history.value['list_answers'].length >=
+                                                                          0.5 &&
+                                                                      history.value['correct'] /
+                                                                              history.value['list_answers'].length <
+                                                                          0.8
+                                                                  ? orange
+                                                                  : green,
+                                                        ),
+                                                        value: history.value[
+                                                                'correct'] /
+                                                            history
+                                                                .value[
+                                                                    'list_answers']
+                                                                .length,
+                                                      ),
+                                                    ),
+                                                  ]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  )),
+                )
+              ]),
+        ));
   }
 }
 

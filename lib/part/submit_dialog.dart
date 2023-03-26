@@ -8,12 +8,14 @@ import 'package:toeic_app/services/exercise_service.dart';
 
 class SubmitDialog extends StatefulWidget {
   final List<String> listQuestionsID, listRightAnswers, listUserChoice;
+  final List<Map<String, dynamic>> listQuestions;
   final int part;
 
   const SubmitDialog(
       {super.key,
       required this.listQuestionsID,
       required this.listRightAnswers,
+      required this.listQuestions,
       required this.listUserChoice,
       required this.part});
 
@@ -35,6 +37,7 @@ class _SubmitDialogState extends State<SubmitDialog> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.listQuestions);
     return AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(6.0))),
@@ -76,6 +79,7 @@ class _SubmitDialogState extends State<SubmitDialog> {
               await Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Result(
+                        listQuestions: [], // TODO: wrong
                         part: widget.part - 1,
                         listAnswers: widget.listUserChoice,
                         listRightAnswers: widget.listRightAnswers),

@@ -2,7 +2,6 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:toeic_app/part/cancel_dialog.dart';
-import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
 import 'package:toeic_app/utils/convert_dynamic.dart';
 
@@ -111,6 +110,7 @@ class _PartTwoState extends State<PartTwo> {
                           );
                         },
                         pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                              listQuestions: widget.data,
                               listQuestionsID: listQuestionsID,
                               part: 2,
                               listRightAnswers: rightAnsChoice,

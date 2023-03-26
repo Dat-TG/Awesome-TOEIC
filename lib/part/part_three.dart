@@ -86,6 +86,7 @@ class _PartThreeState extends State<PartThree> {
                           );
                         },
                         pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                            listQuestions: widget.data,
                             listQuestionsID: listQuestionsID,
                             part: 3,
                             listRightAnswers: rightAnsChoice,

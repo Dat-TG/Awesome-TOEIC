@@ -18,8 +18,8 @@ class ExerciseService {
       'list_answers': listAnswers,
       'part': part,
       'correct': correct,
-      'time': DateFormat("yyyy-MM-dd HH:mm").format(DateTime.now())
+      'list_right_answers': listRightAnswers,
+      'time': DateFormat("HH:mm yyyy-MM-dd").format(DateTime.now())
     });
   }
-
 }

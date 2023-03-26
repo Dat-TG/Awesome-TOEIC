@@ -86,6 +86,7 @@ class _PartSevenState extends State<PartSeven> {
                           );
                         },
                         pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                          listQuestions: widget.data,
                               listQuestionsID: listQuestionsID,
                               part: 7,
                               listRightAnswers: rightAnsChoice,
@@ -132,7 +133,7 @@ class _PartSevenState extends State<PartSeven> {
                           ans: _answers,
                           listNameImages: convertListDynamicToListString(
                               widget.data[i]['images']),
-              
+
                         ),
                     ]))));
   }

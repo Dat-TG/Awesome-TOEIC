@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:toeic_app/utils/convert_dynamic.dart';
+import 'package:toeic_app/utils/get_qa.dart';
 
 Future<Map<String, dynamic>> statisticPraticeByUserID(String uid) async {
   List<double> progress = [for (int i = 0; i < 7; i++) 0];
@@ -28,6 +29,21 @@ Future<Map<String, dynamic>> statisticPraticeByUserID(String uid) async {
         convertListDynamicToListString(data['list_questions_id']).length;
     correctQuestions[data['part'] - 1] += correct;
   }
+  for (var history in listHistory.entries) {
+    List<Map<String, dynamic>> questions = [];
+    for (int j = 0;
+        j <
+            convertListDynamicToListString(history.value['list_questions_id'])
+                .length;
+        j++) {
+      Map<String, dynamic> qa = await (getQuestionsAndAnswersByQID(
+          history.value['list_questions_id'][j] as String));
+      questions.add(qa);
+    }
+    dynamic oldData = listHistory[history.key];
+    oldData['list_questions'] = questions;
+  }
+
   for (int i = 0; i < 7; i++) {
     progress[i] +=
         doneQuestionsForPart[i] / totalQuestion.docs[i]['NumberOfQuestion'];
@@ -37,6 +53,6 @@ Future<Map<String, dynamic>> statisticPraticeByUserID(String uid) async {
     'listHistory': listHistory,
     'doneQuestion': doneQuestionsForPart,
     'correctQuestion': correctQuestions,
-    'progress': progress
+    'progress': progress,
   };
 }

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
+import './history_answer.dart';
 
 class ReviewAnswers extends StatefulWidget {
   final List<String> listAnswers, listRightAnswers;
+  final List<Map<String, dynamic>> listQuestions;
   const ReviewAnswers(
-      {super.key, required this.listAnswers, required this.listRightAnswers});
+      {super.key,
+      required this.listAnswers,
+      required this.listQuestions,
+      required this.listRightAnswers});
 
   @override
   State<ReviewAnswers> createState() => _ReviewAnswersState();
@@ -16,22 +22,49 @@ class _ReviewAnswersState extends State<ReviewAnswers> {
   Map<int, String> listCorrectAnswers = {};
   Map<int, String> listWrongAnswers = {};
   Map<int, String> listAllAnswers = {};
+  List<int> listCheckQuestions =
+      []; // -1: true = 0 , 0: false, true > 0, 1: false = 0
+  int number = 0;
 
   @override
   void initState() {
-    for (int i = 0; i < widget.listAnswers.length; i++) {
-      listAllAnswers[i] = widget.listAnswers[i];
-      if (widget.listAnswers[i] == widget.listRightAnswers[i]) {
-        listCorrectAnswers[i] = widget.listAnswers[i];
+    for (int i = 0; i < widget.listQuestions.length; i++) {
+      bool flag1 = false, flag2 = true;
+      for (int j = 0;
+          j <
+              convertListDynamicToListString(
+                      widget.listQuestions[i]['list_question'])
+                  .length;
+          j++, number++) {
+        listAllAnswers[number] = widget.listAnswers[number];
+
+        if (widget.listAnswers[number] != widget.listRightAnswers[number]) {
+          flag2 = false;
+          listWrongAnswers[number] = widget.listAnswers[number];
+        } else {
+          flag1 = true;
+          listCorrectAnswers[number] = widget.listAnswers[number];
+        }
+      }
+      if (flag1 == flag2) {
+        if (flag1 == true) {
+          listCheckQuestions.add(1);
+        } else {
+          listCheckQuestions.add(-1);
+        }
       } else {
-        listWrongAnswers[i] = widget.listAnswers[i];
+        listCheckQuestions.add(0);
       }
     }
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    print(widget.listAnswers);
+    print(widget.listQuestions);
+    print(widget.listRightAnswers);
     return Scaffold(
         appBar: AppBar(
           title: Text('Hiển thị đáp án'),
@@ -171,16 +204,25 @@ class _ReviewAnswersState extends State<ReviewAnswers> {
                   children: [
                     SingleChildScrollView(
                       child: HistoryAnswer(
+                          status: 0,
+                          listCheckQuestions: listCheckQuestions,
+                          listQuestions: widget.listQuestions,
                           listAnswers: listAllAnswers,
                           listRightAnswers: widget.listRightAnswers),
                     ),
                     SingleChildScrollView(
                       child: HistoryAnswer(
+                          status: 1,
+                          listCheckQuestions: listCheckQuestions,
+                          listQuestions: widget.listQuestions,
                           listAnswers: listCorrectAnswers,
                           listRightAnswers: widget.listRightAnswers),
                     ),
                     SingleChildScrollView(
                       child: HistoryAnswer(
+                          status: -1,
+                          listCheckQuestions: listCheckQuestions,
+                          listQuestions: widget.listQuestions,
                           listAnswers: listWrongAnswers,
                           listRightAnswers: widget.listRightAnswers),
                     )
@@ -191,76 +233,4 @@ class _ReviewAnswersState extends State<ReviewAnswers> {
   }
 }
 
-class HistoryAnswer extends StatefulWidget {
-  final List<String> listRightAnswers;
-  final Map<int, String> listAnswers;
-  const HistoryAnswer(
-      {super.key, required this.listAnswers, required this.listRightAnswers});
 
-  @override
-  State<HistoryAnswer> createState() => HistoryAnswerState();
-}
-
-class HistoryAnswerState extends State<HistoryAnswer> {
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: widget.listAnswers.entries
-          .map((ans) => Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: 110,
-                    child: Row(
-                      children: [
-                        Icon(
-                          ans.value == widget.listRightAnswers[ans.key]
-                              ? Icons.check
-                              : Icons.close,
-                          color: widget.listAnswers[ans.key] ==
-                                  widget.listRightAnswers[ans.key]
-                              ? green
-                              : red,
-                          size: 30,
-                        ),
-                        SizedBox(width: 10),
-                        Text('Câu ${ans.key + 1}',
-                            style: TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ),
-                  for (String option in answersOption)
-                    Container(
-                      padding: EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: widget.listRightAnswers[ans.key] != "" &&
-                                option == widget.listRightAnswers[ans.key]
-                            ? green
-                            : option == widget.listAnswers[ans.key]
-                                ? red
-                                : white,
-                        border: Border.all(color: black, width: 1.3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorBoxShadow,
-                            spreadRadius: 2,
-                            blurRadius: 3,
-                            offset: Offset(0, 3),
-                          )
-                        ],
-                      ),
-                      child: Text(
-                        option,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                ],
-              ))
-          .toList(),
-    );
-  }
-}

@@ -3,7 +3,6 @@ import 'package:rxdart/rxdart.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:toeic_app/part/cancel_dialog.dart';
-import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/part/submit_dialog.dart';
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
@@ -54,7 +53,6 @@ class _PartOneState extends State<PartOne> {
 
   @override
   Widget build(BuildContext context) {
-    print(listQuestionsID);
     return WillPopScope(
       onWillPop: () async {
         bool confirm = await cancelDialog(context);
@@ -85,6 +83,7 @@ class _PartOneState extends State<PartOne> {
                       );
                     },
                     pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                          listQuestions: widget.data,
                           listQuestionsID: listQuestionsID,
                           part: 1,
                           listUserChoice: _answers,

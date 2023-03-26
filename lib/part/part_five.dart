@@ -81,6 +81,7 @@ class _PartFiveState extends State<PartFive> {
                         );
                       },
                       pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                            listQuestions: widget.data,
                             listQuestionsID: listQuestionsID,
                             part: 5,
                             listRightAnswers: rightAnsChoice,
@@ -100,15 +101,15 @@ class _PartFiveState extends State<PartFive> {
                   children: [
                     for (int i = 0; i < widget.data.length; i++)
                       PartFiveFrame(
-                          number: i,
-                          question: widget.data[i]['list_question'][0],
-                          answers: convertListDynamicToListString(
-                              widget.data.elementAt(i)['list_answers'][0]),
-                          getAnswer: (number, value) =>
-                              callbackAnswer(number, value),
-                          ans: _answers,
-                          rightAnswers: rightAnsChoice,
-                          )
+                        number: i,
+                        question: widget.data[i]['list_question'][0],
+                        answers: convertListDynamicToListString(
+                            widget.data.elementAt(i)['list_answers'][0]),
+                        getAnswer: (number, value) =>
+                            callbackAnswer(number, value),
+                        ans: _answers,
+                        rightAnswers: rightAnsChoice,
+                      )
                   ]),
             )));
   }
