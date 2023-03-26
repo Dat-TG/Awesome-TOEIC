@@ -86,7 +86,7 @@ class _PartSevenState extends State<PartSeven> {
                           );
                         },
                         pageBuilder: (context, anim1, anim2) => SubmitDialog(
-                          listQuestions: widget.data,
+                              listQuestions: widget.data,
                               listQuestionsID: listQuestionsID,
                               part: 7,
                               listRightAnswers: rightAnsChoice,
@@ -133,7 +133,6 @@ class _PartSevenState extends State<PartSeven> {
                           ans: _answers,
                           listNameImages: convertListDynamicToListString(
                               widget.data[i]['images']),
-
                         ),
                     ]))));
   }
@@ -207,7 +206,8 @@ class _PartSevenFrameState extends State<PartSevenFrame> {
                       width: MediaQuery.of(context).size.width,
                       constraints: BoxConstraints(
                           minHeight: 50,
-                          maxHeight: MediaQuery.of(context).size.height * 0.4),
+                          maxHeight:
+                              MediaQuery.of(context).size.height * 0.365),
                       padding: const EdgeInsets.fromLTRB(5, 5, 0, 10),
                       child: FutureBuilder<List<String>>(
                           future: imageURL,
