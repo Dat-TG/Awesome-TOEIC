@@ -356,7 +356,10 @@ class _DirectionState extends State<Direction> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        PartOne(data: data)));
+                                                        PartOne(
+                                                          data: data,
+                                                          isExam: false,
+                                                        )));
                                           } else if (widget.part == 1) {
                                             Navigator.push(
                                                 context,

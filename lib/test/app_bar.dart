@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
@@ -20,12 +22,14 @@ final curAnswerPageListening = ValueNotifier<int>(0);
 class AppBarTesting extends StatefulWidget implements PreferredSizeWidget {
   final String numAnswers;
   final List<String> answer, answerSelect;
+  final PageController pageController;
 
   const AppBarTesting(
       {super.key,
       required this.numAnswers,
       required this.answer,
-      required this.answerSelect});
+      required this.answerSelect,
+      required this.pageController});
 
   @override
   State<AppBarTesting> createState() => _AppBarTestingState();
@@ -94,8 +98,10 @@ class _AppBarTestingState extends State<AppBarTesting> {
                               bodyBuilder: (context, offset) {
                                 return SliverChildListDelegate([
                                   AnswerPageView(
-                                      answer: widget.answer,
-                                      answerSelect: widget.answerSelect)
+                                    answer: widget.answer,
+                                    answerSelect: widget.answerSelect,
+                                    pageController: widget.pageController,
+                                  )
                                 ]);
                               },
                               headerBuilder: (context, offset) {
@@ -332,8 +338,12 @@ class _TestContainer extends StatelessWidget {
 
 class AnswerPageView extends StatefulWidget {
   final List<String> answer, answerSelect;
+  final PageController pageController;
   const AnswerPageView(
-      {super.key, required this.answer, required this.answerSelect});
+      {super.key,
+      required this.answer,
+      required this.answerSelect,
+      required this.pageController});
 
   @override
   State<AnswerPageView> createState() => _AnswerPageViewState();
@@ -359,8 +369,15 @@ class _AnswerPageViewState extends State<AnswerPageView> {
         controller: readOrListenController,
         children: [
           ListeningPage(
-              answer: widget.answer, answerSelect: widget.answerSelect),
-          ReadingPage(answer: widget.answer, answerSelect: widget.answerSelect)
+            answer: widget.answer,
+            answerSelect: widget.answerSelect,
+            pageController: widget.pageController,
+          ),
+          ReadingPage(
+            answer: widget.answer,
+            answerSelect: widget.answerSelect,
+            pageController: widget.pageController,
+          )
         ],
       ),
     );
@@ -680,8 +697,12 @@ class _FilterBarState extends State<FilterBar> {
 
 class ListeningPage extends StatefulWidget {
   final List<String> answer, answerSelect;
+  final PageController pageController;
   const ListeningPage(
-      {super.key, required this.answer, required this.answerSelect});
+      {super.key,
+      required this.answer,
+      required this.answerSelect,
+      required this.pageController});
 
   @override
   State<ListeningPage> createState() => _ListeningPageState();
@@ -705,161 +726,213 @@ class _ListeningPageState extends State<ListeningPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Part 1: Mô Tả Hình Ảnh'),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              child: Text(
+                'Part 1: Mô Tả Hình Ảnh',
+                style: TextStyle(
+                    color: colorApp, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
             for (int i = 0; i < 6; i++)
               if (curAnswerPageListening.value == 0 ||
                   (curAnswerPageListening.value == 1 &&
                       widget.answer[i] == widget.answerSelect[i]) ||
                   (curAnswerPageListening.value == 2 &&
                       widget.answer[i] != widget.answerSelect[i]))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text('Câu ${i + 1}'),
-                    for (var j in answersOption)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.answerSelect[i] != j
-                              ? white
-                              : widget.answer[i] == widget.answerSelect[i]
-                                  ? green
-                                  : red,
-                          border: Border.all(color: black, width: 1.3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorBoxShadow,
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            )
-                          ],
+                InkWell(
+                  onTap: () {
+                    widget.pageController.jumpToPage(i + 1);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Câu ${i + 1}'),
+                      for (var j in answersOption)
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: widget.answerSelect[i] != j
+                                ? white
+                                : widget.answer[i] == widget.answerSelect[i]
+                                    ? green
+                                    : red,
+                            border: Border.all(color: black, width: 1.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorBoxShadow,
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            j,
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        child: Text(
-                          j,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-            Text('Part 2: Hỏi & Đáp'),
-            for (int i = 6; i < 32; i++)
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              child: Text(
+                'Part 2: Hỏi & Đáp',
+                style: TextStyle(
+                    color: colorApp, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            for (int i = 6; i < 31; i++)
               if (curAnswerPageListening.value == 0 ||
                   (curAnswerPageListening.value == 1 &&
                       widget.answer[i] == widget.answerSelect[i]) ||
                   (curAnswerPageListening.value == 2 &&
                       widget.answer[i] != widget.answerSelect[i]))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text('Câu ${i + 1}'),
-                    for (var j in answersOption)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.answerSelect[i] != j
-                              ? white
-                              : widget.answer[i] == widget.answerSelect[i]
-                                  ? green
-                                  : red,
-                          border: Border.all(color: black, width: 1.3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorBoxShadow,
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            )
-                          ],
+                InkWell(
+                  onTap: () {
+                    widget.pageController.jumpToPage(i + 2);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Câu ${i + 1}'),
+                      for (var j in answersOption)
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: widget.answerSelect[i] != j
+                                ? white
+                                : widget.answer[i] == widget.answerSelect[i]
+                                    ? green
+                                    : red,
+                            border: Border.all(color: black, width: 1.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorBoxShadow,
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            j,
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        child: Text(
-                          j,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-            Text('Part 3: Đoạn hội thoại'),
-            for (int i = 32; i < 70; i++)
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              child: Text(
+                'Part 3: Đoạn hội thoại',
+                style: TextStyle(
+                    color: colorApp, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            for (int i = 31; i < 70; i++)
               if (curAnswerPageListening.value == 0 ||
                   (curAnswerPageListening.value == 1 &&
                       widget.answer[i] == widget.answerSelect[i]) ||
                   (curAnswerPageListening.value == 2 &&
                       widget.answer[i] != widget.answerSelect[i]))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text('Câu ${i + 1}'),
-                    for (var j in answersOption)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.answerSelect[i] != j
-                              ? white
-                              : widget.answer[i] == widget.answerSelect[i]
-                                  ? green
-                                  : red,
-                          border: Border.all(color: black, width: 1.3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorBoxShadow,
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            )
-                          ],
+                InkWell(
+                  onTap: () {
+                    widget.pageController.jumpToPage(31 + (i - 31) ~/ 3 + 3);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Câu ${i + 1}'),
+                      for (var j in answersOption)
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: widget.answerSelect[i] != j
+                                ? white
+                                : widget.answer[i] == widget.answerSelect[i]
+                                    ? green
+                                    : red,
+                            border: Border.all(color: black, width: 1.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorBoxShadow,
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            j,
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        child: Text(
-                          j,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-            Text('Part 4: Bài nói chuyện ngắn'),
-            for (int i = 71; i < 100; i++)
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              child: Text(
+                'Part 4: Bài nói chuyện ngắn',
+                style: TextStyle(
+                    color: colorApp, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            for (int i = 70; i < 100; i++)
               if (curAnswerPageListening.value == 0 ||
                   (curAnswerPageListening.value == 1 &&
                       widget.answer[i] == widget.answerSelect[i]) ||
                   (curAnswerPageListening.value == 2 &&
                       widget.answer[i] != widget.answerSelect[i]))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text('Câu ${i + 1}'),
-                    for (var j in answersOption)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.answerSelect[i] != j
-                              ? white
-                              : widget.answer[i] == widget.answerSelect[i]
-                                  ? green
-                                  : red,
-                          border: Border.all(color: black, width: 1.3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorBoxShadow,
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            )
-                          ],
+                InkWell(
+                  onTap: () {
+                    widget.pageController.jumpToPage(44 + (i - 70) ~/ 3 + 4);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Câu ${i + 1}'),
+                      for (var j in answersOption)
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: widget.answerSelect[i] != j
+                                ? white
+                                : widget.answer[i] == widget.answerSelect[i]
+                                    ? green
+                                    : red,
+                            border: Border.all(color: black, width: 1.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorBoxShadow,
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            j,
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        child: Text(
-                          j,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
           ],
         ),
@@ -870,8 +943,12 @@ class _ListeningPageState extends State<ListeningPage> {
 
 class ReadingPage extends StatefulWidget {
   final List<String> answer, answerSelect;
+  final PageController pageController;
   const ReadingPage(
-      {super.key, required this.answer, required this.answerSelect});
+      {super.key,
+      required this.answer,
+      required this.answerSelect,
+      required this.pageController});
 
   @override
   State<ReadingPage> createState() => _ReadingPageState();
@@ -895,122 +972,175 @@ class _ReadingPageState extends State<ReadingPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Part 5: Điền vào câu'),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              child: Text(
+                'Part 5: Điền vào câu',
+                style: TextStyle(
+                    color: colorApp, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
             for (int i = 100; i < 130; i++)
               if (curAnswerPageReading.value == 0 ||
                   (curAnswerPageReading.value == 1 &&
                       widget.answer[i] == widget.answerSelect[i]) ||
                   (curAnswerPageReading.value == 2 &&
                       widget.answer[i] != widget.answerSelect[i]))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text('Câu ${i + 1}'),
-                    for (var j in answersOption)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.answerSelect[i] != j
-                              ? white
-                              : widget.answer[i] == widget.answerSelect[i]
-                                  ? green
-                                  : red,
-                          border: Border.all(color: black, width: 1.3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorBoxShadow,
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            )
-                          ],
+                InkWell(
+                  onTap: () {
+                    widget.pageController.jumpToPage(54 + i - 100 + 5);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Câu ${i + 1}'),
+                      for (var j in answersOption)
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: widget.answerSelect[i] != j
+                                ? white
+                                : widget.answer[i] == widget.answerSelect[i]
+                                    ? green
+                                    : red,
+                            border: Border.all(color: black, width: 1.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorBoxShadow,
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            j,
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        child: Text(
-                          j,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-            Text('Part 6: Điền vào đoạn văn'),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              child: Text(
+                'Part 6: Điền vào đoạn văn',
+                style: TextStyle(
+                    color: colorApp, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
             for (int i = 130; i < 146; i++)
               if (curAnswerPageReading.value == 0 ||
                   (curAnswerPageReading.value == 1 &&
                       widget.answer[i] == widget.answerSelect[i]) ||
                   (curAnswerPageReading.value == 2 &&
                       widget.answer[i] != widget.answerSelect[i]))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text('Câu ${i + 1}'),
-                    for (var j in answersOption)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.answerSelect[i] != j
-                              ? white
-                              : widget.answer[i] == widget.answerSelect[i]
-                                  ? green
-                                  : red,
-                          border: Border.all(color: black, width: 1.3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorBoxShadow,
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            )
-                          ],
+                InkWell(
+                  onTap: () {
+                    widget.pageController.jumpToPage(84 + (i - 130) ~/ 4 + 6);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Câu ${i + 1}'),
+                      for (var j in answersOption)
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: widget.answerSelect[i] != j
+                                ? white
+                                : widget.answer[i] == widget.answerSelect[i]
+                                    ? green
+                                    : red,
+                            border: Border.all(color: black, width: 1.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorBoxShadow,
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            j,
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        child: Text(
-                          j,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-            Text('Part 7: Đọc hiểu đoạn văn'),
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              child: Text(
+                'Part 7: Đọc hiểu đoạn văn',
+                style: TextStyle(
+                    color: colorApp, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
             for (int i = 146; i < 200; i++)
               if (curAnswerPageReading.value == 0 ||
                   (curAnswerPageReading.value == 1 &&
                       widget.answer[i] == widget.answerSelect[i]) ||
                   (curAnswerPageReading.value == 2 &&
                       widget.answer[i] != widget.answerSelect[i]))
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text('Câu ${i + 1}'),
-                    for (var j in answersOption)
-                      Container(
-                        padding: EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: widget.answerSelect[i] != j
-                              ? white
-                              : widget.answer[i] == widget.answerSelect[i]
-                                  ? green
-                                  : red,
-                          border: Border.all(color: black, width: 1.3),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorBoxShadow,
-                              spreadRadius: 2,
-                              blurRadius: 3,
-                              offset:
-                                  Offset(0, 3), // changes position of shadow
-                            )
-                          ],
+                InkWell(
+                  onTap: () {
+                    int page;
+                    page = 88 + 7;
+                    if (i >= 146) {
+                      page += (min(i, 153) - 146) ~/ 2;
+                    }
+                    if (i >= 154) {
+                      page += (min(i, 162) - 154) ~/ 3 + 1;
+                    }
+                    if (i >= 163) {
+                      page += (min(i, 174) - 163) ~/ 4 + 1;
+                    }
+                    if (i >= 175) {
+                      page += (i - 175) ~/ 5 + 1;
+                    }
+                    widget.pageController.jumpToPage(page);
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text('Câu ${i + 1}'),
+                      for (var j in answersOption)
+                        Container(
+                          padding: EdgeInsets.all(15),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: widget.answerSelect[i] != j
+                                ? white
+                                : widget.answer[i] == widget.answerSelect[i]
+                                    ? green
+                                    : red,
+                            border: Border.all(color: black, width: 1.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorBoxShadow,
+                                spreadRadius: 2,
+                                blurRadius: 3,
+                                offset:
+                                    Offset(0, 3), // changes position of shadow
+                              )
+                            ],
+                          ),
+                          child: Text(
+                            j,
+                            style: TextStyle(fontSize: 16),
+                          ),
                         ),
-                        child: Text(
-                          j,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
           ],
         ),

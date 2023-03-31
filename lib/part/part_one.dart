@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 
 class PartOne extends StatefulWidget {
   final List<Map<String, dynamic>> data;
-  const PartOne({super.key, required this.data});
+  final bool isExam;
+  const PartOne({super.key, required this.data, required this.isExam});
 
   @override
   State<PartOne> createState() => _PartOneState();
@@ -55,20 +56,22 @@ class _PartOneState extends State<PartOne> {
             children: [
               for (int i = 0; i < totalQues; i++)
                 PartOneFrame(
-                    number: i,
-                    getAnswer: (numb, value) => callbackAnswer(numb, value),
-                    ans: _answer,
-                    isShow: isShow,
-                    rightAnswers: convertListDynamicToListString(
-                        widget.data[i]['list_right_answer']),
-                    listNameImages: convertListDynamicToListString(
-                        widget.data[i]['images']),
-                    audio: widget.data[i]['audio'],
-                    cancelShowExplan: (s) {
-                      setState(() {
-                        isShow = s;
-                      });
-                    })
+                  number: i,
+                  getAnswer: (numb, value) => callbackAnswer(numb, value),
+                  ans: _answer,
+                  isShow: isShow,
+                  rightAnswers: convertListDynamicToListString(
+                      widget.data[i]['list_right_answer']),
+                  listNameImages:
+                      convertListDynamicToListString(widget.data[i]['images']),
+                  audio: widget.data[i]['audio'],
+                  cancelShowExplan: (s) {
+                    setState(() {
+                      isShow = s;
+                    });
+                  },
+                  isExam: widget.isExam,
+                )
             ]));
   }
 }
@@ -81,6 +84,7 @@ class PartOneFrame extends StatefulWidget {
   final Function(bool) cancelShowExplan;
   final List<String> rightAnswers, listNameImages;
   final String audio;
+  final bool isExam;
   // Note, reason
 
   const PartOneFrame(
@@ -92,7 +96,8 @@ class PartOneFrame extends StatefulWidget {
       required this.listNameImages,
       required this.audio,
       required this.isShow,
-      required this.cancelShowExplan});
+      required this.cancelShowExplan,
+      required this.isExam});
 
   @override
   State<PartOneFrame> createState() => _PartOneFrameState();
@@ -290,10 +295,16 @@ class _PartOneFrameState extends State<PartOneFrame> {
                                 shape: BoxShape.circle,
                                 color: widget.ans[widget.number] != "" &&
                                         i == widget.rightAnswers[0]
-                                    ? green
+                                    ? (widget.isExam)
+                                        ? (i == widget.ans[widget.number])
+                                            ? yellowBold
+                                            : white
+                                        : green
                                     : (widget.ans[widget.number] != "")
                                         ? (i == widget.ans[widget.number]
-                                            ? red
+                                            ? (widget.isExam)
+                                                ? yellowBold
+                                                : red
                                             : white)
                                         : white,
                                 border: Border.all(color: black, width: 1.3),

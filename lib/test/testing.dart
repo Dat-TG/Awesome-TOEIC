@@ -106,33 +106,38 @@ class _TestingState extends State<Testing> {
     int startPart7 = 146;
     return Scaffold(
       appBar: AppBarTesting(
-        numAnswers: numAnswers[_curr],
-        answer: rightAnswerSelect,
-        answerSelect: _answer,
-      ),
+          numAnswers: numAnswers[_curr],
+          answer: rightAnswerSelect,
+          answerSelect: _answer,
+          pageController: controller),
       body: PageView(
         /// [PageView.scrollDirection] defaults to [Axis.horizontal].
         /// Use [Axis.vertical] to scroll vertically.
         controller: controller,
         children: [
-          PartIntro(part: 1),
+          PartIntro(part: 1, controller: controller),
           for (int i = 0; i < listQuestion[0].length; i++)
             PartOneFrame(
-                number: i,
-                getAnswer: (numb, value) => callbackAnswer(numb, value),
-                ans: _answer,
-                rightAnswers: convertListDynamicToListString(
-                    listQuestion[0][i]['list_right_answer']),
-                listNameImages: convertListDynamicToListString(
-                    listQuestion[0][i]['images']),
-                audio: listQuestion[0][i]['audio'],
-                isShow: isShow,
-                cancelShowExplan: (s) {
-                  setState(() {
-                    isShow = s;
-                  });
-                }),
-          PartIntro(part: 2),
+              number: i,
+              getAnswer: (numb, value) => callbackAnswer(numb, value),
+              ans: _answer,
+              rightAnswers: convertListDynamicToListString(
+                  listQuestion[0][i]['list_right_answer']),
+              listNameImages:
+                  convertListDynamicToListString(listQuestion[0][i]['images']),
+              audio: listQuestion[0][i]['audio'],
+              isShow: isShow,
+              cancelShowExplan: (s) {
+                setState(() {
+                  isShow = s;
+                });
+              },
+              isExam: true,
+            ),
+          PartIntro(
+            part: 2,
+            controller: controller,
+          ),
           for (int i = listQuestion[0].length;
               i < listQuestion[0].length + listQuestion[1].length;
               i++)
@@ -144,7 +149,10 @@ class _TestingState extends State<Testing> {
               rightAnswers: convertListDynamicToListString(listQuestion[1]
                   [i - listQuestion[0].length]['list_right_answer']),
             ),
-          PartIntro(part: 3),
+          PartIntro(
+            part: 3,
+            controller: controller,
+          ),
           for (int i = listQuestion[0].length + listQuestion[1].length;
               i <
                   listQuestion[0].length +
@@ -184,7 +192,10 @@ class _TestingState extends State<Testing> {
               },
               rightAnswers: rightAnswerSelect,
             ),
-          PartIntro(part: 4),
+          PartIntro(
+            part: 4,
+            controller: controller,
+          ),
           for (int i = listQuestion[0].length +
                   listQuestion[1].length +
                   listQuestion[2].length;
@@ -232,7 +243,10 @@ class _TestingState extends State<Testing> {
               },
               rightAnswers: rightAnswerSelect,
             ),
-          PartIntro(part: 5),
+          PartIntro(
+            part: 5,
+            controller: controller,
+          ),
           for (int i = listQuestion[0].length +
                   listQuestion[1].length +
                   listQuestion[2].length +
@@ -265,7 +279,10 @@ class _TestingState extends State<Testing> {
                     isShow = s;
                   });
                 }),
-          PartIntro(part: 6),
+          PartIntro(
+            part: 6,
+            controller: controller,
+          ),
           for (int i = listQuestion[0].length +
                   listQuestion[1].length +
                   listQuestion[2].length +
@@ -321,7 +338,10 @@ class _TestingState extends State<Testing> {
               },
               rightAnswers: rightAnswerSelect,
             ),
-          PartIntro(part: 7),
+          PartIntro(
+            part: 7,
+            controller: controller,
+          ),
           for (int i = listQuestion[0].length +
                   listQuestion[1].length +
                   listQuestion[2].length +
@@ -399,51 +419,85 @@ class _TestingState extends State<Testing> {
 
 class PartIntro extends StatelessWidget {
   final int part;
-  const PartIntro({super.key, required this.part});
+  final PageController controller;
+  const PartIntro({super.key, required this.part, required this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topLeft,
-      child: Column(
-        children: [
-          if (part == 1)
-            Text(
-              "PART 1: PHOTOGRAPHS",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )
-          else if (part == 2)
-            Text(
-              "PART 2: QUESTION-RESPONSE",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )
-          else if (part == 3)
-            Text(
-              "PART 3: CONVERSATIONS",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )
-          else if (part == 4)
-            Text(
-              "PART 4: SHORT TALKS",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )
-          else if (part == 5)
-            Text(
-              "PART 5: INCOMPLETE SENTENCES",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )
-          else if (part == 6)
-            Text(
-              "PART 6: TEXT COMPLETION",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )
-          else if (part == 7)
-            Text(
-              "PART 7: READING COMPREHENSION",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Container(
+        alignment: Alignment.topLeft,
+        child: Column(
+          children: [
+            if (part == 1)
+              Text(
+                "PART 1: PHOTOGRAPHS",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              )
+            else if (part == 2)
+              Text(
+                "PART 2: QUESTION-RESPONSE",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              )
+            else if (part == 3)
+              Text(
+                "PART 3: CONVERSATIONS",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              )
+            else if (part == 4)
+              Text(
+                "PART 4: SHORT TALKS",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              )
+            else if (part == 5)
+              Text(
+                "PART 5: INCOMPLETE SENTENCES",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              )
+            else if (part == 6)
+              Text(
+                "PART 6: TEXT COMPLETION",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              )
+            else if (part == 7)
+              Text(
+                "PART 7: READING COMPREHENSION",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            SizedBox(
+              height: 10,
             ),
-          Text(listDirectionEng[part - 1])
-        ],
+            Text(
+              listDirectionEng[part - 1],
+              textAlign: TextAlign.start,
+            ),
+            Expanded(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      controller.nextPage(
+                          duration: const Duration(milliseconds: 100),
+                          curve: Curves.easeInOut);
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(colorApp),
+                      shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20))),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: Text(
+                        "Bắt đầu",
+                        style: TextStyle(color: white),
+                      ),
+                    ))
+              ],
+            ))
+          ],
+        ),
       ),
     );
   }
