@@ -148,6 +148,7 @@ class _TestingState extends State<Testing> {
               ans: _answer,
               rightAnswers: convertListDynamicToListString(listQuestion[1]
                   [i - listQuestion[0].length]['list_right_answer']),
+              isExam: true,
             ),
           PartIntro(
             part: 3,
@@ -191,6 +192,7 @@ class _TestingState extends State<Testing> {
                 });
               },
               rightAnswers: rightAnswerSelect,
+              isExam: true,
             ),
           PartIntro(
             part: 4,
@@ -233,7 +235,7 @@ class _TestingState extends State<Testing> {
                   listQuestion[0].length -
                   listQuestion[1].length -
                   listQuestion[2].length]['list_answers']),
-              getAnswer: (number, value) => callbackAnswer(number, value),
+              getAnswer: (number, value) => callbackAnswer(number - 1, value),
               ans: _answer,
               isShow: isShow,
               cancelShowExplan: (s) {
@@ -242,6 +244,7 @@ class _TestingState extends State<Testing> {
                 });
               },
               rightAnswers: rightAnswerSelect,
+              isExam: true,
             ),
           PartIntro(
             part: 5,
@@ -259,26 +262,29 @@ class _TestingState extends State<Testing> {
                       listQuestion[4].length;
               i++)
             PartFiveFrame(
-                number: startPart5++,
-                question: listQuestion[4][i -
-                    listQuestion[0].length -
-                    listQuestion[1].length -
-                    listQuestion[2].length -
-                    listQuestion[3].length]['list_question'][0],
-                answers: convertListDynamicToListString(listQuestion[4].elementAt(i -
-                    listQuestion[0].length -
-                    listQuestion[1].length -
-                    listQuestion[2].length -
-                    listQuestion[3].length)['list_answers'][0]),
-                getAnswer: (number, value) => callbackAnswer(number, value),
-                ans: _answer,
-                rightAnswers: rightAnswerSelect,
-                isShow: isShow,
-                cancelShowExplan: (s) {
-                  setState(() {
-                    isShow = s;
-                  });
-                }),
+              number: startPart5++,
+              question: listQuestion[4][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length -
+                  listQuestion[3].length]['list_question'][0],
+              answers: convertListDynamicToListString(listQuestion[4].elementAt(
+                  i -
+                      listQuestion[0].length -
+                      listQuestion[1].length -
+                      listQuestion[2].length -
+                      listQuestion[3].length)['list_answers'][0]),
+              getAnswer: (number, value) => callbackAnswer(number, value),
+              ans: _answer,
+              rightAnswers: rightAnswerSelect,
+              isShow: isShow,
+              cancelShowExplan: (s) {
+                setState(() {
+                  isShow = s;
+                });
+              },
+              isExam: true,
+            ),
           PartIntro(
             part: 6,
             controller: controller,
@@ -337,6 +343,7 @@ class _TestingState extends State<Testing> {
                 });
               },
               rightAnswers: rightAnswerSelect,
+              isExam: true,
             ),
           PartIntro(
             part: 7,
@@ -402,6 +409,7 @@ class _TestingState extends State<Testing> {
                   isShow = s;
                 });
               },
+              isExam: true,
             ),
         ],
         onPageChanged: (value) {

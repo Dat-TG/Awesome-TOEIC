@@ -756,9 +756,7 @@ class _ListeningPageState extends State<ListeningPage> {
                             shape: BoxShape.circle,
                             color: widget.answerSelect[i] != j
                                 ? white
-                                : widget.answer[i] == widget.answerSelect[i]
-                                    ? green
-                                    : red,
+                                : yellowBold,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(
@@ -808,9 +806,7 @@ class _ListeningPageState extends State<ListeningPage> {
                             shape: BoxShape.circle,
                             color: widget.answerSelect[i] != j
                                 ? white
-                                : widget.answer[i] == widget.answerSelect[i]
-                                    ? green
-                                    : red,
+                                : yellowBold,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(
@@ -860,9 +856,7 @@ class _ListeningPageState extends State<ListeningPage> {
                             shape: BoxShape.circle,
                             color: widget.answerSelect[i] != j
                                 ? white
-                                : widget.answer[i] == widget.answerSelect[i]
-                                    ? green
-                                    : red,
+                                : yellowBold,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(
@@ -912,9 +906,7 @@ class _ListeningPageState extends State<ListeningPage> {
                             shape: BoxShape.circle,
                             color: widget.answerSelect[i] != j
                                 ? white
-                                : widget.answer[i] == widget.answerSelect[i]
-                                    ? green
-                                    : red,
+                                : yellowBold,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(
@@ -1002,9 +994,7 @@ class _ReadingPageState extends State<ReadingPage> {
                             shape: BoxShape.circle,
                             color: widget.answerSelect[i] != j
                                 ? white
-                                : widget.answer[i] == widget.answerSelect[i]
-                                    ? green
-                                    : red,
+                                : yellowBold,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(
@@ -1054,9 +1044,7 @@ class _ReadingPageState extends State<ReadingPage> {
                             shape: BoxShape.circle,
                             color: widget.answerSelect[i] != j
                                 ? white
-                                : widget.answer[i] == widget.answerSelect[i]
-                                    ? green
-                                    : red,
+                                : yellowBold,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(
@@ -1120,9 +1108,7 @@ class _ReadingPageState extends State<ReadingPage> {
                             shape: BoxShape.circle,
                             color: widget.answerSelect[i] != j
                                 ? white
-                                : widget.answer[i] == widget.answerSelect[i]
-                                    ? green
-                                    : red,
+                                : yellowBold,
                             border: Border.all(color: black, width: 1.3),
                             boxShadow: [
                               BoxShadow(

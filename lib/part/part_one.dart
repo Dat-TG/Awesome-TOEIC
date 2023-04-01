@@ -32,7 +32,7 @@ class _PartOneState extends State<PartOne> {
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      if (_answer[number] == "") _answer[number] = ans;
+      if (_answer[number] == "" || widget.isExam) _answer[number] = ans;
       print(_answer);
     });
   }
@@ -287,7 +287,14 @@ class _PartOneFrameState extends State<PartOneFrame> {
                         for (var i in answersOption)
                           InkWell(
                             onTap: () {
-                              widget.getAnswer(widget.number, i);
+                              setState(() {
+                                widget.getAnswer(widget.number, i);
+                                if (widget.isExam) {
+                                  widget.ans[widget.number] = i;
+                                }
+                                printError("ans");
+                                print(widget.ans);
+                              });
                             },
                             child: Container(
                               padding: EdgeInsets.all(15),

@@ -11,7 +11,8 @@ import 'question_frame.dart';
 
 class PartFour extends StatefulWidget {
   final List<Map<String, dynamic>> data;
-  const PartFour({super.key, required this.data});
+  final bool isExam;
+  const PartFour({super.key, required this.data, required this.isExam});
 
   @override
   State<PartFour> createState() => _PartFourState();
@@ -27,7 +28,8 @@ class _PartFourState extends State<PartFour> {
 
   void callbackAnswer(int number, String value) {
     setState(() {
-      if (_answer[number - 1] == "") _answer[number - 1] = value;
+      if (_answer[number - 1] == "" || widget.isExam)
+        _answer[number - 1] = value;
       print(_answer);
     });
   }
@@ -115,6 +117,7 @@ class _PartFourState extends State<PartFour> {
                     });
                   },
                   rightAnswers: rightAnswersSelect,
+                  isExam: widget.isExam,
                 ),
             ]));
   }
@@ -130,6 +133,7 @@ class PartFourFrame extends StatefulWidget {
   final bool isShow;
   final List<String> images;
   final List<String> rightAnswers;
+  final bool isExam;
   // Note, reason
 
   const PartFourFrame(
@@ -143,7 +147,8 @@ class PartFourFrame extends StatefulWidget {
       required this.ans,
       required this.cancelShowExplan,
       required this.isShow,
-      required this.rightAnswers});
+      required this.rightAnswers,
+      required this.isExam});
 
   @override
   State<PartFourFrame> createState() => _PartFourFrameState();
@@ -401,32 +406,42 @@ class _PartFourFrameState extends State<PartFourFrame> {
                                       children: [
                                         InkWell(
                                           onTap: () {
-                                            widget.getAnswer(
-                                                widget.number[size], i);
-                                            print(
-                                                'Question ${widget.number[size]} - answer $i');
+                                            setState(() {
+                                              widget.getAnswer(
+                                                  widget.number[size], i);
+                                              if (widget.isExam) {
+                                                widget.ans[widget.number[size] -
+                                                    1] = i;
+                                              }
+                                            });
                                           },
                                           child: Container(
                                             padding: EdgeInsets.all(15),
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
-                                              color: widget.ans[widget.number[size] -
-                                                              1] !=
+                                              color: widget.ans[widget.number[size] - 1] !=
                                                           "" &&
                                                       i ==
                                                           widget.rightAnswers[
                                                               widget.number[size] -
                                                                   1]
-                                                  ? green
-                                                  : (widget.ans[
-                                                              widget.number[size] -
-                                                                  1] !=
-                                                          "")
+                                                  ? (widget.isExam)
                                                       ? (i ==
-                                                              widget.ans[widget
-                                                                      .number[size] -
-                                                                  1]
-                                                          ? red
+                                                              widget.ans[
+                                                                  widget.number[
+                                                                          size] -
+                                                                      1])
+                                                          ? yellowBold
+                                                          : white
+                                                      : green
+                                                  : (widget.ans[widget
+                                                                  .number[size] -
+                                                              1] !=
+                                                          "")
+                                                      ? (i == widget.ans[widget.number[size] - 1]
+                                                          ? (widget.isExam)
+                                                              ? yellowBold
+                                                              : red
                                                           : white)
                                                       : white,
                                               border: Border.all(

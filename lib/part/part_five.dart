@@ -5,7 +5,8 @@ import 'question_frame.dart';
 
 class PartFive extends StatefulWidget {
   final List<Map<String, dynamic>> data;
-  const PartFive({super.key, required this.data});
+  final bool isExam;
+  const PartFive({super.key, required this.data, required this.isExam});
   @override
   State<StatefulWidget> createState() => _PartFiveState();
 }
@@ -21,7 +22,7 @@ class _PartFiveState extends State<PartFive> {
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      if (_answers[number] == "") _answers[number] = ans;
+      if (_answers[number] == "" || widget.isExam) _answers[number] = ans;
       print(_answers);
     });
   }
@@ -77,19 +78,21 @@ class _PartFiveState extends State<PartFive> {
             children: [
               for (int i = 0; i < totalQues; i++)
                 PartFiveFrame(
-                    number: i,
-                    question: widget.data[i]['list_question'][0],
-                    answers: convertListDynamicToListString(
-                        widget.data.elementAt(i)['list_answers'][0]),
-                    getAnswer: (number, value) => callbackAnswer(number, value),
-                    ans: _answers,
-                    rightAnswers: rightAnsText,
-                    isShow: isShow,
-                    cancelShowExplan: (s) {
-                      setState(() {
-                        isShow = s;
-                      });
-                    })
+                  number: i,
+                  question: widget.data[i]['list_question'][0],
+                  answers: convertListDynamicToListString(
+                      widget.data.elementAt(i)['list_answers'][0]),
+                  getAnswer: (number, value) => callbackAnswer(number, value),
+                  ans: _answers,
+                  rightAnswers: rightAnsText,
+                  isShow: isShow,
+                  cancelShowExplan: (s) {
+                    setState(() {
+                      isShow = s;
+                    });
+                  },
+                  isExam: widget.isExam,
+                )
             ]));
   }
 }
@@ -103,6 +106,7 @@ class PartFiveFrame extends StatefulWidget {
   final Function(int, String) getAnswer;
   final bool isShow;
   final Function(bool) cancelShowExplan;
+  final bool isExam;
   // Note, reason
 
   const PartFiveFrame(
@@ -114,7 +118,8 @@ class PartFiveFrame extends StatefulWidget {
       required this.rightAnswers,
       required this.ans,
       required this.isShow,
-      required this.cancelShowExplan});
+      required this.cancelShowExplan,
+      required this.isExam});
 
   @override
   State<PartFiveFrame> createState() => _PartFiveFrameState();
@@ -181,7 +186,12 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                         for (var i in answersOption)
                           InkWell(
                             onTap: () {
-                              widget.getAnswer(widget.number, i);
+                              setState(() {
+                                widget.getAnswer(widget.number, i);
+                                if (widget.isExam) {
+                                  widget.ans[widget.number] = i;
+                                }
+                              });
                             },
                             child: Container(
                               padding: EdgeInsets.all(15),
@@ -189,10 +199,16 @@ class _PartFiveFrameState extends State<PartFiveFrame> {
                                 shape: BoxShape.circle,
                                 color: widget.ans[widget.number] != "" &&
                                         i == widget.rightAnswers[widget.number]
-                                    ? green
+                                    ? (widget.isExam)
+                                        ? (i == widget.ans[widget.number])
+                                            ? yellowBold
+                                            : white
+                                        : green
                                     : (widget.ans[widget.number] != "")
                                         ? (i == widget.ans[widget.number]
-                                            ? red
+                                            ? (widget.isExam)
+                                                ? yellowBold
+                                                : red
                                             : white)
                                         : white,
                                 border: Border.all(color: black, width: 1.3),

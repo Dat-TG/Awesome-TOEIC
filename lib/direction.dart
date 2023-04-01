@@ -365,38 +365,56 @@ class _DirectionState extends State<Direction> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        PartTwo(data: data)));
+                                                        PartTwo(
+                                                          data: data,
+                                                          isExam: false,
+                                                        )));
                                           } else if (widget.part == 2) {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        PartThree(data: data)));
+                                                        PartThree(
+                                                          data: data,
+                                                          isExam: false,
+                                                        )));
                                           } else if (widget.part == 3) {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   builder: (context) =>
-                                                      PartFour(data: data),
+                                                      PartFour(
+                                                    data: data,
+                                                    isExam: false,
+                                                  ),
                                                 ));
                                           } else if (widget.part == 4) {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        PartFive(data: data)));
+                                                        PartFive(
+                                                          data: data,
+                                                          isExam: false,
+                                                        )));
                                           } else if (widget.part == 5) {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        PartSix(data: data)));
+                                                        PartSix(
+                                                          data: data,
+                                                          isExam: false,
+                                                        )));
                                           } else if (widget.part == 6) {
                                             Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        PartSeven(data: data)));
+                                                        PartSeven(
+                                                          data: data,
+                                                          isExam: false,
+                                                        )));
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(

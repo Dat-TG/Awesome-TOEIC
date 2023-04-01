@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 
 class PartTwo extends StatefulWidget {
   final List<Map<String, dynamic>> data;
-  const PartTwo({super.key, required this.data});
+  final bool isExam;
+  const PartTwo({super.key, required this.data, required this.isExam});
 
   @override
   State<PartTwo> createState() => _PartTwoState();
@@ -35,7 +36,7 @@ class _PartTwoState extends State<PartTwo> {
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      _answer[number - 1] = ans;
+      if (_answer[number - 1] == "" || widget.isExam) _answer[number - 1] = ans;
     });
     print(_answer);
   }
@@ -95,6 +96,7 @@ class _PartTwoState extends State<PartTwo> {
                   ans: _answer,
                   rightAnswers: convertListDynamicToListString(
                       widget.data[i]['list_right_answer']),
+                  isExam: widget.isExam,
                 ),
             ]));
   }
@@ -105,6 +107,7 @@ class PartTwoFrame extends StatefulWidget {
   final String audioPath;
   final List<String> ans, rightAnswers;
   final Function(int, String) getAnswer;
+  final bool isExam;
   // Note, reason
 
   const PartTwoFrame(
@@ -113,7 +116,8 @@ class PartTwoFrame extends StatefulWidget {
       required this.audioPath,
       required this.getAnswer,
       required this.ans,
-      required this.rightAnswers});
+      required this.rightAnswers,
+      required this.isExam});
 
   @override
   State<PartTwoFrame> createState() => _PartTwoFrameState();
@@ -238,7 +242,12 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
                     for (var i in answersOption)
                       InkWell(
                         onTap: () {
-                          widget.getAnswer(widget.number, i);
+                          setState(() {
+                            widget.getAnswer(widget.number, i);
+                            if (widget.isExam) {
+                              widget.ans[widget.number - 1] = i;
+                            }
+                          });
                         },
                         child: Container(
                           padding: EdgeInsets.all(15),
@@ -246,10 +255,16 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
                             shape: BoxShape.circle,
                             color: widget.ans[widget.number - 1] != "" &&
                                     i == widget.rightAnswers[0]
-                                ? green
+                                ? (widget.isExam)
+                                    ? (i == widget.ans[widget.number - 1])
+                                        ? yellowBold
+                                        : white
+                                    : green
                                 : (widget.ans[widget.number - 1] != "")
                                     ? (i == widget.ans[widget.number - 1]
-                                        ? red
+                                        ? (widget.isExam)
+                                            ? yellowBold
+                                            : red
                                         : white)
                                     : white,
                             border: Border.all(color: black, width: 1.3),
