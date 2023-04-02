@@ -8,7 +8,7 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:toeic_app/data/data.dart';
 import 'package:toeic_app/part/part_one.dart';
-import 'overview.dart';
+import 'certificate.dart';
 
 import '../constants.dart';
 import '../part/app_bar.dart';
@@ -276,7 +276,178 @@ class _AppBarTestingState extends State<AppBarTesting> {
               child: Column(
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(6.0))),
+                                icon: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.assignment_turned_in,
+                                      color: colorApp,
+                                      size: 30,
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Text(
+                                      "Nộp bài thi?",
+                                      style: TextStyle(
+                                          fontSize: 21,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  ],
+                                ),
+                                content: Text(
+                                  "Sau khi nộp bài thi bạn có thể xem kết quả và đáp án",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400),
+                                  textAlign: TextAlign.justify,
+                                ),
+                                actions: [
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: colorApp,
+                                          padding: EdgeInsets.only(
+                                              left: 25, right: 25)),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        //Bảng quy đổi điểm: https://www.anhngumshoa.com/tin-tuc/thang-diem-toeic-cach-tinh-diem-toeic-format-moi-chuan-nhat-34838.html
+                                        int readingScore = 0,
+                                            listeningScore = 0;
+                                        for (int q = 0; q < 100; q++) {
+                                          if (widget.answer[q] ==
+                                              widget.answerSelect[q]) {
+                                            listeningScore++;
+                                          }
+                                          if (widget.answer[q + 100] ==
+                                              widget.answerSelect[q + 100]) {
+                                            readingScore++;
+                                          }
+                                        }
+                                        printError(
+                                            "listening score: $listeningScore");
+                                        printError(
+                                            "reading score: $readingScore");
+                                        if (listeningScore == 0) {
+                                          listeningScore = 5;
+                                        } else if (listeningScore <= 75) {
+                                          listeningScore =
+                                              15 + (listeningScore - 1) * 5;
+                                        } else {
+                                          listeningScore = min(495,
+                                              395 + (listeningScore - 76) * 5);
+                                        }
+                                        if (readingScore <= 2) {
+                                          readingScore = 5;
+                                        } else {
+                                          readingScore =
+                                              10 + (readingScore - 3) * 5;
+                                        }
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) => Scaffold(
+                                                      appBar: AppBar(
+                                                        title: Text("Kết quả"),
+                                                        centerTitle: true,
+                                                        backgroundColor:
+                                                            colorApp,
+                                                      ),
+                                                      body: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    top: 20,
+                                                                    left: 8,
+                                                                    right: 8),
+                                                            child: Certificate(
+                                                              listeningScore:
+                                                                  listeningScore,
+                                                              readingScore:
+                                                                  readingScore,
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(10),
+                                                            child:
+                                                                ElevatedButton(
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        shape: RoundedRectangleBorder(
+                                                                            borderRadius: BorderRadius.circular(
+                                                                                20)),
+                                                                        backgroundColor:
+                                                                            colorApp),
+                                                                    onPressed:
+                                                                        () {},
+                                                                    child: Text(
+                                                                      "Xem đáp án",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              white),
+                                                                    )),
+                                                          ),
+                                                          TextButton.icon(
+                                                              onPressed: () {},
+                                                              icon: Icon(
+                                                                Icons.share,
+                                                                color: colorApp,
+                                                              ),
+                                                              label: Text(
+                                                                "Chia sẻ kết quả với bạn bè",
+                                                                style: TextStyle(
+                                                                    color:
+                                                                        black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400),
+                                                              ))
+                                                        ],
+                                                      ),
+                                                    )));
+                                      },
+                                      child: Text(
+                                        "Nộp",
+                                        style: TextStyle(fontSize: 15),
+                                        textAlign: TextAlign.center,
+                                      )),
+                                  SizedBox(width: 2),
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: white.withOpacity(0.6),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(6.0)),
+                                            side: BorderSide(color: black)),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                          decoration: BoxDecoration(),
+                                          width: 50,
+                                          child: Center(
+                                              child: Text(
+                                            "Hủy bỏ",
+                                            style: TextStyle(
+                                                color: black, fontSize: 15),
+                                            textAlign: TextAlign.center,
+                                          )))),
+                                  SizedBox(width: 4),
+                                ],
+                              ));
+                    },
                     child: Center(
                       child: Text(
                         'Submit',
