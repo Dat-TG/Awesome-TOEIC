@@ -10,6 +10,8 @@ import 'package:toeic_app/data/data.dart';
 import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/main.dart';
 import 'package:toeic_app/part/part_one.dart';
+import 'package:toeic_app/test/review.dart';
+import 'package:toeic_app/test/testing.dart';
 import 'certificate.dart';
 
 import '../constants.dart';
@@ -25,13 +27,17 @@ class AppBarTesting extends StatefulWidget implements PreferredSizeWidget {
   final String numAnswers;
   final List<String> answer, answerSelect;
   final PageController pageController;
+  final String testID;
+  final List<Map<String, dynamic>>? data;
 
   const AppBarTesting(
       {super.key,
       required this.numAnswers,
       required this.answer,
       required this.answerSelect,
-      required this.pageController});
+      required this.pageController,
+      required this.testID,
+      required this.data});
 
   @override
   State<AppBarTesting> createState() => _AppBarTestingState();
@@ -575,7 +581,12 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                                                         backgroundColor:
                                                                             colorApp),
                                                                     onPressed:
-                                                                        () {},
+                                                                        () {
+                                                                      Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                              builder: (context) => Result(testID: widget.testID, data: widget.data, answer: widget.answer, answerSelect: widget.answerSelect)));
+                                                                    },
                                                                     child: Text(
                                                                       "Xem đáp án",
                                                                       style: TextStyle(

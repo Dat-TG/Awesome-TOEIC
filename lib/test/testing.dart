@@ -106,10 +106,13 @@ class _TestingState extends State<Testing> {
     int startPart7 = 146;
     return Scaffold(
       appBar: AppBarTesting(
-          numAnswers: numAnswers[_curr],
-          answer: rightAnswerSelect,
-          answerSelect: _answer,
-          pageController: controller),
+        numAnswers: numAnswers[_curr],
+        answer: rightAnswerSelect,
+        answerSelect: _answer,
+        pageController: controller,
+        testID: widget.testID,
+        data: widget.data,
+      ),
       body: PageView(
         /// [PageView.scrollDirection] defaults to [Axis.horizontal].
         /// Use [Axis.vertical] to scroll vertically.
