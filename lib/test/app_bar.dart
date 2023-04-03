@@ -7,6 +7,8 @@ import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:toeic_app/data/data.dart';
+import 'package:toeic_app/home_page.dart';
+import 'package:toeic_app/main.dart';
 import 'package:toeic_app/part/part_one.dart';
 import 'certificate.dart';
 
@@ -44,6 +46,157 @@ class _AppBarTestingState extends State<AppBarTesting> {
   @override
   void initState() {
     super.initState();
+    timerController = CountdownTimerController(
+        onEnd: () {
+          for (AudioPlayer i in playingAudio) {
+            i.pause();
+          }
+          if (navigatorKey.currentContext != null) {
+            showDialog(
+                barrierDismissible: false,
+                context: navigatorKey.currentContext!,
+                builder: (context) => WillPopScope(
+                      onWillPop: () async => false,
+                      child: AlertDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(6.0))),
+                        icon: Row(
+                          children: [
+                            Icon(
+                              Icons.timer_off,
+                              color: colorApp,
+                              size: 30,
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              "Đã hết thời gian làm bài",
+                              style: TextStyle(
+                                  fontSize: 21, fontWeight: FontWeight.bold),
+                            )
+                          ],
+                        ),
+                        content: Text(
+                          "Nhấn 'Tiếp tục' để xem kết quả",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w400),
+                          textAlign: TextAlign.justify,
+                        ),
+                        actions: [
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: colorApp,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                              ),
+                              onPressed: () {
+                                int readingScore = 0, listeningScore = 0;
+                                for (int q = 0; q < 100; q++) {
+                                  if (widget.answer[q] ==
+                                      widget.answerSelect[q]) {
+                                    listeningScore++;
+                                  }
+                                  if (widget.answer[q + 100] ==
+                                      widget.answerSelect[q + 100]) {
+                                    readingScore++;
+                                  }
+                                }
+                                printError("listening score: $listeningScore");
+                                printError("reading score: $readingScore");
+                                if (listeningScore == 0) {
+                                  listeningScore = 5;
+                                } else if (listeningScore <= 75) {
+                                  listeningScore =
+                                      15 + (listeningScore - 1) * 5;
+                                } else {
+                                  listeningScore =
+                                      min(495, 395 + (listeningScore - 76) * 5);
+                                }
+                                if (readingScore <= 2) {
+                                  readingScore = 5;
+                                } else {
+                                  readingScore = 10 + (readingScore - 3) * 5;
+                                }
+                                Navigator.popUntil(
+                                    context, (route) => route.isFirst);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Scaffold(
+                                              appBar: AppBar(
+                                                title: Text("Kết quả"),
+                                                centerTitle: true,
+                                                backgroundColor: colorApp,
+                                              ),
+                                              body: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 20,
+                                                            left: 8,
+                                                            right: 8),
+                                                    child: Certificate(
+                                                      listeningScore:
+                                                          listeningScore,
+                                                      readingScore:
+                                                          readingScore,
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            10),
+                                                    child: ElevatedButton(
+                                                        style: ElevatedButton.styleFrom(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            20)),
+                                                            backgroundColor:
+                                                                colorApp),
+                                                        onPressed: () {},
+                                                        child: Text(
+                                                          "Xem đáp án",
+                                                          style: TextStyle(
+                                                              color: white),
+                                                        )),
+                                                  ),
+                                                  TextButton.icon(
+                                                      onPressed: () {},
+                                                      icon: Icon(
+                                                        Icons.share,
+                                                        color: colorApp,
+                                                      ),
+                                                      label: Text(
+                                                        "Chia sẻ kết quả với bạn bè",
+                                                        style: TextStyle(
+                                                            color: black,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      ))
+                                                ],
+                                              ),
+                                            )));
+                              },
+                              child: Text(
+                                "Tiếp tục",
+                                style: TextStyle(color: white, fontSize: 15),
+                                textAlign: TextAlign.center,
+                              )),
+                        ],
+                      ),
+                    ));
+          }
+        },
+        endTime: DateTime.now().millisecondsSinceEpoch + 1000 * 120 * 60);
   }
 
   @override
@@ -169,15 +322,15 @@ class _AppBarTestingState extends State<AppBarTesting> {
                     InkWell(
                         onTap: () async {
                           int? remainingTime = (timerController
-                                          .currentRemainingTime!.hours ??
+                                          .currentRemainingTime?.hours ??
                                       0) *
                                   60 *
                                   60 *
                                   1000 +
-                              (timerController.currentRemainingTime!.min ?? 0) *
+                              (timerController.currentRemainingTime?.min ?? 0) *
                                   60 *
                                   1000 +
-                              (timerController.currentRemainingTime!.sec ?? 0) *
+                              (timerController.currentRemainingTime?.sec ?? 0) *
                                   1000;
                           printWarning(
                               timerController.currentRemainingTime.toString());
@@ -187,76 +340,106 @@ class _AppBarTestingState extends State<AppBarTesting> {
                           }
                           showDialog(
                             context: context,
-                            builder: (context) => AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(6.0))),
-                              icon: Row(
-                                children: [
-                                  Icon(
-                                    Icons.pause_presentation,
-                                    color: colorApp,
-                                    size: 30,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text(
-                                    "Tạm dừng bài thi.",
-                                    style: TextStyle(
-                                        fontSize: 21,
-                                        fontWeight: FontWeight.bold),
-                                  )
-                                ],
-                              ),
-                              content: Text(
-                                "Nhấn 'Tiếp tục' để tiếp tục làm bài hoặc 'Hủy bỏ' để hủy bài thi.",
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w400),
-                                textAlign: TextAlign.justify,
-                              ),
-                              actions: [
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: colorApp,
-                                        padding: EdgeInsets.only(
-                                            left: 25, right: 25)),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      timerController.endTime = DateTime.now()
-                                              .millisecondsSinceEpoch +
-                                          remainingTime;
-                                      timerController.start();
-                                    },
-                                    child: Text(
-                                      "Tiếp tục",
-                                      style: TextStyle(fontSize: 15),
-                                      textAlign: TextAlign.center,
-                                    )),
-                                SizedBox(width: 2),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: white.withOpacity(0.6),
+                            builder: (context) => GestureDetector(
+                              onTap: () {
+                                Navigator.pop(context);
+                                timerController.endTime =
+                                    DateTime.now().millisecondsSinceEpoch +
+                                        remainingTime;
+                                timerController.start();
+                              },
+                              child: Container(
+                                color: Colors.transparent,
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: AlertDialog(
                                       shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(6.0)),
-                                          side: BorderSide(color: black)),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Container(
-                                        decoration: BoxDecoration(),
-                                        width: 50,
-                                        child: Center(
+                                              Radius.circular(6.0))),
+                                      icon: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.pause_presentation,
+                                            color: colorApp,
+                                            size: 30,
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            "Tạm dừng bài thi.",
+                                            style: TextStyle(
+                                                fontSize: 21,
+                                                fontWeight: FontWeight.bold),
+                                          )
+                                        ],
+                                      ),
+                                      content: Text(
+                                        "Nhấn 'Tiếp tục' để tiếp tục làm bài hoặc 'Hủy bỏ' để hủy bài thi.",
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400),
+                                        textAlign: TextAlign.justify,
+                                      ),
+                                      actions: [
+                                        ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                                backgroundColor: colorApp,
+                                                padding: EdgeInsets.only(
+                                                    left: 25, right: 25)),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              timerController
+                                                  .endTime = DateTime.now()
+                                                      .millisecondsSinceEpoch +
+                                                  remainingTime;
+                                              timerController.start();
+                                            },
                                             child: Text(
-                                          "Hủy bỏ",
-                                          style: TextStyle(
-                                              color: black, fontSize: 15),
-                                          textAlign: TextAlign.center,
-                                        )))),
-                                SizedBox(width: 4),
-                              ],
+                                              "Tiếp tục",
+                                              style: TextStyle(fontSize: 15),
+                                              textAlign: TextAlign.center,
+                                            )),
+                                        SizedBox(width: 2),
+                                        ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  white.withOpacity(0.6),
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(6.0)),
+                                                  side:
+                                                      BorderSide(color: black)),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(context)
+                                                  .pushAndRemoveUntil(
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        HomePage(
+                                                            intialIndex: 1)),
+                                                (Route<dynamic> route) => false,
+                                              );
+                                            },
+                                            child: Container(
+                                                decoration: BoxDecoration(),
+                                                width: 50,
+                                                child: Center(
+                                                    child: Text(
+                                                  "Hủy bỏ",
+                                                  style: TextStyle(
+                                                      color: black,
+                                                      fontSize: 15),
+                                                  textAlign: TextAlign.center,
+                                                )))),
+                                        SizedBox(width: 4),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ),
                           );
                         },
@@ -348,6 +531,8 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                           readingScore =
                                               10 + (readingScore - 3) * 5;
                                         }
+                                        Navigator.popUntil(
+                                            context, (route) => route.isFirst);
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
@@ -460,8 +645,8 @@ class _AppBarTestingState extends State<AppBarTesting> {
                     ),
                   ),
                   CountdownTimer(
-                    onEnd: () {},
                     controller: timerController,
+                    endWidget: const Center(child: Text('00 : 00 : 00')),
                   )
                 ],
               ),
