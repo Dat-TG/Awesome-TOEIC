@@ -1,11 +1,14 @@
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:bottom_sheet/bottom_sheet.dart';
+import 'package:esys_flutter_share_plus/esys_flutter_share_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:toeic_app/data/data.dart';
 import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/main.dart';
@@ -49,6 +52,25 @@ class AppBarTesting extends StatefulWidget implements PreferredSizeWidget {
 class _AppBarTestingState extends State<AppBarTesting> {
   CountdownTimerController timerController = CountdownTimerController(
       endTime: DateTime.now().millisecondsSinceEpoch + 1000 * 120 * 60);
+  ScreenshotController screenshotController = ScreenshotController();
+
+  Future<dynamic> showCapturedWidget(
+      BuildContext context, Uint8List capturedImage) {
+    return showDialog(
+      useSafeArea: false,
+      context: context,
+      builder: (context) => Scaffold(
+        appBar: AppBar(
+          title: Text("Captured widget screenshot"),
+        ),
+        body: Center(
+            child: capturedImage != null
+                ? Image.memory(capturedImage)
+                : Container()),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -152,6 +174,8 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                                           listeningScore,
                                                       readingScore:
                                                           readingScore,
+                                                      screenshotController:
+                                                          screenshotController,
                                                     ),
                                                   ),
                                                   Padding(
@@ -566,6 +590,8 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                                                   listeningScore,
                                                               readingScore:
                                                                   readingScore,
+                                                              screenshotController:
+                                                                  screenshotController,
                                                             ),
                                                           ),
                                                           Padding(
@@ -595,7 +621,30 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                                                     )),
                                                           ),
                                                           TextButton.icon(
-                                                              onPressed: () {},
+                                                              onPressed: () {
+                                                                screenshotController
+                                                                    .capture(
+                                                                        delay: Duration(
+                                                                            milliseconds:
+                                                                                10))
+                                                                    .then(
+                                                                        (capturedImage) async {
+                                                                  //showCapturedWidget(
+                                                                  //  context,
+                                                                  //capturedImage!);
+                                                                  await Share.file(
+                                                                      'Toeic Certificate',
+                                                                      'certificate.png',
+                                                                      capturedImage!,
+                                                                      'image/png',
+                                                                      text:
+                                                                          'Awsome TOEIC Certificate');
+                                                                }).catchError(
+                                                                        (onError) {
+                                                                  print(
+                                                                      onError);
+                                                                });
+                                                              },
                                                               icon: Icon(
                                                                 Icons.share,
                                                                 color: colorApp,

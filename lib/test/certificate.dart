@@ -5,70 +5,78 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
 import 'dart:ui' as ui;
+import 'package:screenshot/screenshot.dart';
 
 class Certificate extends StatelessWidget {
   final int readingScore, listeningScore;
+  final ScreenshotController screenshotController;
   const Certificate(
-      {super.key, required this.listeningScore, required this.readingScore});
+      {super.key,
+      required this.listeningScore,
+      required this.readingScore,
+      required this.screenshotController});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Text(
-              "Awsome Toeic",
-              style: TextStyle(
-                  color: colorApp, fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.orange[600],
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.elliptical(150, 50),
-                      topRight: Radius.elliptical(150, 50))),
-              height: 40,
-              width: 220,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "LISTENING AND READING",
-                    style: TextStyle(
-                        fontSize: 10,
-                        color: black,
-                        fontWeight: FontWeight.w800),
-                  ),
-                  Text(
-                    " OFFICAL SCORE CERTIFICATE ",
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: black,
-                        fontWeight: FontWeight.w900),
-                  )
-                ],
+    return Screenshot(
+      controller: screenshotController,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text(
+                "Awsome Toeic",
+                style: TextStyle(
+                    color: colorApp, fontSize: 20, fontWeight: FontWeight.bold),
               ),
-            )
-          ],
-        ),
-        Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              width: 2,
-              color: Colors.orange,
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.orange[600],
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.elliptical(150, 50),
+                        topRight: Radius.elliptical(150, 50))),
+                height: 40,
+                width: 220,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "LISTENING AND READING",
+                      style: TextStyle(
+                          fontSize: 10,
+                          color: black,
+                          fontWeight: FontWeight.w800),
+                    ),
+                    Text(
+                      " OFFICAL SCORE CERTIFICATE ",
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: black,
+                          fontWeight: FontWeight.w900),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 2,
+                color: Colors.orange,
+              ),
             ),
-          ),
-          width: double.infinity,
-          height: 300,
-          child: CustomPaint(
-            size: Size(double.infinity, 300),
-            painter: MyPainter(
-                listeningScore: listeningScore, readingScore: readingScore),
-          ),
-        )
-      ],
+            width: double.infinity,
+            height: 300,
+            child: CustomPaint(
+              size: Size(double.infinity, 300),
+              painter: MyPainter(
+                  listeningScore: listeningScore, readingScore: readingScore),
+            ),
+          )
+        ],
+      ),
     );
   }
 }
