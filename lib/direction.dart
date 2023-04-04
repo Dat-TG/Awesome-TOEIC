@@ -1,5 +1,6 @@
 // ignore_for_file: curly_braces_in_flow_control_structures, use_build_context_synchronously
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:toeic_app/part/part_five.dart';
 import 'package:toeic_app/part/part_four.dart';
@@ -8,31 +9,49 @@ import 'package:toeic_app/part/part_seven.dart';
 import 'package:toeic_app/part/part_six.dart';
 import 'package:toeic_app/part/part_three.dart';
 import 'package:toeic_app/part/part_two.dart';
+import 'package:toeic_app/utils/get_qa.dart';
 
 import 'constants.dart';
 
 class Direction extends StatefulWidget {
-  final int part;
+  final int part, doneQuestion, correctQuestion;
+  final double progress;
 
   // Constructor
-  const Direction({super.key, required this.part});
+  const Direction(
+      {super.key,
+      required this.part,
+      required this.doneQuestion,
+      required this.correctQuestion,
+      required this.progress});
 
   @override
   State<Direction> createState() => _DirectionState();
 }
 
 class _DirectionState extends State<Direction> {
-  String _dropDownValue = "10"; // Set default value: 10
+  String _dropDownValue = "2";
   bool _isTest = false;
+  Future<List<Map<String, dynamic>>> qas = Future(() => []);
+
+  @override
+  void initState() {
+    qas = getQuestionsAndAnswersFilterByUserID(
+        FirebaseAuth.instance.currentUser!.uid, widget.part + 1);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Object>(
-        future: getQuestionsAndAnswers(widget.part + 1),
+    return FutureBuilder<List<Map<String, dynamic>>>(
+        future: qas,
         builder: (context, snapshot) {
           List<Map<String, dynamic>> data = [];
 
           if (snapshot.connectionState == ConnectionState.done) {
             data = snapshot.data as List<Map<String, dynamic>>;
+            if (data.isEmpty) _dropDownValue = "None";
+            if (data.length == 1) _dropDownValue = "1";
           }
 
           return Scaffold(
@@ -91,7 +110,7 @@ class _DirectionState extends State<Direction> {
                                         width: 10,
                                       ),
                                       Text(
-                                        '${listSentencesDone[widget.part]}',
+                                        '${widget.doneQuestion}',
                                         style: TextStyle(fontSize: 16),
                                       ),
                                     ]),
@@ -111,7 +130,7 @@ class _DirectionState extends State<Direction> {
                                             width: 10,
                                           ),
                                           Text(
-                                            '${listSentencesRight[widget.part]}',
+                                            '${widget.correctQuestion}',
                                             style: TextStyle(fontSize: 16),
                                           )
                                         ],
@@ -138,7 +157,7 @@ class _DirectionState extends State<Direction> {
                                                 AlwaysStoppedAnimation<Color>(
                                               colorApp,
                                             ),
-                                            value: listProgress[widget.part],
+                                            value: widget.progress,
                                           ),
                                         )
                                       ],
@@ -232,205 +251,220 @@ class _DirectionState extends State<Direction> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 40),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Số câu hỏi: ',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10, right: 10),
-                                          child: Container(
-                                            height: 30,
-                                            decoration: BoxDecoration(
-                                              color: colorBox,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: colorBoxShadow,
-                                                  spreadRadius: 2,
-                                                  blurRadius: 3,
-                                                  offset: Offset(0,
-                                                      1), // changes position of shadow
-                                                )
-                                              ],
+                          child: snapshot.connectionState ==
+                                  ConnectionState.waiting
+                              ? CircularProgressIndicator()
+                              : Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Số câu hỏi: ',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
                                             ),
-                                            child: DropdownButton(
-                                              hint: _dropDownValue == null
-                                                  ? Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        left: 15,
-                                                        right: 10,
-                                                      ),
-                                                      child: Text(""),
-                                                    )
-                                                  : Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                        left: 15,
-                                                        right: 10,
-                                                      ),
-                                                      child: Text(
-                                                        _dropDownValue,
-                                                        style: TextStyle(
-                                                            color: textColor),
-                                                      ),
-                                                    ),
-                                              items: ['10', '20', '30']
-                                                  .map((val) =>
-                                                      DropdownMenuItem<String>(
-                                                          value: val,
-                                                          child: Text(val)))
-                                                  .toList(),
-                                              onChanged: (value) {
+                                            Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 10, right: 10),
+                                                child: Container(
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: colorBox,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(5)),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: colorBoxShadow,
+                                                        spreadRadius: 2,
+                                                        blurRadius: 3,
+                                                        offset: Offset(0,
+                                                            1), // changes position of shadow
+                                                      )
+                                                    ],
+                                                  ),
+                                                  child: DropdownButton(
+                                                    hint: _dropDownValue == null
+                                                        ? Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              left: 15,
+                                                              right: 10,
+                                                            ),
+                                                            child: Text(""),
+                                                          )
+                                                        : Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .only(
+                                                              left: 15,
+                                                              right: 10,
+                                                            ),
+                                                            child: Text(
+                                                              _dropDownValue,
+                                                              style: TextStyle(
+                                                                  color:
+                                                                      textColor),
+                                                            ),
+                                                          ),
+                                                    items: [
+                                                      for (int i = 0;
+                                                          i < data.length;
+                                                          i++)
+                                                        (i + 1).toString()
+                                                    ]
+                                                        .map((val) =>
+                                                            DropdownMenuItem<
+                                                                    String>(
+                                                                value: val,
+                                                                child:
+                                                                    Text(val)))
+                                                        .toList(),
+                                                    menuMaxHeight: 200,
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _dropDownValue = value!;
+                                                      });
+                                                    },
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
+                                                  ),
+                                                ))
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              'Kiểm tra: ',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            Switch(
+                                              value: _isTest,
+                                              onChanged: (bool newValue) {
                                                 setState(() {
-                                                  _dropDownValue = value!;
+                                                  _isTest = newValue;
                                                 });
                                               },
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16),
                                             ),
-                                          ))
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Kiểm tra: ',
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      Switch(
-                                        value: _isTest,
-                                        onChanged: (bool newValue) {
-                                          setState(() {
-                                            _isTest = newValue;
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              _isTest
-                                  ? Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          Icons.access_time_rounded,
-                                          color:
-                                              Color.fromARGB(255, 255, 123, 0),
+                                          ],
                                         ),
-                                        SizedBox(width: 10),
-                                        Text(
-                                          '4m 20s',
-                                          style: TextStyle(fontSize: 15),
-                                        )
                                       ],
-                                    )
-                                  : SizedBox.shrink(),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(bottom: 10, top: 20),
-                                child: snapshot.connectionState ==
-                                        ConnectionState.waiting
-                                    ? CircularProgressIndicator()
-                                    : ElevatedButton(
-                                        onPressed: () async {
-                                          // ? Call API
-                                          if (widget.part == 0) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
+                                    ),
+                                    _isTest
+                                        ? Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.access_time_rounded,
+                                                color: Color.fromARGB(
+                                                    255, 255, 123, 0),
+                                              ),
+                                              SizedBox(width: 10),
+                                              Text(
+                                                '4m 20s',
+                                                style: TextStyle(fontSize: 15),
+                                              )
+                                            ],
+                                          )
+                                        : SizedBox.shrink(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          bottom: 10, top: 20),
+                                      child: ElevatedButton(
+                                          onPressed: () async {
+                                            data = data.sublist(
+                                                0, int.parse(_dropDownValue));
+                                            // ? Call API
+                                            if (widget.part == 0) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartOne(
+                                                            data: data,
+                                                            isExam: false,
+                                                          )));
+                                            } else if (widget.part == 1) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartTwo(
+                                                            data: data,
+                                                            isExam: false,
+                                                          )));
+                                            } else if (widget.part == 2) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartThree(
+                                                            data: data,
+                                                            isExam: false,
+                                                          )));
+                                            } else if (widget.part == 3) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
                                                     builder: (context) =>
-                                                        PartOne(
-                                                          data: data,
-                                                          isExam: false,
-                                                        )));
-                                          } else if (widget.part == 1) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartTwo(
-                                                          data: data,
-                                                          isExam: false,
-                                                        )));
-                                          } else if (widget.part == 2) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartThree(
-                                                          data: data,
-                                                          isExam: false,
-                                                        )));
-                                          } else if (widget.part == 3) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      PartFour(
-                                                    data: data,
-                                                    isExam: false,
-                                                  ),
-                                                ));
-                                          } else if (widget.part == 4) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartFive(
-                                                          data: data,
-                                                          isExam: false,
-                                                        )));
-                                          } else if (widget.part == 5) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartSix(
-                                                          data: data,
-                                                          isExam: false,
-                                                        )));
-                                          } else if (widget.part == 6) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        PartSeven(
-                                                          data: data,
-                                                          isExam: false,
-                                                        )));
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            shape: StadiumBorder(),
-                                            backgroundColor: colorApp),
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              40, 15, 40, 15),
-                                          child: Text(
-                                            'Bắt đầu nào',
-                                            style: TextStyle(fontSize: 17),
-                                          ),
-                                        )),
-                              )
-                            ],
-                          ),
+                                                        PartFour(
+                                                      data: data,
+                                                      isExam: false,
+                                                    ),
+                                                  ));
+                                            } else if (widget.part == 4) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartFive(
+                                                            data: data,
+                                                            isExam: false,
+                                                          )));
+                                            } else if (widget.part == 5) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartSix(
+                                                            data: data,
+                                                            isExam: false,
+                                                          )));
+                                            } else if (widget.part == 6) {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          PartSeven(
+                                                            data: data,
+                                                            isExam: false,
+                                                          )));
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              shape: StadiumBorder(),
+                                              backgroundColor: colorApp),
+                                          child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                40, 15, 40, 15),
+                                            child: Text(
+                                              'Bắt đầu nào',
+                                              style: TextStyle(fontSize: 17),
+                                            ),
+                                          )),
+                                    ),
+                                  ],
+                                ),
                         )
                       ],
                     ));

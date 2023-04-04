@@ -2,9 +2,12 @@ import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
+import 'package:toeic_app/part/submit_dialog.dart';
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 
 class PartOne extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -17,71 +20,113 @@ class PartOne extends StatefulWidget {
 
 class _PartOneState extends State<PartOne> {
   int _curr = 1;
-  int totalQues = 6;
-  List<String> _answer = [];
+  List<String> _answers = [];
   PageController controller = PageController();
-  bool isShow = false;
+  late List<String> rightAnsChoice, listQuestionsID;
+  bool isDialog = true;
 
   @override
   void initState() {
+    setState(() {
+      rightAnsChoice = [];
+      listQuestionsID = [];
+      for (int i = 0; i < widget.data.length; i++) {
+        listQuestionsID.add(widget.data[i]['id']);
+        _answers.add("");
+        rightAnsChoice.add(widget.data[i]['list_right_answer'][0]);
+      }
+    });
+
     super.initState();
-    for (int i = 0; i < totalQues; i++) {
-      _answer.add("");
-    }
   }
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      if (_answer[number] == "" || widget.isExam) _answer[number] = ans;
-      print(_answer);
+      if (_answers[number] == "" || widget.isExam) _answers[number] = ans;
+      print(_answers);
     });
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () async {
+        bool confirm = await cancelDialog(context);
+        if (confirm) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      child: Scaffold(
         appBar: AppBarPractice(
           numAnswers: '$_curr',
           answers: listDirectionEng,
           ansTrans: listDirectionVn,
         ),
-        body: PageView(
-            scrollDirection: Axis.horizontal,
-            controller: controller,
-            onPageChanged: (number) {
-              setState(() {
-                _curr = number + 1;
-              });
+        body: NotificationListener<ScrollNotification>(
+            onNotification: (scrollNotification) {
+              if (scrollNotification is OverscrollNotification &&
+                  controller.page == widget.data.length - 1) {
+                showGeneralDialog(
+                    context: context,
+                    transitionDuration: Duration(milliseconds: 300),
+                    transitionBuilder: (context, anim1, anim2, child) {
+                      return SlideTransition(
+                        position: Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                            .animate(anim1),
+                        child: child,
+                      );
+                    },
+                    pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                          listQuestions: widget.data,
+                          listQuestionsID: listQuestionsID,
+                          part: 1,
+                          listUserChoice: _answers,
+                          listRightAnswers: rightAnsChoice,
+                        ));
+              }
+              return true;
             },
-            children: [
-              for (int i = 0; i < totalQues; i++)
-                PartOneFrame(
-                  number: i,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer,
-                  isShow: isShow,
-                  rightAnswers: convertListDynamicToListString(
-                      widget.data[i]['list_right_answer']),
-                  listNameImages:
-                      convertListDynamicToListString(widget.data[i]['images']),
-                  audio: widget.data[i]['audio'],
-                  cancelShowExplan: (s) {
-                    setState(() {
-                      isShow = s;
-                    });
-                  },
-                  isExam: widget.isExam,
-                )
-            ]));
+            child: PageView(
+                scrollDirection: Axis.horizontal,
+                controller: controller,
+                onPageChanged: (number) {
+                  setState(() {
+                    _curr = number + 1;
+                  });
+                },
+                children: [
+                  for (int i = 0; i < widget.data.length; i++)
+                    PartOneFrame(
+                      number: i,
+                      getAnswer: (numb, value) => callbackAnswer(numb, value),
+                      ans: _answers,
+                      rightAnswers: convertListDynamicToListString(
+                          widget.data[i]['list_right_answer']),
+                      listNameImages: convertListDynamicToListString(
+                          widget.data[i]['images']),
+                      audio: widget.data[i]['audio'],
+                      isExam: widget.isExam,
+                    )
+                ])),
+      ),
+    );
   }
 }
+
+// --------------------------------------------------------
 
 class PartOneFrame extends StatefulWidget {
   final int number;
   final List<String> ans;
   final Function(int, String) getAnswer;
-  final bool isShow;
-  final Function(bool) cancelShowExplan;
   final List<String> rightAnswers, listNameImages;
   final String audio;
   final bool isExam;
@@ -95,8 +140,6 @@ class PartOneFrame extends StatefulWidget {
       required this.rightAnswers,
       required this.listNameImages,
       required this.audio,
-      required this.isShow,
-      required this.cancelShowExplan,
       required this.isExam});
 
   @override

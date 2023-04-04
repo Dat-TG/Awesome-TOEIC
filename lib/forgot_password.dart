@@ -1,7 +1,5 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
-import 'package:toeic_app/main.dart';
-import 'package:toeic_app/sign_up.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'constants.dart';
 

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:toeic_app/part/app_bar.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
+import 'package:toeic_app/part/result.dart';
+import 'package:toeic_app/part/submit_dialog.dart';
 import './../constants.dart';
 import 'question_frame.dart';
+import './../utils/convert_ans_text_to_choice.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 
 class PartFive extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -13,12 +18,11 @@ class PartFive extends StatefulWidget {
 
 class _PartFiveState extends State<PartFive> {
   int _curr = 1;
-  int totalQues = 30;
   List<String> _answers = [];
   List<List<String>> answersData = [];
   PageController controller = PageController();
-  bool isShow = false;
-  late List<String> rightAnsText;
+  late List<String> rightAnsChoice, listQuestionsID;
+  bool isDialog = true;
 
   void callbackAnswer(int number, String ans) {
     setState(() {
@@ -30,72 +34,91 @@ class _PartFiveState extends State<PartFive> {
   @override
   void initState() {
     setState(() {
-      for (int i = 0; i < totalQues; i++) {
+      listQuestionsID = [];
+      for (int i = 0; i < widget.data.length; i++) {
+        listQuestionsID.add(widget.data[i]['id']);
         _answers.add("");
       }
+      rightAnsChoice = convertAnsTextToChoice(widget.data);
     });
     super.initState();
-    rightAnsText = compareAnswersToRightAnswers();
   }
 
-  List<String> compareAnswersToRightAnswers() {
-    List<String> rightAns = [];
-    for (int i = 0; i < widget.data.length; i++) {
-      for (int j = 0; j < 4; j++) {
-        if (widget.data.elementAt(i)['list_right_answer'][0] ==
-            widget.data.elementAt(i)['list_answers'][0][j]) {
-          if (j == 0) {
-            rightAns.add("A");
-          } else if (j == 1) {
-            rightAns.add("B");
-          } else if (j == 2) {
-            rightAns.add("C");
-          } else {
-            rightAns.add("D");
-          }
-        }
-      }
-    }
-    return rightAns;
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBarPractice(
-          numAnswers: '$_curr',
-          answers: listDirectionEng,
-          ansTrans: listDirectionVn,
-        ),
-        body: PageView(
-            scrollDirection: Axis.horizontal,
-            controller: controller,
-            onPageChanged: (number) {
-              setState(() {
-                _curr = number + 1;
-              });
-            },
-            children: [
-              for (int i = 0; i < totalQues; i++)
-                PartFiveFrame(
-                  number: i,
-                  question: widget.data[i]['list_question'][0],
-                  answers: convertListDynamicToListString(
-                      widget.data.elementAt(i)['list_answers'][0]),
-                  getAnswer: (number, value) => callbackAnswer(number, value),
-                  ans: _answers,
-                  rightAnswers: rightAnsText,
-                  isShow: isShow,
-                  cancelShowExplan: (s) {
+    return WillPopScope(
+        onWillPop: () async {
+          bool confirm = await cancelDialog(context);
+          if (confirm) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        child: Scaffold(
+            appBar: AppBarPractice(
+              numAnswers: '$_curr',
+              answers: listDirectionEng,
+              ansTrans: listDirectionVn,
+            ),
+            body: NotificationListener<ScrollNotification>(
+              onNotification: (scrollNotification) {
+                if (scrollNotification is OverscrollNotification &&
+                    controller.page == widget.data.length - 1) {
+                  showGeneralDialog(
+                      context: context,
+                      transitionDuration: Duration(milliseconds: 300),
+                      transitionBuilder: (context, anim1, anim2, child) {
+                        return SlideTransition(
+                          position:
+                              Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                                  .animate(anim1),
+                          child: child,
+                        );
+                      },
+                      pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                            listQuestions: widget.data,
+                            listQuestionsID: listQuestionsID,
+                            part: 5,
+                            listRightAnswers: rightAnsChoice,
+                            listUserChoice: _answers,
+                          ));
+                }
+                return true;
+              },
+              child: PageView(
+                  scrollDirection: Axis.horizontal,
+                  controller: controller,
+                  onPageChanged: (number) {
                     setState(() {
-                      isShow = s;
+                      _curr = number + 1;
                     });
                   },
-                  isExam: widget.isExam,
-                )
-            ]));
+                  children: [
+                    for (int i = 0; i < widget.data.length; i++)
+                      PartFiveFrame(
+                        number: i,
+                        question: widget.data[i]['list_question'][0],
+                        answers: convertListDynamicToListString(
+                            widget.data.elementAt(i)['list_answers'][0]),
+                        getAnswer: (number, value) =>
+                            callbackAnswer(number, value),
+                        ans: _answers,
+                        rightAnswers: rightAnsChoice,
+                        isExam: widget.isExam,
+                      )
+                  ]),
+            )));
   }
 }
+
+// -------------------------------------------------------------
 
 class PartFiveFrame extends StatefulWidget {
   final int number;
@@ -104,8 +127,6 @@ class PartFiveFrame extends StatefulWidget {
   final List<String> answers;
   final List<String> rightAnswers;
   final Function(int, String) getAnswer;
-  final bool isShow;
-  final Function(bool) cancelShowExplan;
   final bool isExam;
   // Note, reason
 
@@ -117,15 +138,12 @@ class PartFiveFrame extends StatefulWidget {
       required this.getAnswer,
       required this.rightAnswers,
       required this.ans,
-      required this.isShow,
-      required this.cancelShowExplan,
       required this.isExam});
 
   @override
   State<PartFiveFrame> createState() => _PartFiveFrameState();
 }
 
-// --------------------------------------------------------------------
 class _PartFiveFrameState extends State<PartFiveFrame> {
   @override
   void initState() {

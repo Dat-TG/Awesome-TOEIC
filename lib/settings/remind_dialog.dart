@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toeic_app/others/get_It.dart';
+import 'package:toeic_app/utils/get_It.dart';
 import 'package:toeic_app/settings/time_remind_picker.dart';
 
 import '../constants.dart';

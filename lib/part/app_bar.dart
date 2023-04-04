@@ -20,7 +20,6 @@ class AppBarPractice extends StatefulWidget implements PreferredSizeWidget {
 
 class _AppBarPracticeState extends State<AppBarPractice> {
   PageController controller = PageController();
-  int _curr = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +60,7 @@ class _AppBarPracticeState extends State<AppBarPractice> {
               showModalBottomSheet<void>(
                   context: context,
                   isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
                   builder: (BuildContext context) {
                     return DraggableScrollableSheet(
                         expand: false,
@@ -88,6 +88,7 @@ class _AppBarPracticeState extends State<AppBarPractice> {
           ),
         )
       ],
+      
     );
   }
 }
@@ -159,7 +160,7 @@ class _ExplanationState extends State<Explanation> {
                           'Giải thích',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: _curr == 0 ? orange : white,
+                              color: _curr == 0 ? orange : black,
                               fontWeight: FontWeight.bold,
                               fontSize: 17),
                         ),
@@ -188,7 +189,7 @@ class _ExplanationState extends State<Explanation> {
                           'Lời dịch',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                              color: _curr == 1 ? orange : white,
+                              color: _curr == 1 ? orange : black,
                               fontWeight: FontWeight.bold,
                               fontSize: 17),
                         ),
@@ -200,7 +201,7 @@ class _ExplanationState extends State<Explanation> {
                       },
                       child: Icon(
                         Icons.cancel,
-                        color: white,
+                        color: black,
                       ),
                     )
                   ]),

@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:toeic_app/settings/language_form.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 const String appName = "TOEIC APP";
 const String appIcon = 'assets/img/headphones.png';
@@ -21,18 +21,11 @@ Color white = Colors.white;
 Color black = Colors.black;
 Color green = Colors.green;
 Color red = Colors.red;
+Color transparent = Colors.red.withOpacity(0);
 
 bool isDarkMode = false;
 
 List<String> answersOption = ["A", "B", "C", "D"];
-
-List<String> convertListDynamicToListString(List<dynamic> data) {
-  List<String> newList = [];
-  for (int i = 0; i < data.length; i++) {
-    newList.add(data[i].toString());
-  }
-  return newList;
-}
 
 // get question -answer from cloud storage
 Future<List<Map<String, dynamic>>> getQuestionsAndAnswers(int partID) async {
@@ -65,27 +58,6 @@ Future<List<Map<String, dynamic>>> getQuestionsAndAnswers(int partID) async {
             print(value.docs.length)
           });
   return data;
-}
-
-List<List<String>> convertListDynamicToListListString(List<dynamic> data) {
-  List<List<String>> newList = [];
-  for (int i = 0; i < data.length; i++) {
-    newList.add(List<String>.from(data[i] as List));
-  }
-  return newList;
-}
-
-void changeColorByTheme() {
-  colorBox = isDarkMode ? Colors.black.withOpacity(0.4) : Colors.white;
-  colorBoxShadow =
-      !isDarkMode ? Colors.grey.withOpacity(0.5) : Colors.transparent;
-  textColor = isDarkMode ? Colors.white : Colors.black;
-  bottomNavColor = isDarkMode ? Colors.black : colorApp;
-  textNav = !isDarkMode
-      ? Colors.grey.withOpacity(0.5)
-      : Colors.white.withOpacity(0.5);
-  white = isDarkMode ? Colors.black : Colors.white;
-  black = !isDarkMode ? Colors.black : Colors.white;
 }
 
 final List<String> listImage = [
@@ -137,10 +109,6 @@ final List<String> listDirectionVn = [
   'Đọc các văn bản sau. Một từ, cụm từ hoặc câu bị thiếu trong các phần của mỗi văn bản. Bốn lựa chọn trả lời cho mỗi câu hỏi được đưa ra bên dưới văn bản. Chọn câu trả lời đúng nhất để hoàn thành đoạn văn. Sau đó đánh dấu chữ cái (A), (B), (C) hoặc (D) trên phiếu trả lời của bạn',
   'Trong phần này, bạn sẽ đọc tuyển tập các văn bản, chẳng hạn như các bài báo và tạp chí, e-mail và tin nhắn nhanh. Mỗi văn bản hoặc bộ văn bản được theo sau bởi một số câu hỏi. Chọn câu trả lời đúng nhất cho mỗi câu hỏi và đánh dấu chữ cái (A), (B), (C) hoặc (D) trên phiếu trả lời của bạn'
 ];
-
-final List<int> listSentencesDone = [1, 2, 3, 4, 5, 6, 7];
-final List<int> listSentencesRight = [1, 2, 3, 4, 5, 6, 7];
-final List<double> listProgress = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7];
 
 String language = "";
 Language? enumLanguage;

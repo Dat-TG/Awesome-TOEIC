@@ -1,7 +1,9 @@
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:toeic_app/main.dart';
+import 'package:toeic_app/part/cancel_dialog.dart';
+import 'package:toeic_app/part/submit_dialog.dart';
+import 'package:toeic_app/utils/convert_dynamic.dart';
 
 import './../constants.dart';
 import 'package:just_audio/just_audio.dart';
@@ -19,88 +21,131 @@ class PartTwo extends StatefulWidget {
 class _PartTwoState extends State<PartTwo> {
   int _curr = 1;
   int totalQues = 4; // Example
-  List<String> _answer = [];
+  List<String> _answers = [];
   PageController controller = PageController();
+  late List<String> rightAnsChoice, listQuestionsID;
+  bool isDialog = true;
 
   @override
   void initState() {
-    super.initState();
     setState(() {
       totalQues = widget.data.length;
-      _answer = [];
-      for (int i = 0; i < totalQues; i++) {
-        _answer.add("");
+      _answers = [];
+      rightAnsChoice = [];
+      listQuestionsID = [];
+      for (int i = 0; i < widget.data.length; i++) {
+        listQuestionsID.add(widget.data[i]['id']);
+        _answers.add("");
+        rightAnsChoice.add(widget.data[i]['list_right_answer'][0]);
       }
     });
+    super.initState();
   }
 
   void callbackAnswer(int number, String ans) {
     setState(() {
-      if (_answer[number - 1] == "" || widget.isExam) _answer[number - 1] = ans;
+      if (_answers[number - 1] == "" || widget.isExam)
+        _answers[number - 1] = ans;
     });
-    print(_answer);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Transform.translate(
-              offset: Offset(-25, 0),
-              child: (Row(
-                children: [
-                  Text('Câu $_curr'),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 13, right: 8),
-                    child: Icon(Icons.info_outline),
+    return WillPopScope(
+        onWillPop: () async {
+          bool confirm = await cancelDialog(context);
+          if (confirm) {
+            return true;
+          } else {
+            return false;
+          }
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              title: Transform.translate(
+                  offset: Offset(-25, 0),
+                  child: (Row(
+                    children: [
+                      Text('Câu $_curr'),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 13, right: 8),
+                        child: Icon(Icons.info_outline),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8, right: 13),
+                        child: Icon(Icons.settings_outlined),
+                      ),
+                      Icon(Icons.favorite_outline)
+                    ],
+                  ))),
+              backgroundColor: colorApp,
+              centerTitle: true,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Center(
+                    child: Text(
+                      'Giải thích',
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8, right: 13),
-                    child: Icon(Icons.settings_outlined),
-                  ),
-                  Icon(Icons.favorite_outline)
-                ],
-              ))),
-          backgroundColor: colorApp,
-          centerTitle: true,
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: Center(
-                child: Text(
-                  'Giải thích',
-                  style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            )
-          ],
-        ),
-        body: PageView(
-            scrollDirection: Axis.horizontal,
-            controller: controller,
-            onPageChanged: (number) {
-              setState(() {
-                _curr = number + 1;
-              });
-            },
-            children: [
-              for (int i = 0; i < widget.data.length; i++)
-                PartTwoFrame(
-                  audioPath: widget.data[i]['audio'],
-                  number: i + 1,
-                  getAnswer: (numb, value) => callbackAnswer(numb, value),
-                  ans: _answer,
-                  rightAnswers: convertListDynamicToListString(
-                      widget.data[i]['list_right_answer']),
-                  isExam: widget.isExam,
-                ),
-            ]));
+                )
+              ],
+            ),
+            body: NotificationListener<ScrollNotification>(
+                onNotification: (scrollNotification) {
+                  if (scrollNotification is OverscrollNotification &&
+                      controller.page == totalQues - 1) {
+                    showGeneralDialog(
+                        context: context,
+                        transitionDuration: Duration(milliseconds: 300),
+                        transitionBuilder: (context, anim1, anim2, child) {
+                          return SlideTransition(
+                            position:
+                                Tween(begin: Offset(1, 0), end: Offset(0, 0))
+                                    .animate(anim1),
+                            child: child,
+                          );
+                        },
+                        pageBuilder: (context, anim1, anim2) => SubmitDialog(
+                              listQuestions: widget.data,
+                              listQuestionsID: listQuestionsID,
+                              part: 2,
+                              listRightAnswers: rightAnsChoice,
+                              listUserChoice: _answers,
+                            ));
+                  }
+                  return true;
+                },
+                child: PageView(
+                    scrollDirection: Axis.horizontal,
+                    controller: controller,
+                    onPageChanged: (number) {
+                      setState(() {
+                        _curr = number + 1;
+                      });
+                    },
+                    children: [
+                      for (int i = 0; i < widget.data.length; i++)
+                        PartTwoFrame(
+                          audioPath: widget.data[i]['audio'],
+                          number: i + 1,
+                          getAnswer: (numb, value) =>
+                              callbackAnswer(numb, value),
+                          ans: _answers,
+                          rightAnswers: convertListDynamicToListString(
+                              widget.data[i]['list_right_answer']),
+                          isExam: widget.isExam,
+                        ),
+                    ]))));
   }
 }
+
+// -----------------------------------------
 
 class PartTwoFrame extends StatefulWidget {
   final int number;

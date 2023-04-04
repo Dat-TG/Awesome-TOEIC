@@ -1,14 +1,13 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toeic_app/utils/change_color_by_theme.dart';
 import 'constants.dart';
 import 'package:flutter_format_money_vietnam/flutter_format_money_vietnam.dart';
 
-import 'others/get_It.dart';
+import 'utils/get_It.dart';
 
 class UpgradePage extends StatefulWidget {
   const UpgradePage({super.key});

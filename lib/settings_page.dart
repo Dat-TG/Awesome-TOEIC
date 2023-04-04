@@ -6,15 +6,15 @@ import 'package:toeic_app/home_page.dart';
 import 'package:toeic_app/settings/edit_profile.dart';
 import 'package:toeic_app/settings/language_form.dart';
 import 'package:toeic_app/settings/remind_dialog.dart';
-import 'package:toeic_app/settings/time_remind_picker.dart';
 import 'package:toeic_app/sign_in.dart';
 import 'package:toeic_app/sign_up.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:toeic_app/utils/change_color_by_theme.dart';
 import 'main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'others/get_It.dart';
+import 'utils/get_It.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

@@ -9,6 +9,7 @@ import '../part/part_seven.dart';
 import '../part/part_six.dart';
 import '../part/part_three.dart';
 import '../part/part_two.dart';
+import '../utils/convert_dynamic.dart';
 import 'app_bar.dart';
 
 class Testing extends StatefulWidget {
@@ -129,12 +130,6 @@ class _TestingState extends State<Testing> {
               listNameImages:
                   convertListDynamicToListString(listQuestion[0][i]['images']),
               audio: listQuestion[0][i]['audio'],
-              isShow: isShow,
-              cancelShowExplan: (s) {
-                setState(() {
-                  isShow = s;
-                });
-              },
               isExam: true,
             ),
           PartIntro(
@@ -188,12 +183,6 @@ class _TestingState extends State<Testing> {
                   ['list_answers']),
               getAnswer: (number, value) => callbackAnswer(number - 1, value),
               ans: _answer,
-              isShow: isShow,
-              cancelShowExplan: (s) {
-                setState(() {
-                  isShow = s;
-                });
-              },
               rightAnswers: rightAnswerSelect,
               isExam: true,
             ),
@@ -240,12 +229,6 @@ class _TestingState extends State<Testing> {
                   listQuestion[2].length]['list_answers']),
               getAnswer: (number, value) => callbackAnswer(number - 1, value),
               ans: _answer,
-              isShow: isShow,
-              cancelShowExplan: (s) {
-                setState(() {
-                  isShow = s;
-                });
-              },
               rightAnswers: rightAnswerSelect,
               isExam: true,
             ),
@@ -280,12 +263,6 @@ class _TestingState extends State<Testing> {
               getAnswer: (number, value) => callbackAnswer(number, value),
               ans: _answer,
               rightAnswers: rightAnswerSelect,
-              isShow: isShow,
-              cancelShowExplan: (s) {
-                setState(() {
-                  isShow = s;
-                });
-              },
               isExam: true,
             ),
           PartIntro(
@@ -339,12 +316,6 @@ class _TestingState extends State<Testing> {
                   listQuestion[4].length]['list_answers']),
               getAnswer: (number, value) => callbackAnswer(number - 1, value),
               ans: _answer,
-              isShow: isShow,
-              cancelShowExplan: (s) {
-                setState(() {
-                  isShow = s;
-                });
-              },
               rightAnswers: rightAnswerSelect,
               isExam: true,
             ),
@@ -406,12 +377,6 @@ class _TestingState extends State<Testing> {
                   listQuestion[3].length -
                   listQuestion[4].length -
                   listQuestion[5].length]['images']),
-              isShow: isShow,
-              cancelShowExplan: (s) {
-                setState(() {
-                  isShow = s;
-                });
-              },
               isExam: true,
             ),
         ],
