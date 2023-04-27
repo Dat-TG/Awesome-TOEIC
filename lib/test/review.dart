@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:toeic_app/test/app_bar.dart';
+import 'package:toeic_app/test/review_details.dart';
 
 import '../constants.dart';
 
@@ -112,7 +114,17 @@ class Result extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  curReadOrListen = ValueNotifier<int>(0);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ReviewDetails(
+                                              testID: testID,
+                                              data: data,
+                                              answer: answer,
+                                              answerSelect: answerSelect)));
+                                },
                                 child: Text(
                                   "Chi tiết",
                                   style: TextStyle(
@@ -355,7 +367,17 @@ class Result extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(right: 20),
                             child: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  curReadOrListen = ValueNotifier<int>(1);
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => ReviewDetails(
+                                              testID: testID,
+                                              data: data,
+                                              answer: answer,
+                                              answerSelect: answerSelect)));
+                                },
                                 child: Text(
                                   "Chi tiết",
                                   style: TextStyle(

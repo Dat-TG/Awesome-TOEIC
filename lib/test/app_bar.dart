@@ -22,7 +22,7 @@ import '../part/app_bar.dart';
 
 PageController readOrListenController = PageController();
 PageController filterController = PageController();
-final curReadOrListen = ValueNotifier<int>(0);
+var curReadOrListen = ValueNotifier<int>(0);
 final curAnswerPageReading = ValueNotifier<int>(0);
 final curAnswerPageListening = ValueNotifier<int>(0);
 
