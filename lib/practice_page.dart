@@ -27,8 +27,21 @@ class _PracticeState extends State<Practice> {
 
   @override
   void initState() {
-    statistic =
-        statisticPraticeByUserID(FirebaseAuth.instance.currentUser!.uid);
+    if (FirebaseAuth.instance.currentUser != null) {
+      statistic =
+          statisticPraticeByUserID(FirebaseAuth.instance.currentUser!.uid);
+    } else {
+      List<double> progress = [for (int i = 0; i < 7; i++) 0];
+      List<int> doneQuestionsForPart = [for (int i = 0; i < 7; i++) 0],
+          correctQuestions = [for (int i = 0; i < 7; i++) 0];
+      Map<String, dynamic> listHistory = {};
+      statistic = Future(() => {
+            'listHistory': listHistory,
+            'doneQuestion': doneQuestionsForPart,
+            'correctQuestion': correctQuestions,
+            'progress': progress,
+          });
+    }
     super.initState();
     _loadTheme();
   }
