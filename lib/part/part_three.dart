@@ -183,12 +183,17 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
       url =
           await storage.ref().child('img/${widget.images[0]}').getDownloadURL();
     }
-
-    setState(() {
-      imageURL = url;
-    });
-    await _player.setAudioSource(ConcatenatingAudioSource(
-        children: [AudioSource.uri(Uri.parse(audioURL))]));
+    if (mounted) {
+      setState(() {
+        imageURL = url;
+      });
+    }
+    try {
+      await _player.setAudioSource(ConcatenatingAudioSource(
+          children: [AudioSource.uri(Uri.parse(audioURL))]));
+    } on Exception {
+      printError("audio fail");
+    }
   }
 
   @override
@@ -333,9 +338,11 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                       for (int index in widget.number)
                         InkWell(
                           onTap: () {
-                            setState(() {
-                              _currAns = index;
-                            });
+                            if (mounted) {
+                              setState(() {
+                                _currAns = index;
+                              });
+                            }
                             print(widget.number);
                             controllerAnswer
                                 .jumpToPage(_currAns - widget.number[0]);
@@ -387,9 +394,11 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                         controller: controllerAnswer,
                         scrollDirection: Axis.horizontal,
                         onPageChanged: (number) {
-                          setState(() {
-                            _currAns = widget.number[number];
-                          });
+                          if (mounted) {
+                            setState(() {
+                              _currAns = widget.number[number];
+                            });
+                          }
                         },
                         children: [
                           for (int size = 0;
@@ -405,14 +414,17 @@ class _PartThreeFrameState extends State<PartThreeFrame> {
                                       children: [
                                         InkWell(
                                           onTap: () {
-                                            setState(() {
-                                              widget.getAnswer(
-                                                  widget.number[size], i);
-                                              if (widget.isExam) {
-                                                widget.ans[widget.number[size] -
-                                                    1] = i;
-                                              }
-                                            });
+                                            if (mounted) {
+                                              setState(() {
+                                                widget.getAnswer(
+                                                    widget.number[size], i);
+                                                if (widget.isExam) {
+                                                  widget.ans[
+                                                      widget.number[size] -
+                                                          1] = i;
+                                                }
+                                              });
+                                            }
                                           },
                                           child: Container(
                                             padding: EdgeInsets.all(15),

@@ -171,12 +171,17 @@ class _PartOneFrameState extends State<PartOneFrame> {
         .ref()
         .child('img/${widget.listNameImages[0]}')
         .getDownloadURL();
-
-    setState(() {
-      imageURL = url;
-    });
-    await _player.setAudioSource(ConcatenatingAudioSource(
-        children: [AudioSource.uri(Uri.parse(audioURL))]));
+    if (mounted) {
+      setState(() {
+        imageURL = url;
+      });
+    }
+    try {
+      await _player.setAudioSource(ConcatenatingAudioSource(
+          children: [AudioSource.uri(Uri.parse(audioURL))]));
+    } on Exception {
+      printError("Audio set source fail");
+    }
   }
 
   @override
@@ -330,14 +335,16 @@ class _PartOneFrameState extends State<PartOneFrame> {
                         for (var i in answersOption)
                           InkWell(
                             onTap: () {
-                              setState(() {
-                                widget.getAnswer(widget.number, i);
-                                if (widget.isExam) {
-                                  widget.ans[widget.number] = i;
-                                }
-                                printError("ans");
-                                print(widget.ans);
-                              });
+                              if (mounted) {
+                                setState(() {
+                                  widget.getAnswer(widget.number, i);
+                                  if (widget.isExam) {
+                                    widget.ans[widget.number] = i;
+                                  }
+                                  printError("ans");
+                                  print(widget.ans);
+                                });
+                              }
                             },
                             child: Container(
                               padding: EdgeInsets.all(15),

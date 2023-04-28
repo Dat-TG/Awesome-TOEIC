@@ -189,8 +189,12 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
   void init() async {
     Reference audioRef = storage.ref().child(widget.audioPath);
     String audioURL = await audioRef.getDownloadURL();
-    await _player.setAudioSource(ConcatenatingAudioSource(
-        children: [AudioSource.uri(Uri.parse(audioURL))]));
+    try {
+      await _player.setAudioSource(ConcatenatingAudioSource(
+          children: [AudioSource.uri(Uri.parse(audioURL))]));
+    } on Exception {
+      printError("audio fail");
+    }
   }
 
   @override
@@ -287,12 +291,14 @@ class _PartTwoFrameState extends State<PartTwoFrame> {
                     for (var i in answersOption)
                       InkWell(
                         onTap: () {
-                          setState(() {
-                            widget.getAnswer(widget.number, i);
-                            if (widget.isExam) {
-                              widget.ans[widget.number - 1] = i;
-                            }
-                          });
+                          if (mounted) {
+                            setState(() {
+                              widget.getAnswer(widget.number, i);
+                              if (widget.isExam) {
+                                widget.ans[widget.number - 1] = i;
+                              }
+                            });
+                          }
                         },
                         child: Container(
                           padding: EdgeInsets.all(15),
