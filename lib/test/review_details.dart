@@ -2,10 +2,17 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:toeic_app/constants.dart';
+import 'package:toeic_app/test/testing.dart';
 
+import '../part/part_five.dart';
+import '../part/part_four.dart';
+import '../part/part_one.dart';
+import '../part/part_seven.dart';
+import '../part/part_six.dart';
+import '../part/part_three.dart';
+import '../part/part_two.dart';
+import '../utils/convert_dynamic.dart';
 import 'app_bar.dart';
-
-final PageController pageController = PageController();
 
 class ReviewDetails extends StatelessWidget {
   final String testID;
@@ -38,7 +45,7 @@ class ReviewDetails extends StatelessWidget {
             StaticAnswerPageView(
               answer: answer,
               answerSelect: answerSelect,
-              pageController: pageController,
+              data: data,
             )
           ],
         ));
@@ -47,12 +54,12 @@ class ReviewDetails extends StatelessWidget {
 
 class StaticAnswerPageView extends StatefulWidget {
   final List<String> answer, answerSelect;
-  final PageController pageController;
+  final List<Map<String, dynamic>>? data;
   const StaticAnswerPageView(
       {super.key,
       required this.answer,
       required this.answerSelect,
-      required this.pageController});
+      required this.data});
 
   @override
   State<StaticAnswerPageView> createState() => _StaticAnswerPageViewState();
@@ -80,12 +87,12 @@ class _StaticAnswerPageViewState extends State<StaticAnswerPageView> {
           StaticListeningPage(
             answer: widget.answer,
             answerSelect: widget.answerSelect,
-            pageController: widget.pageController,
+            data: widget.data,
           ),
           StaticReadingPage(
             answer: widget.answer,
             answerSelect: widget.answerSelect,
-            pageController: widget.pageController,
+            data: widget.data,
           )
         ],
       ),
@@ -95,12 +102,12 @@ class _StaticAnswerPageViewState extends State<StaticAnswerPageView> {
 
 class StaticListeningPage extends StatefulWidget {
   final List<String> answer, answerSelect;
-  final PageController pageController;
+  final List<Map<String, dynamic>>? data;
   const StaticListeningPage(
       {super.key,
       required this.answer,
       required this.answerSelect,
-      required this.pageController});
+      required this.data});
 
   @override
   State<StaticListeningPage> createState() => _StaticListeningPageState();
@@ -140,8 +147,13 @@ class _StaticListeningPageState extends State<StaticListeningPage> {
                       widget.answer[i] != widget.answerSelect[i]))
                 InkWell(
                   onTap: () {
-                    widget.pageController.jumpToPage(i + 1);
-                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReviewTest(
+                                  data: widget.data,
+                                  intialPage: i + 1,
+                                )));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -202,8 +214,14 @@ class _StaticListeningPageState extends State<StaticListeningPage> {
                       widget.answer[i] != widget.answerSelect[i]))
                 InkWell(
                   onTap: () {
-                    widget.pageController.jumpToPage(i + 2);
-                    Navigator.pop(context);
+                    //widget.pageController.jumpToPage(i + 2);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReviewTest(
+                                  data: widget.data,
+                                  intialPage: i + 2,
+                                )));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -262,8 +280,14 @@ class _StaticListeningPageState extends State<StaticListeningPage> {
                       widget.answer[i] != widget.answerSelect[i]))
                 InkWell(
                   onTap: () {
-                    widget.pageController.jumpToPage(31 + (i - 31) ~/ 3 + 3);
-                    Navigator.pop(context);
+                    //widget.pageController.jumpToPage(31 + (i - 31) ~/ 3 + 3);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReviewTest(
+                                  data: widget.data,
+                                  intialPage: 31 + (i - 31) ~/ 3 + 3,
+                                )));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -322,8 +346,14 @@ class _StaticListeningPageState extends State<StaticListeningPage> {
                       widget.answer[i] != widget.answerSelect[i]))
                 InkWell(
                   onTap: () {
-                    widget.pageController.jumpToPage(44 + (i - 70) ~/ 3 + 4);
-                    Navigator.pop(context);
+                    //widget.pageController.jumpToPage(44 + (i - 70) ~/ 3 + 4);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReviewTest(
+                                  data: widget.data,
+                                  intialPage: 44 + (i - 70) ~/ 3 + 4,
+                                )));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -375,12 +405,12 @@ class _StaticListeningPageState extends State<StaticListeningPage> {
 
 class StaticReadingPage extends StatefulWidget {
   final List<String> answer, answerSelect;
-  final PageController pageController;
+  final List<Map<String, dynamic>>? data;
   const StaticReadingPage(
       {super.key,
       required this.answer,
       required this.answerSelect,
-      required this.pageController});
+      required this.data});
 
   @override
   State<StaticReadingPage> createState() => _StaticReadingPageState();
@@ -420,8 +450,14 @@ class _StaticReadingPageState extends State<StaticReadingPage> {
                       widget.answer[i] != widget.answerSelect[i]))
                 InkWell(
                   onTap: () {
-                    widget.pageController.jumpToPage(54 + i - 100 + 5);
-                    Navigator.pop(context);
+                    //widget.pageController.jumpToPage(54 + i - 100 + 5);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReviewTest(
+                                  data: widget.data,
+                                  intialPage: 54 + i - 100 + 5,
+                                )));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -480,8 +516,14 @@ class _StaticReadingPageState extends State<StaticReadingPage> {
                       widget.answer[i] != widget.answerSelect[i]))
                 InkWell(
                   onTap: () {
-                    widget.pageController.jumpToPage(84 + (i - 130) ~/ 4 + 6);
-                    Navigator.pop(context);
+                    //widget.pageController.jumpToPage(84 + (i - 130) ~/ 4 + 6);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReviewTest(
+                                  data: widget.data,
+                                  intialPage: 84 + (i - 130) ~/ 4 + 6,
+                                )));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -554,8 +596,14 @@ class _StaticReadingPageState extends State<StaticReadingPage> {
                     if (i >= 175) {
                       page += (i - 175) ~/ 5 + 1;
                     }
-                    widget.pageController.jumpToPage(page);
-                    Navigator.pop(context);
+                    //widget.pageController.jumpToPage(page);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => ReviewTest(
+                                  data: widget.data,
+                                  intialPage: page,
+                                )));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -600,6 +648,388 @@ class _StaticReadingPageState extends State<StaticReadingPage> {
                 ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ReviewTest extends StatefulWidget {
+  final List<Map<String, dynamic>>? data;
+  final int intialPage;
+  const ReviewTest({super.key, required this.data, required this.intialPage});
+
+  @override
+  State<ReviewTest> createState() => _ReviewTestState();
+}
+
+class _ReviewTestState extends State<ReviewTest> {
+  List<String> numAnswers = [];
+  List<List<Map<String, dynamic>>> listQuestion = [[], [], [], [], [], [], []];
+  int _curr = 0;
+  int _number = 0;
+  List<String> _answer = [], rightAnswerSelect = [];
+  bool isShow = false;
+  var pageController;
+  @override
+  void initState() {
+    super.initState();
+    pageController = PageController(initialPage: widget.intialPage);
+    _curr = widget.intialPage;
+    for (int i = 0; i < widget.data!.length; i++) {
+      int j = widget.data![i]['part_id'];
+      listQuestion[j - 1].add(widget.data![i]);
+    }
+    int temp = 1;
+    for (int i = 0; i < 7; i++) {
+      numAnswers.add("");
+      for (int j = 0; j < listQuestion[i].length; j++) {
+        if (i < 2 || i == 4) {
+          numAnswers.add(temp.toString());
+          temp++;
+        } else {
+          numAnswers.add(
+              "$temp - ${temp += convertListDynamicToListString(listQuestion[i][j]['list_question']).length - 1}");
+          temp++;
+        }
+      }
+    }
+    for (int i = 0; i < 200; i++) {
+      _answer.add("");
+    }
+    for (int i = 0; i < listQuestion[0].length; i++) {
+      rightAnswerSelect.add(listQuestion[0][i]['list_right_answer'][0]);
+    }
+    for (int i = 0; i < listQuestion[1].length; i++) {
+      rightAnswerSelect.add(listQuestion[1][i]['list_right_answer'][0]);
+    }
+    for (int i = 1; i <= 7; i++) {
+      rightAnswerSelect.addAll(compareAnswersToRightAnswers(i));
+    }
+    print(rightAnswerSelect);
+  }
+
+  void callbackAnswer(int number, String ans) {
+    setState(() {
+      if (_answer[number] == "") _answer[number] = ans;
+    });
+  }
+
+  List<String> compareAnswersToRightAnswers(int part) {
+    List<String> rightAns = [];
+    for (int i = 0; i < listQuestion[part - 1].length; i++) {
+      for (int k = 0;
+          k < listQuestion[part - 1].elementAt(i)['list_answers'].length;
+          k++) {
+        for (int j = 0; j < 4; j++) {
+          if (answersOption
+              .contains(listQuestion[part - 1][i]['list_right_answer'][k])) {}
+          if (listQuestion[part - 1].elementAt(i)['list_right_answer'][k] ==
+              listQuestion[part - 1].elementAt(i)['list_answers'][k][j]) {
+            if (j == 0) {
+              rightAns.add("A");
+            } else if (j == 1) {
+              rightAns.add("B");
+            } else if (j == 2) {
+              rightAns.add("C");
+            } else {
+              rightAns.add("D");
+            }
+          }
+        }
+      }
+    }
+    return rightAns;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    int startPart3 = 32;
+    int startPart4 = 71;
+    int startPart6 = 131;
+    int startPart5 = 100;
+    int startPart7 = 146;
+    return Scaffold(
+      appBar: AppBar(
+        title: (numAnswers[_curr] != "")
+            ? Text("Câu ${numAnswers[_curr]}")
+            : Text(""),
+        centerTitle: true,
+        backgroundColor: colorApp,
+      ),
+      body: PageView(
+        /// [PageView.scrollDirection] defaults to [Axis.horizontal].
+        /// Use [Axis.vertical] to scroll vertically.
+        controller: pageController,
+        children: [
+          PartIntro(part: 1, controller: pageController),
+          for (int i = 0; i < listQuestion[0].length; i++)
+            PartOneFrame(
+              number: i,
+              getAnswer: (numb, value) => callbackAnswer(numb, value),
+              ans: _answer,
+              rightAnswers: convertListDynamicToListString(
+                  listQuestion[0][i]['list_right_answer']),
+              listNameImages:
+                  convertListDynamicToListString(listQuestion[0][i]['images']),
+              audio: listQuestion[0][i]['audio'],
+              isExam: false,
+            ),
+          PartIntro(
+            part: 2,
+            controller: pageController,
+          ),
+          for (int i = listQuestion[0].length;
+              i < listQuestion[0].length + listQuestion[1].length;
+              i++)
+            PartTwoFrame(
+              audioPath: listQuestion[1][i - listQuestion[0].length]['audio'],
+              number: i + 1,
+              getAnswer: (numb, value) => callbackAnswer(numb - 1, value),
+              ans: _answer,
+              rightAnswers: convertListDynamicToListString(listQuestion[1]
+                  [i - listQuestion[0].length]['list_right_answer']),
+              isExam: false,
+            ),
+          PartIntro(
+            part: 3,
+            controller: pageController,
+          ),
+          for (int i = listQuestion[0].length + listQuestion[1].length;
+              i <
+                  listQuestion[0].length +
+                      listQuestion[1].length +
+                      listQuestion[2].length;
+              i++)
+            PartThreeFrame(
+              number: [
+                for (int j = 0;
+                    j <
+                        convertListDynamicToListListString(listQuestion[2][i -
+                                listQuestion[0].length -
+                                listQuestion[1].length]['list_answers'])
+                            .length;
+                    j++)
+                  startPart3++
+              ],
+              audioPath: listQuestion[2]
+                      [i - listQuestion[0].length - listQuestion[1].length]
+                  ['audio'],
+              images: List<String>.from(listQuestion[2]
+                      [i - listQuestion[0].length - listQuestion[1].length]
+                  ['images'] as List),
+              question: List<String>.from(listQuestion[2]
+                      [i - listQuestion[0].length - listQuestion[1].length]
+                  ['list_question'] as List),
+              answers: convertListDynamicToListListString(listQuestion[2]
+                      [i - listQuestion[0].length - listQuestion[1].length]
+                  ['list_answers']),
+              getAnswer: (number, value) => callbackAnswer(number - 1, value),
+              ans: _answer,
+              rightAnswers: rightAnswerSelect,
+              isExam: false,
+            ),
+          PartIntro(
+            part: 4,
+            controller: pageController,
+          ),
+          for (int i = listQuestion[0].length +
+                  listQuestion[1].length +
+                  listQuestion[2].length;
+              i <
+                  listQuestion[0].length +
+                      listQuestion[1].length +
+                      listQuestion[2].length +
+                      listQuestion[3].length;
+              i++)
+            PartFourFrame(
+              number: [
+                for (int j = 0;
+                    j <
+                        convertListDynamicToListListString(listQuestion[3][i -
+                                listQuestion[0].length -
+                                listQuestion[1].length -
+                                listQuestion[2].length]['list_answers'])
+                            .length;
+                    j++)
+                  startPart4++
+              ],
+              audioPath: listQuestion[3][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length]['audio'],
+              images: List<String>.from(listQuestion[3][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length]['images'] as List),
+              question: List<String>.from(listQuestion[3][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length]['list_question'] as List),
+              answers: convertListDynamicToListListString(listQuestion[3][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length]['list_answers']),
+              getAnswer: (number, value) => callbackAnswer(number - 1, value),
+              ans: _answer,
+              rightAnswers: rightAnswerSelect,
+              isExam: false,
+            ),
+          PartIntro(
+            part: 5,
+            controller: pageController,
+          ),
+          for (int i = listQuestion[0].length +
+                  listQuestion[1].length +
+                  listQuestion[2].length +
+                  listQuestion[3].length;
+              i <
+                  listQuestion[0].length +
+                      listQuestion[1].length +
+                      listQuestion[2].length +
+                      listQuestion[3].length +
+                      listQuestion[4].length;
+              i++)
+            PartFiveFrame(
+              number: startPart5++,
+              question: listQuestion[4][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length -
+                  listQuestion[3].length]['list_question'][0],
+              answers: convertListDynamicToListString(listQuestion[4].elementAt(
+                  i -
+                      listQuestion[0].length -
+                      listQuestion[1].length -
+                      listQuestion[2].length -
+                      listQuestion[3].length)['list_answers'][0]),
+              getAnswer: (number, value) => callbackAnswer(number, value),
+              ans: _answer,
+              rightAnswers: rightAnswerSelect,
+              isExam: false,
+            ),
+          PartIntro(
+            part: 6,
+            controller: pageController,
+          ),
+          for (int i = listQuestion[0].length +
+                  listQuestion[1].length +
+                  listQuestion[2].length +
+                  listQuestion[3].length +
+                  listQuestion[4].length;
+              i <
+                  listQuestion[0].length +
+                      listQuestion[1].length +
+                      listQuestion[2].length +
+                      listQuestion[3].length +
+                      listQuestion[4].length +
+                      listQuestion[5].length;
+              i++)
+            PartSixFrame(
+              number: [
+                for (int j = 0;
+                    j <
+                        convertListDynamicToListListString(listQuestion[5][i -
+                                listQuestion[0].length -
+                                listQuestion[1].length -
+                                listQuestion[2].length -
+                                listQuestion[3].length -
+                                listQuestion[4].length]['list_answers'])
+                            .length;
+                    j++)
+                  startPart6++
+              ],
+              paragraph: listQuestion[5][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length -
+                  listQuestion[3].length -
+                  listQuestion[4].length]['content'],
+              question: List<String>.from(listQuestion[5][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length -
+                  listQuestion[3].length -
+                  listQuestion[4].length]['list_question'] as List),
+              answers: convertListDynamicToListListString(listQuestion[5][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length -
+                  listQuestion[3].length -
+                  listQuestion[4].length]['list_answers']),
+              getAnswer: (number, value) => callbackAnswer(number - 1, value),
+              ans: _answer,
+              rightAnswers: rightAnswerSelect,
+              isExam: false,
+            ),
+          PartIntro(
+            part: 7,
+            controller: pageController,
+          ),
+          for (int i = listQuestion[0].length +
+                  listQuestion[1].length +
+                  listQuestion[2].length +
+                  listQuestion[3].length +
+                  listQuestion[4].length +
+                  listQuestion[5].length;
+              i <
+                  listQuestion[0].length +
+                      listQuestion[1].length +
+                      listQuestion[2].length +
+                      listQuestion[3].length +
+                      listQuestion[4].length +
+                      listQuestion[5].length +
+                      listQuestion[6].length;
+              i++)
+            PartSevenFrame(
+              number: [
+                for (int j = 0;
+                    j <
+                        convertListDynamicToListListString(listQuestion[6][i -
+                                listQuestion[0].length -
+                                listQuestion[1].length -
+                                listQuestion[2].length -
+                                listQuestion[3].length -
+                                listQuestion[4].length -
+                                listQuestion[5].length]['list_answers'])
+                            .length;
+                    j++)
+                  startPart7++
+              ],
+              question: convertListDynamicToListString(listQuestion[6][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length -
+                  listQuestion[3].length -
+                  listQuestion[4].length -
+                  listQuestion[5].length]['list_question']),
+              answers: convertListDynamicToListListString(listQuestion[6][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length -
+                  listQuestion[3].length -
+                  listQuestion[4].length -
+                  listQuestion[5].length]['list_answers']),
+              rightAnswersSelect: rightAnswerSelect,
+              getAnswer: (number, value) => callbackAnswer(number, value),
+              ans: _answer,
+              listNameImages: convertListDynamicToListString(listQuestion[6][i -
+                  listQuestion[0].length -
+                  listQuestion[1].length -
+                  listQuestion[2].length -
+                  listQuestion[3].length -
+                  listQuestion[4].length -
+                  listQuestion[5].length]['images']),
+              isExam: false,
+            ),
+        ],
+        onPageChanged: (value) {
+          setState(() {
+            _curr = value;
+          });
+          printError('page $_curr');
+          printError(numAnswers[_curr]);
+          printError(_number.toString());
+        },
       ),
     );
   }
