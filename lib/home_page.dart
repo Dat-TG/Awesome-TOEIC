@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toeic_app/learning_route.dart';
 import 'package:toeic_app/test_page.dart';
 import 'package:toeic_app/upgrade_page.dart';
 import 'package:toeic_app/utils/change_color_by_theme.dart';
@@ -18,7 +19,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
-
 
   @override
   void initState() {
@@ -41,10 +41,7 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     Practice(),
     Test(),
-    Text(
-      'Trang 2: Lộ trình',
-      style: optionStyle,
-    ),
+    LearningRoute(),
     UpgradePage(),
     SettingsPage()
   ];
