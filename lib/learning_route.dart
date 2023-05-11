@@ -30,7 +30,7 @@ class _LearningRouteState extends State<LearningRoute> {
           children: [DropdownButtonGoal(), Text(" điểm TOEIC")],
         ),
         Text(
-          "Lộ trình Awsome TOEIC",
+          "Lộ trình Awesome TOEIC",
           style: TextStyle(
               color: colorApp, fontSize: 20, fontWeight: FontWeight.bold),
         ),

@@ -638,7 +638,7 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                                                       capturedImage!,
                                                                       'image/png',
                                                                       text:
-                                                                          'Awsome TOEIC Certificate');
+                                                                          'Awesome TOEIC Certificate');
                                                                 }).catchError(
                                                                         (onError) {
                                                                   print(

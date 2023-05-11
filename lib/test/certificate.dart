@@ -26,7 +26,7 @@ class Certificate extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               Text(
-                "Awsome Toeic",
+                "Awesome Toeic",
                 style: TextStyle(
                     color: colorApp, fontSize: 20, fontWeight: FontWeight.bold),
               ),

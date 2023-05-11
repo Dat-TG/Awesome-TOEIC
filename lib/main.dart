@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:toeic_app/data/data.dart';
 import 'package:toeic_app/utils/change_color_by_theme.dart';
 
@@ -27,6 +28,8 @@ Future<void> main() async {
   await initNotification();
   await showRemindNotification();
   await Firebase.initializeApp();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   /*List<String> arr = [];
   for (int i = 1; i <= 200; i++) {
     final docRef =

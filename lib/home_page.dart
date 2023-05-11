@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toeic_app/learning_route.dart';
 import 'package:toeic_app/test_page.dart';
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _selectedIndex = widget.intialIndex;
     _loadTheme();
+    FlutterNativeSplash.remove();
     super.initState();
   }
 
@@ -47,7 +49,7 @@ class _HomePageState extends State<HomePage> {
   ];
 
   static const List<String> appBarTitle = [
-    "Awsome TOEIC",
+    "Awesome TOEIC",
     "Thi",
     "Lộ trình",
     "Nâng cấp",
