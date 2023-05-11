@@ -2,9 +2,9 @@
     package="com.example.toeic_app">
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
    <application
-        android:label="toeic_app"
+        android:label="Awesome TOEIC"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"
