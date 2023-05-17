@@ -4,6 +4,7 @@ import 'package:toeic_app/direction.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/question.dart';
+import 'package:toeic_app/services/exam_service.dart';
 import 'package:toeic_app/services/statistic_service.dart';
 import 'package:toeic_app/utils/change_color_by_theme.dart';
 import 'package:toeic_app/utils/convert_dynamic.dart';
@@ -37,6 +38,7 @@ class _PracticeState extends State<Practice> {
       Map<String, dynamic> listHistory = {};
       statistic = Future(() => {
             'listHistory': listHistory,
+            'listExam': [],
             'doneQuestion': doneQuestionsForPart,
             'correctQuestion': correctQuestions,
             'progress': progress,
@@ -519,15 +521,86 @@ class _PracticeState extends State<Practice> {
                                       Column(
                                         children: [
                                           SizedBox(
-                                              height: 150,
-                                              child: Center(
-                                                child: Text(
-                                                    "Bạn chưa thi thử lần nào",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.w600)),
-                                              )),
+                                            height: 170,
+                                            child: Column(
+                                              children: snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting
+                                                  ? []
+                                                  : ListTile.divideTiles(
+                                                      context: context,
+                                                      tiles: (snapshot.data![
+                                                                  'listExam']
+                                                              as List<
+                                                                  Map<String,
+                                                                      dynamic>>)
+                                                          .take(3)
+                                                          .map(
+                                                            (history) =>
+                                                                ListTile(
+                                                              onTap: () {},
+                                                              trailing: Text(
+                                                                  '${history['reading_score'] + history['listening_score']}/990',
+                                                                  style: TextStyle(
+                                                                      color: (history['reading_score'] + history['listening_score']) < 200
+                                                                          ? red
+                                                                          : (history['reading_score'] + history['listening_score']) < 500
+                                                                              ? orange
+                                                                              : green,
+                                                                      fontSize: 17,
+                                                                      fontWeight: FontWeight.w600)),
+                                                              leading: Image.asset(
+                                                                  "assets/img/test.png",
+                                                                  width: 30,
+                                                                  height: 30),
+                                                              title: Text(
+                                                                  "Test ${history['exam_id']}",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16)),
+                                                            ),
+                                                          )).toList(),
+                                            ),
+                                          ),
+                                          snapshot.connectionState ==
+                                                  ConnectionState.waiting
+                                              ? SizedBox.shrink()
+                                              : snapshot.data!['listExam']
+                                                          .length <=
+                                                      3
+                                                  ? SizedBox.shrink()
+                                                  : TextButton(
+                                                      onPressed: () {
+                                                        showModalBottomSheet<
+                                                                void>(
+                                                            context: context,
+                                                            isScrollControlled:
+                                                                true,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return DraggableScrollableSheet(
+                                                                  expand: false,
+                                                                  initialChildSize:
+                                                                      .8,
+                                                                  minChildSize:
+                                                                      .8,
+                                                                  maxChildSize:
+                                                                      .8,
+                                                                  builder: (BuildContext
+                                                                          context,
+                                                                      ScrollController
+                                                                          scrollController) {
+                                                                    return SeeMoreHistory(
+                                                                        histories:
+                                                                            snapshot.data![
+                                                                                'listHistory'],
+                                                                        correctQuestion:
+                                                                            snapshot.data!['correctQuestion']);
+                                                                  });
+                                                            });
+                                                      },
+                                                      child: Text("Xem thêm"))
                                         ],
                                       ),
                                     ]))

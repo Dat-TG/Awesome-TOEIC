@@ -22,3 +22,18 @@ class ExamService {
     });
   }
 }
+
+class HistoryExam {
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Future<List<Map<String, dynamic>>> getHistoryExamofUser(String uid) async {
+    QuerySnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance
+        .collection('DoneExaminations')
+        .where('uid', isEqualTo: uid)
+        .get();
+    List<Map<String, dynamic>> list = [];
+    for (int i = 0; i < data.docs.length; i++) {
+      list.add(data.docs[i].data());
+    }
+    return list;
+  }
+}
