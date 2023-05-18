@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:bottom_sheet/bottom_sheet.dart';
 import 'package:esys_flutter_share_plus/esys_flutter_share_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/current_remaining_time.dart';
@@ -15,6 +16,7 @@ import 'package:toeic_app/main.dart';
 import 'package:toeic_app/part/part_one.dart';
 import 'package:toeic_app/test/review.dart';
 import 'package:toeic_app/test/testing.dart';
+import '../services/exam_service.dart';
 import 'certificate.dart';
 
 import '../constants.dart';
@@ -53,6 +55,7 @@ class _AppBarTestingState extends State<AppBarTesting> {
   CountdownTimerController timerController = CountdownTimerController(
       endTime: DateTime.now().millisecondsSinceEpoch + 1000 * 120 * 60);
   ScreenshotController screenshotController = ScreenshotController();
+  String uid = "";
 
   Future<dynamic> showCapturedWidget(
       BuildContext context, Uint8List capturedImage) {
@@ -74,6 +77,9 @@ class _AppBarTestingState extends State<AppBarTesting> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      uid = FirebaseAuth.instance.currentUser!.uid;
+    });
     timerController = CountdownTimerController(
         onEnd: () {
           for (AudioPlayer i in playingAudio) {
@@ -561,6 +567,15 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                           readingScore =
                                               10 + (readingScore - 3) * 5;
                                         }
+                                        if (uid != "") {
+                                          ExamService().insertDoneExam(
+                                              widget.testID,
+                                              uid,
+                                              widget.answerSelect,
+                                              widget.answer,
+                                              readingScore,
+                                              listeningScore);
+                                        }
                                         Navigator.popUntil(
                                             context, (route) => route.isFirst);
                                         Navigator.push(
@@ -611,7 +626,7 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                                                       Navigator.push(
                                                                           context,
                                                                           MaterialPageRoute(
-                                                                              builder: (context) => Result(testID: widget.testID, data: widget.data, answer: widget.answer, answerSelect: widget.answerSelect)));
+                                                                              builder: (context) => ResultExam(testID: widget.testID, data: widget.data, answer: widget.answer, answerSelect: widget.answerSelect)));
                                                                     },
                                                                     child: Text(
                                                                       "Xem đáp án",

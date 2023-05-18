@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:toeic_app/services/exam_service.dart';
 import 'package:toeic_app/utils/convert_dynamic.dart';
 import 'package:toeic_app/utils/get_qa.dart';
 
@@ -49,8 +50,12 @@ Future<Map<String, dynamic>> statisticPraticeByUserID(String uid) async {
         doneQuestionsForPart[i] / totalQuestion.docs[i]['NumberOfQuestion'];
   }
 
+  List<Map<String, dynamic>> listExam =
+      await HistoryExam().getHistoryExamofUser(uid);
+
   return {
     'listHistory': listHistory,
+    'listExam': listExam,
     'doneQuestion': doneQuestionsForPart,
     'correctQuestion': correctQuestions,
     'progress': progress,

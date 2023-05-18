@@ -1,10 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:esys_flutter_share_plus/esys_flutter_share_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:screenshot/screenshot.dart';
 import 'package:toeic_app/direction.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/question.dart';
+import 'package:toeic_app/services/exam_service.dart';
 import 'package:toeic_app/services/statistic_service.dart';
+import 'package:toeic_app/test/certificate.dart';
+import 'package:toeic_app/test/review.dart';
 import 'package:toeic_app/utils/change_color_by_theme.dart';
 import 'package:toeic_app/utils/convert_dynamic.dart';
 import 'package:toeic_app/vocabulary.dart';
@@ -25,6 +31,8 @@ class _PracticeState extends State<Practice> {
   PageController historyController = PageController();
   int currentHistoryPage = 0;
 
+  ScreenshotController screenshotController = ScreenshotController();
+
   @override
   void initState() {
     if (FirebaseAuth.instance.currentUser != null) {
@@ -37,6 +45,7 @@ class _PracticeState extends State<Practice> {
       Map<String, dynamic> listHistory = {};
       statistic = Future(() => {
             'listHistory': listHistory,
+            'listExam': [],
             'doneQuestion': doneQuestionsForPart,
             'correctQuestion': correctQuestions,
             'progress': progress,
@@ -519,15 +528,169 @@ class _PracticeState extends State<Practice> {
                                       Column(
                                         children: [
                                           SizedBox(
-                                              height: 150,
-                                              child: Center(
-                                                child: Text(
-                                                    "Bạn chưa thi thử lần nào",
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.w600)),
-                                              )),
+                                            height: 170,
+                                            child: Column(
+                                              children: snapshot
+                                                          .connectionState ==
+                                                      ConnectionState.waiting
+                                                  ? []
+                                                  : ListTile.divideTiles(
+                                                      context: context,
+                                                      tiles: (snapshot.data![
+                                                                  'listExam']
+                                                              as List<
+                                                                  Map<String,
+                                                                      dynamic>>)
+                                                          .take(3)
+                                                          .map(
+                                                            (history) =>
+                                                                ListTile(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            Scaffold(
+                                                                              appBar: AppBar(
+                                                                                title: Text("Kết quả"),
+                                                                                centerTitle: true,
+                                                                                backgroundColor: colorApp,
+                                                                              ),
+                                                                              body: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(top: 20, left: 8, right: 8),
+                                                                                    child: Certificate(
+                                                                                      listeningScore: history['listening_score'],
+                                                                                      readingScore: history['reading_score'],
+                                                                                      screenshotController: screenshotController,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.all(10),
+                                                                                    child: ElevatedButton(
+                                                                                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), backgroundColor: colorApp),
+                                                                                        onPressed: () async {
+                                                                                          var data = await FirebaseFirestore.instance.collection("Examinations").doc(history['exam_id']).get();
+                                                                                          if (!mounted) {
+                                                                                            return;
+                                                                                          }
+                                                                                          Navigator.push(
+                                                                                              context,
+                                                                                              MaterialPageRoute(
+                                                                                                  builder: (context) => FutureBuilder(
+                                                                                                      future: getAllQuestionSnapshot(data),
+                                                                                                      builder: (context, snapshot) {
+                                                                                                        List<Map<String, dynamic>> data = [];
+
+                                                                                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                                                          return Dialog.fullscreen(
+                                                                                                            child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                                                                                                              const Text('Questions are loading, please wait...'),
+                                                                                                              const SizedBox(height: 15),
+                                                                                                              SizedBox(
+                                                                                                                width: 200,
+                                                                                                                height: 5,
+                                                                                                                child: LinearProgressIndicator(),
+                                                                                                              )
+                                                                                                            ]),
+                                                                                                          );
+                                                                                                        }
+                                                                                                        if (snapshot.connectionState == ConnectionState.done) {
+                                                                                                          data = snapshot.data as List<Map<String, dynamic>>;
+                                                                                                        }
+
+                                                                                                        return ResultExam(testID: history['exam_id'], data: data, answer: convertListDynamicToListString(history['list_right_answers']), answerSelect: convertListDynamicToListString(history['list_answers']));
+                                                                                                      })));
+                                                                                        },
+                                                                                        child: Text(
+                                                                                          "Xem đáp án",
+                                                                                          style: TextStyle(color: white),
+                                                                                        )),
+                                                                                  ),
+                                                                                  TextButton.icon(
+                                                                                      onPressed: () {
+                                                                                        screenshotController.capture(delay: Duration(milliseconds: 10)).then((capturedImage) async {
+                                                                                          //showCapturedWidget(
+                                                                                          //  context,
+                                                                                          //capturedImage!);
+                                                                                          await Share.file('Toeic Certificate', 'certificate.png', capturedImage!, 'image/png', text: 'Awesome TOEIC Certificate');
+                                                                                        }).catchError((onError) {
+                                                                                          print(onError);
+                                                                                        });
+                                                                                      },
+                                                                                      icon: Icon(
+                                                                                        Icons.share,
+                                                                                        color: colorApp,
+                                                                                      ),
+                                                                                      label: Text(
+                                                                                        "Chia sẻ kết quả với bạn bè",
+                                                                                        style: TextStyle(color: black, fontWeight: FontWeight.w400),
+                                                                                      ))
+                                                                                ],
+                                                                              ),
+                                                                            )));
+                                                              },
+                                                              trailing: Text(
+                                                                  '${history['reading_score'] + history['listening_score']}/990',
+                                                                  style: TextStyle(
+                                                                      color: (history['reading_score'] + history['listening_score']) < 200
+                                                                          ? red
+                                                                          : (history['reading_score'] + history['listening_score']) < 500
+                                                                              ? orange
+                                                                              : green,
+                                                                      fontSize: 17,
+                                                                      fontWeight: FontWeight.w600)),
+                                                              leading: Image.asset(
+                                                                  "assets/img/test.png",
+                                                                  width: 30,
+                                                                  height: 30),
+                                                              title: Text(
+                                                                  "Test ${history['exam_id']}",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16)),
+                                                            ),
+                                                          )).toList(),
+                                            ),
+                                          ),
+                                          snapshot.connectionState ==
+                                                  ConnectionState.waiting
+                                              ? SizedBox.shrink()
+                                              : snapshot.data!['listExam']
+                                                          .length <=
+                                                      3
+                                                  ? SizedBox.shrink()
+                                                  : TextButton(
+                                                      onPressed: () {
+                                                        showModalBottomSheet<
+                                                                void>(
+                                                            context: context,
+                                                            isScrollControlled:
+                                                                true,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return DraggableScrollableSheet(
+                                                                  expand: false,
+                                                                  initialChildSize:
+                                                                      .8,
+                                                                  minChildSize:
+                                                                      .8,
+                                                                  maxChildSize:
+                                                                      .8,
+                                                                  builder: (BuildContext
+                                                                          context,
+                                                                      ScrollController
+                                                                          scrollController) {
+                                                                    return SeeMoreExam(
+                                                                        exam: snapshot
+                                                                            .data!['listExam']);
+                                                                  });
+                                                            });
+                                                      },
+                                                      child: Text("Xem thêm"))
                                         ],
                                       ),
                                     ]))
@@ -866,5 +1029,389 @@ class BoxContainer extends StatelessWidget {
         )
       ],
     );
+  }
+}
+
+class SeeMoreExam extends StatefulWidget {
+  final List<Map<String, dynamic>> exam;
+  const SeeMoreExam({super.key, required this.exam});
+
+  @override
+  State<SeeMoreExam> createState() => _SeeMoreExamState();
+}
+
+class _SeeMoreExamState extends State<SeeMoreExam> {
+  final ScreenshotController screenshotController = ScreenshotController();
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+            color: transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )),
+        child: Center(
+          child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: colorAppBold,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      )),
+                  child: Row(mainAxisSize: MainAxisSize.max, children: [
+                    Expanded(
+                        flex: 1,
+                        child: Text(
+                          'Lịch sử thi',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.cancel,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ]),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                      child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: widget.exam
+                          .map((history) => Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Scaffold(
+                                                  appBar: AppBar(
+                                                    title: Text("Kết quả"),
+                                                    centerTitle: true,
+                                                    backgroundColor: colorApp,
+                                                  ),
+                                                  body: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 20,
+                                                                left: 8,
+                                                                right: 8),
+                                                        child: Certificate(
+                                                          listeningScore: history[
+                                                              'listening_score'],
+                                                          readingScore: history[
+                                                              'reading_score'],
+                                                          screenshotController:
+                                                              screenshotController,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                        child: ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20)),
+                                                                backgroundColor:
+                                                                    colorApp),
+                                                            onPressed:
+                                                                () async {
+                                                              var data = await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "Examinations")
+                                                                  .doc(history[
+                                                                      'exam_id'])
+                                                                  .get();
+                                                              if (!mounted) {
+                                                                return;
+                                                              }
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => FutureBuilder(
+                                                                          future: getAllQuestionSnapshot(data),
+                                                                          builder: (context, snapshot) {
+                                                                            List<Map<String, dynamic>>
+                                                                                data =
+                                                                                [];
+
+                                                                            if (snapshot.connectionState ==
+                                                                                ConnectionState.waiting) {
+                                                                              return Dialog.fullscreen(
+                                                                                child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                                                                                  const Text('Questions are loading, please wait...'),
+                                                                                  const SizedBox(height: 15),
+                                                                                  SizedBox(
+                                                                                    width: 200,
+                                                                                    height: 5,
+                                                                                    child: LinearProgressIndicator(),
+                                                                                  )
+                                                                                ]),
+                                                                              );
+                                                                            }
+                                                                            if (snapshot.connectionState ==
+                                                                                ConnectionState.done) {
+                                                                              data = snapshot.data as List<Map<String, dynamic>>;
+                                                                            }
+
+                                                                            return ResultExam(
+                                                                                testID: history['exam_id'],
+                                                                                data: data,
+                                                                                answer: convertListDynamicToListString(history['list_right_answers']),
+                                                                                answerSelect: convertListDynamicToListString(history['list_answers']));
+                                                                          })));
+                                                            },
+                                                            child: Text(
+                                                              "Xem đáp án",
+                                                              style: TextStyle(
+                                                                  color: white),
+                                                            )),
+                                                      ),
+                                                      TextButton.icon(
+                                                          onPressed: () {
+                                                            screenshotController
+                                                                .capture(
+                                                                    delay: Duration(
+                                                                        milliseconds:
+                                                                            10))
+                                                                .then(
+                                                                    (capturedImage) async {
+                                                              //showCapturedWidget(
+                                                              //  context,
+                                                              //capturedImage!);
+                                                              await Share.file(
+                                                                  'Toeic Certificate',
+                                                                  'certificate.png',
+                                                                  capturedImage!,
+                                                                  'image/png',
+                                                                  text:
+                                                                      'Awesome TOEIC Certificate');
+                                                            }).catchError(
+                                                                    (onError) {
+                                                              print(onError);
+                                                            });
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.share,
+                                                            color: colorApp,
+                                                          ),
+                                                          label: Text(
+                                                            "Chia sẻ kết quả với bạn bè",
+                                                            style: TextStyle(
+                                                                color: black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ))
+                                                    ],
+                                                  ),
+                                                )));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: black.withOpacity(0.2)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          20, 20, 20, 20),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: Image.asset(
+                                                "assets/img/test.png",
+                                                width: 45,
+                                                height: 45),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15),
+                                              child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Text(history['time'],
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: black
+                                                                    .withOpacity(
+                                                                        0.6))),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Column(
+                                                          children: [
+                                                            Text(
+                                                                "Test ${history['exam_id']}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        17,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        black)),
+                                                            Text(
+                                                                'Số câu hỏi: ${history['list_answers'].length}',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: black
+                                                                        .withOpacity(
+                                                                            0.8))),
+                                                          ],
+                                                        ),
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                                'Reading: ${history['reading_score']}/495',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                    color: black
+                                                                        .withOpacity(
+                                                                            0.8)),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right),
+                                                            Text(
+                                                                'Listening: ${history['listening_score']}/495',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                    color: black
+                                                                        .withOpacity(
+                                                                            0.8)),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right),
+                                                            Text(
+                                                                'Overall: ${history['listening_score'] + history['reading_score']}/990',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: black
+                                                                        .withOpacity(
+                                                                            0.8)),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 8,
+                                                      child:
+                                                          LinearProgressIndicator(
+                                                        backgroundColor:
+                                                            colorApp3,
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                                Color>(
+                                                          (history['reading_score'] +
+                                                                      history[
+                                                                          'listening_score']) <
+                                                                  200
+                                                              ? red
+                                                              : (history['reading_score'] +
+                                                                          history[
+                                                                              'listening_score']) <
+                                                                      500
+                                                                  ? orange
+                                                                  : green,
+                                                        ),
+                                                        value: (history[
+                                                                    'reading_score'] +
+                                                                history[
+                                                                    'listening_score']) /
+                                                            990,
+                                                      ),
+                                                    ),
+                                                  ]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  )),
+                )
+              ]),
+        ));
   }
 }

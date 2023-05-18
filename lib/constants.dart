@@ -131,9 +131,9 @@ Future<List<QueryDocumentSnapshot<Map<String, dynamic>>>>
 }
 
 Future<List<Map<String, dynamic>>> getAllQuestionSnapshot(
-    QueryDocumentSnapshot<Map<String, dynamic>>? data) async {
+    DocumentSnapshot<Map<String, dynamic>>? data) async {
   List<Map<String, dynamic>> res = [];
-  for (String i in data!.data()['list_question_id'] ?? []) {
+  for (String i in data!.data()!['list_question_id'] ?? []) {
     final question =
         await FirebaseFirestore.instance.collection("Questions").doc(i).get();
     question.data()!['list_answers'] = [];
