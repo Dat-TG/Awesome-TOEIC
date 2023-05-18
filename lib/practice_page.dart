@@ -591,12 +591,9 @@ class _PracticeState extends State<Practice> {
                                                                           context,
                                                                       ScrollController
                                                                           scrollController) {
-                                                                    return SeeMoreHistory(
-                                                                        histories:
-                                                                            snapshot.data![
-                                                                                'listHistory'],
-                                                                        correctQuestion:
-                                                                            snapshot.data!['correctQuestion']);
+                                                                    return SeeMoreExam(
+                                                                        exam: snapshot
+                                                                            .data!['listExam']);
                                                                   });
                                                             });
                                                       },
@@ -939,5 +936,252 @@ class BoxContainer extends StatelessWidget {
         )
       ],
     );
+  }
+}
+
+class SeeMoreExam extends StatelessWidget {
+  final List<Map<String, dynamic>> exam;
+  const SeeMoreExam({super.key, required this.exam});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+            color: transparent,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            )),
+        child: Center(
+          child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                      color: colorAppBold,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      )),
+                  child: Row(mainAxisSize: MainAxisSize.max, children: [
+                    Expanded(
+                        flex: 1,
+                        child: Text(
+                          'Lịch sử thi',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 12.0),
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Icon(
+                          Icons.cancel,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  ]),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                      child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: exam
+                          .map((history) => Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Text("")));
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: black.withOpacity(0.2)),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(8))),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          20, 20, 20, 20),
+                                      child: Row(
+                                        children: [
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: Image.asset(
+                                                "assets/img/test.png",
+                                                width: 45,
+                                                height: 45),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 15),
+                                              child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Text(history['time'],
+                                                            style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: black
+                                                                    .withOpacity(
+                                                                        0.6))),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Column(
+                                                          children: [
+                                                            Text(
+                                                                "Test ${history['exam_id']}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        17,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        black)),
+                                                            Text(
+                                                                'Số câu hỏi: ${history['list_answers'].length}',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    color: black
+                                                                        .withOpacity(
+                                                                            0.8))),
+                                                          ],
+                                                        ),
+                                                        Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                                'Reading: ${history['reading_score']}/495',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                    color: black
+                                                                        .withOpacity(
+                                                                            0.8)),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right),
+                                                            Text(
+                                                                'Listening: ${history['listening_score']}/495',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .normal,
+                                                                    color: black
+                                                                        .withOpacity(
+                                                                            0.8)),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right),
+                                                            Text(
+                                                                'Overall: ${history['listening_score'] + history['reading_score']}/990',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: black
+                                                                        .withOpacity(
+                                                                            0.8)),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
+                                                    SizedBox(
+                                                      height: 8,
+                                                      child:
+                                                          LinearProgressIndicator(
+                                                        backgroundColor:
+                                                            colorApp3,
+                                                        valueColor:
+                                                            AlwaysStoppedAnimation<
+                                                                Color>(
+                                                          (history['reading_score'] +
+                                                                      history[
+                                                                          'listening_score']) <
+                                                                  200
+                                                              ? red
+                                                              : (history['reading_score'] +
+                                                                          history[
+                                                                              'listening_score']) <
+                                                                      500
+                                                                  ? orange
+                                                                  : green,
+                                                        ),
+                                                        value: (history[
+                                                                    'reading_score'] +
+                                                                history[
+                                                                    'listening_score']) /
+                                                            990,
+                                                      ),
+                                                    ),
+                                                  ]),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  )),
+                )
+              ]),
+        ));
   }
 }
