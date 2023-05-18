@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:esys_flutter_share_plus/esys_flutter_share_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import "package:flutter/material.dart";
+import 'package:screenshot/screenshot.dart';
 import 'package:toeic_app/direction.dart';
 import 'package:toeic_app/part/app_bar.dart';
 import 'package:toeic_app/part/result.dart';
 import 'package:toeic_app/question.dart';
 import 'package:toeic_app/services/exam_service.dart';
 import 'package:toeic_app/services/statistic_service.dart';
+import 'package:toeic_app/test/certificate.dart';
+import 'package:toeic_app/test/review.dart';
 import 'package:toeic_app/utils/change_color_by_theme.dart';
 import 'package:toeic_app/utils/convert_dynamic.dart';
 import 'package:toeic_app/vocabulary.dart';
@@ -25,6 +30,8 @@ class _PracticeState extends State<Practice> {
   Future<Map<String, dynamic>> statistic = Future(() => {});
   PageController historyController = PageController();
   int currentHistoryPage = 0;
+
+  ScreenshotController screenshotController = ScreenshotController();
 
   @override
   void initState() {
@@ -538,7 +545,93 @@ class _PracticeState extends State<Practice> {
                                                           .map(
                                                             (history) =>
                                                                 ListTile(
-                                                              onTap: () {},
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                        builder: (context) =>
+                                                                            Scaffold(
+                                                                              appBar: AppBar(
+                                                                                title: Text("Kết quả"),
+                                                                                centerTitle: true,
+                                                                                backgroundColor: colorApp,
+                                                                              ),
+                                                                              body: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                children: [
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.only(top: 20, left: 8, right: 8),
+                                                                                    child: Certificate(
+                                                                                      listeningScore: history['listening_score'],
+                                                                                      readingScore: history['reading_score'],
+                                                                                      screenshotController: screenshotController,
+                                                                                    ),
+                                                                                  ),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.all(10),
+                                                                                    child: ElevatedButton(
+                                                                                        style: ElevatedButton.styleFrom(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), backgroundColor: colorApp),
+                                                                                        onPressed: () async {
+                                                                                          var data = await FirebaseFirestore.instance.collection("Examinations").doc(history['exam_id']).get();
+                                                                                          if (!mounted) {
+                                                                                            return;
+                                                                                          }
+                                                                                          Navigator.push(
+                                                                                              context,
+                                                                                              MaterialPageRoute(
+                                                                                                  builder: (context) => FutureBuilder(
+                                                                                                      future: getAllQuestionSnapshot(data),
+                                                                                                      builder: (context, snapshot) {
+                                                                                                        List<Map<String, dynamic>> data = [];
+
+                                                                                                        if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                                                          return Dialog.fullscreen(
+                                                                                                            child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                                                                                                              const Text('Questions are loading, please wait...'),
+                                                                                                              const SizedBox(height: 15),
+                                                                                                              SizedBox(
+                                                                                                                width: 200,
+                                                                                                                height: 5,
+                                                                                                                child: LinearProgressIndicator(),
+                                                                                                              )
+                                                                                                            ]),
+                                                                                                          );
+                                                                                                        }
+                                                                                                        if (snapshot.connectionState == ConnectionState.done) {
+                                                                                                          data = snapshot.data as List<Map<String, dynamic>>;
+                                                                                                        }
+
+                                                                                                        return ResultExam(testID: history['exam_id'], data: data, answer: convertListDynamicToListString(history['list_right_answers']), answerSelect: convertListDynamicToListString(history['list_answers']));
+                                                                                                      })));
+                                                                                        },
+                                                                                        child: Text(
+                                                                                          "Xem đáp án",
+                                                                                          style: TextStyle(color: white),
+                                                                                        )),
+                                                                                  ),
+                                                                                  TextButton.icon(
+                                                                                      onPressed: () {
+                                                                                        screenshotController.capture(delay: Duration(milliseconds: 10)).then((capturedImage) async {
+                                                                                          //showCapturedWidget(
+                                                                                          //  context,
+                                                                                          //capturedImage!);
+                                                                                          await Share.file('Toeic Certificate', 'certificate.png', capturedImage!, 'image/png', text: 'Awesome TOEIC Certificate');
+                                                                                        }).catchError((onError) {
+                                                                                          print(onError);
+                                                                                        });
+                                                                                      },
+                                                                                      icon: Icon(
+                                                                                        Icons.share,
+                                                                                        color: colorApp,
+                                                                                      ),
+                                                                                      label: Text(
+                                                                                        "Chia sẻ kết quả với bạn bè",
+                                                                                        style: TextStyle(color: black, fontWeight: FontWeight.w400),
+                                                                                      ))
+                                                                                ],
+                                                                              ),
+                                                                            )));
+                                                              },
                                                               trailing: Text(
                                                                   '${history['reading_score'] + history['listening_score']}/990',
                                                                   style: TextStyle(
@@ -939,10 +1032,16 @@ class BoxContainer extends StatelessWidget {
   }
 }
 
-class SeeMoreExam extends StatelessWidget {
+class SeeMoreExam extends StatefulWidget {
   final List<Map<String, dynamic>> exam;
   const SeeMoreExam({super.key, required this.exam});
 
+  @override
+  State<SeeMoreExam> createState() => _SeeMoreExamState();
+}
+
+class _SeeMoreExamState extends State<SeeMoreExam> {
+  final ScreenshotController screenshotController = ScreenshotController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -999,7 +1098,7 @@ class SeeMoreExam extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: exam
+                      children: widget.exam
                           .map((history) => Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
                                 child: InkWell(
@@ -1007,7 +1106,138 @@ class SeeMoreExam extends StatelessWidget {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) => Text("")));
+                                            builder: (context) => Scaffold(
+                                                  appBar: AppBar(
+                                                    title: Text("Kết quả"),
+                                                    centerTitle: true,
+                                                    backgroundColor: colorApp,
+                                                  ),
+                                                  body: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 20,
+                                                                left: 8,
+                                                                right: 8),
+                                                        child: Certificate(
+                                                          listeningScore: history[
+                                                              'listening_score'],
+                                                          readingScore: history[
+                                                              'reading_score'],
+                                                          screenshotController:
+                                                              screenshotController,
+                                                        ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                        child: ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            20)),
+                                                                backgroundColor:
+                                                                    colorApp),
+                                                            onPressed:
+                                                                () async {
+                                                              var data = await FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      "Examinations")
+                                                                  .doc(history[
+                                                                      'exam_id'])
+                                                                  .get();
+                                                              if (!mounted) {
+                                                                return;
+                                                              }
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) => FutureBuilder(
+                                                                          future: getAllQuestionSnapshot(data),
+                                                                          builder: (context, snapshot) {
+                                                                            List<Map<String, dynamic>>
+                                                                                data =
+                                                                                [];
+
+                                                                            if (snapshot.connectionState ==
+                                                                                ConnectionState.waiting) {
+                                                                              return Dialog.fullscreen(
+                                                                                child: Column(mainAxisSize: MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                                                                                  const Text('Questions are loading, please wait...'),
+                                                                                  const SizedBox(height: 15),
+                                                                                  SizedBox(
+                                                                                    width: 200,
+                                                                                    height: 5,
+                                                                                    child: LinearProgressIndicator(),
+                                                                                  )
+                                                                                ]),
+                                                                              );
+                                                                            }
+                                                                            if (snapshot.connectionState ==
+                                                                                ConnectionState.done) {
+                                                                              data = snapshot.data as List<Map<String, dynamic>>;
+                                                                            }
+
+                                                                            return ResultExam(
+                                                                                testID: history['exam_id'],
+                                                                                data: data,
+                                                                                answer: convertListDynamicToListString(history['list_right_answers']),
+                                                                                answerSelect: convertListDynamicToListString(history['list_answers']));
+                                                                          })));
+                                                            },
+                                                            child: Text(
+                                                              "Xem đáp án",
+                                                              style: TextStyle(
+                                                                  color: white),
+                                                            )),
+                                                      ),
+                                                      TextButton.icon(
+                                                          onPressed: () {
+                                                            screenshotController
+                                                                .capture(
+                                                                    delay: Duration(
+                                                                        milliseconds:
+                                                                            10))
+                                                                .then(
+                                                                    (capturedImage) async {
+                                                              //showCapturedWidget(
+                                                              //  context,
+                                                              //capturedImage!);
+                                                              await Share.file(
+                                                                  'Toeic Certificate',
+                                                                  'certificate.png',
+                                                                  capturedImage!,
+                                                                  'image/png',
+                                                                  text:
+                                                                      'Awesome TOEIC Certificate');
+                                                            }).catchError(
+                                                                    (onError) {
+                                                              print(onError);
+                                                            });
+                                                          },
+                                                          icon: Icon(
+                                                            Icons.share,
+                                                            color: colorApp,
+                                                          ),
+                                                          label: Text(
+                                                            "Chia sẻ kết quả với bạn bè",
+                                                            style: TextStyle(
+                                                                color: black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                          ))
+                                                    ],
+                                                  ),
+                                                )));
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(

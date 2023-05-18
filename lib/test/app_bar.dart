@@ -626,7 +626,7 @@ class _AppBarTestingState extends State<AppBarTesting> {
                                                                       Navigator.push(
                                                                           context,
                                                                           MaterialPageRoute(
-                                                                              builder: (context) => Result(testID: widget.testID, data: widget.data, answer: widget.answer, answerSelect: widget.answerSelect)));
+                                                                              builder: (context) => ResultExam(testID: widget.testID, data: widget.data, answer: widget.answer, answerSelect: widget.answerSelect)));
                                                                     },
                                                                     child: Text(
                                                                       "Xem đáp án",

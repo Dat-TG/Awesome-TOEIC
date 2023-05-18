@@ -4,11 +4,11 @@ import 'package:toeic_app/test/review_details.dart';
 
 import '../constants.dart';
 
-class Result extends StatelessWidget {
+class ResultExam extends StatelessWidget {
   final String testID;
   final List<Map<String, dynamic>>? data;
   final List<String> answer, answerSelect;
-  const Result(
+  const ResultExam(
       {super.key,
       required this.testID,
       required this.data,
